@@ -26,3 +26,5 @@ def test_a_star_with_no_path_manhattan(valid_nodes):
 
 def test_a_star_with_single_node_path_manhattan():
     assert len(a_star(graph=Graph([(0, 0)], ()), start_node_index=0, end_node_index=0, heuristic_distance=manhattan_distance)) == 0
+
+# TODO: Add tests for euclidean distance, and many more permutations of the above tests.
