@@ -1,3 +1,5 @@
+"""Simple and complex data types for the navigation module."""
+
 import bisect
 from collections.abc import Sequence, Mapping, Callable
 from copy import copy
@@ -13,6 +15,7 @@ type HeuristicDistanceCallable = Callable[[Node, Node], int]
 
 @dataclass(order=True)
 class Edge:
+    """An edge in a graph."""
     weight: int
     node_indices: frozenset[int] = field(compare=False)
     g: int | float | None = None
@@ -33,6 +36,7 @@ class Edge:
             return self.g + self.h
 
     def coordinates_of_other(self, current_index: int):
+        """Given one node index, return the other node index."""
         node_indices = list(self.node_indices)
         return node_indices[1] if node_indices[0] == current_index else node_indices[0]
 
@@ -53,6 +57,7 @@ class Edge:
 
 
 class Graph:
+    """A graph."""
     nodes: NodeSequence = field(default_factory=list)
     edges: EdgeSequence = field(default_factory=tuple)
 
@@ -78,7 +83,8 @@ class Graph:
         return hash((self.nodes, self.edges))
 
     def adjacency_map(self) -> AdjacencyMapping:
-        """Convert a graph to an adjacency mapping."""
+        """Render an adjacency map."""
+
         adjacency_map = {node: [] for node in self.nodes}
 
         for edge in self.edges:
@@ -88,7 +94,8 @@ class Graph:
         return adjacency_map
 
     def adjacency_matrix(self) -> np.ndarray:
-        """Convert a graph to an adjacency matrix."""
+        """Render an adjacency matrix."""
+
         adjacency_matrix = np.ones((len(self.nodes), len(self.nodes))) * np.inf
 
         for edge in self.edges:

@@ -1,6 +1,8 @@
+"""A module containing an implementation of the A* algorithm for finding the shortest path between two nodes in a graph."""
+
 from heapdict import heapdict
 
-from modgeosys.nav.types import Edge, Graph, EdgeSequence, HeuristicDistanceCallable
+from modgeosys.nav.types import Edge, Graph, HeuristicDistanceCallable
 from modgeosys.nav.distance import manhattan_distance
 
 
