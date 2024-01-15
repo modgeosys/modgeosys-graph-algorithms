@@ -1,0 +1,16 @@
+select = ["ALL"]
+
+# Ignore some rules.
+ignore = [
+    "D203",     # 1 blank line required before class docstring
+    "D204",     # 1 blank line required after class docstring
+    "D208",     # Docstring is over-indented
+    "D209",     # Multi-line docstring closing quotes should be on a separate line
+    "D213",     # Multi-line docstring summary should start at the second line
+    "E501",     # Line too long ({width} > {limit} characters)
+    "FA100",    # Missing 'from __future__ import annotations', but uses `{name}`
+    "FA102",    # Missing 'from __future__ import annotations', but uses
+    "PLR0911",  # Too many return statements ({returns} > {max_returns})
+    "Q000",     # Single quotes found but double quotes preferred
+    "S101",     # Use of assert detected.
+]
