@@ -113,7 +113,7 @@ class Graph:
 class NavigationFieldTypeError(TypeError):
     """Raised when an invalid type is passed to a navigation function."""
     def __init__(self, field_name: str, expected_types: Sequence[type], value: Any):
-        super().__init__("Expected type %s for '%s', but received type %s.", ' | '.join([t.__name__ for t in expected_types]), field_name, type(value).__name__)
+        super().__init__("Expected type %s for '%s', but received type %s.", '|'.join([t.__name__ for t in expected_types]), field_name, type(value).__name__)
 
 
 class NoNavigablePathError(Exception):
