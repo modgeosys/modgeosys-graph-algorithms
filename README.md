@@ -5,11 +5,11 @@ path planning, and obstacle avoidance algorithms I will be using in the near fut
 Python and/or Rust with Python bindings. I'll be adding more algorithm implementations over time.
 
 ## Algorithms: Currently implemented + planned
-* [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) - A* graph path search algorithm.
+* [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) - Graph path search algorithm.
   * code-complete in Python.
   * Needs a more thorough test suite.
   * Needs a Rust implementation.
-* Probabilistic Roadmap (PRM).
+* Probabilistic Roadmap (PRM) - Robot navigation algorithm with obstacle avoidance.
   * Planned.
 
 ## Usage
