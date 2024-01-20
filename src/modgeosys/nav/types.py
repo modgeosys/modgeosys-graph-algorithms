@@ -25,10 +25,10 @@ class Edge:
 
     def __post_init__(self):
         """Validate the dataclass fields."""
-        validate(field_name='weight', expected_types=(int | float), value=self.weight)
-        validate(field_name='node_indices', expected_types=(frozenset), value=self.node_indices)
-        validate(field_name='g', expected_types=(int | float | type(None)), value=self.g)
-        validate(field_name='h', expected_types=(int | float | type(None)), value=self.h)
+        validate(field_name='weight',       expected_types=(int | float),              value=self.weight)
+        validate(field_name='node_indices', expected_types=frozenset,                  value=self.node_indices)
+        validate(field_name='g',            expected_types=(int | float | type(None)), value=self.g)
+        validate(field_name='h',            expected_types=(int | float | type(None)), value=self.h)
 
     def f(self) -> int | float | None:
         """Calculate the combined cost of the edge."""
@@ -105,7 +105,7 @@ class Graph:
         return adjacency_matrix
 
 
-def validate(field_name: str, expected_types: type, value: Any, excluded_types: type = None):
+def validate(field_name: str, expected_types: type, value: Any, excluded_types: type | None = None) -> None:
     """Validate a field value."""
     if (excluded_types and isinstance(value, excluded_types)) or not isinstance(value, expected_types):
         raise NavigationFieldTypeError(field_name=field_name, expected_types=expected_types, value=value)
