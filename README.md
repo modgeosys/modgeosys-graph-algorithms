@@ -14,7 +14,7 @@ Python and/or Rust with Python bindings. I'll be adding more algorithm implement
 
 ## Usage
 
-### A* (Python)
+### A\* (Python)
 ```python
 from modgeosys.nav.a_star import a_star
 from modgeosys.nav.types import Edge, Graph
