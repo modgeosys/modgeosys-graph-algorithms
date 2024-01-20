@@ -103,3 +103,8 @@ class Graph:
             adjacency_matrix[node_indices[0], node_indices[1]] = adjacency_matrix[node_indices[1], node_indices[0]] = edge.weight
 
         return adjacency_matrix
+
+
+class NoPathError(Exception):
+    """Raised when no path can be found to the goal node."""
+    pass
