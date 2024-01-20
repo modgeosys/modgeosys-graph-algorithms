@@ -1,8 +1,8 @@
 import pytest
 
 from modgeosys.nav.a_star import a_star
-from modgeosys.nav.types import Edge, Graph, NoPathError
 from modgeosys.nav.distance import manhattan_distance, euclidean_distance
+from modgeosys.nav.types import Edge, Graph, NoNavigablePathError
 
 
 def test_a_star_finds_shortest_path_manhattan_graph1(valid_graph1):
@@ -23,7 +23,7 @@ def test_a_star_finds_shortest_path_manhattan_graph2(valid_graph2):
 
 
 def test_a_star_with_no_path_manhattan(valid_nodes):
-    with pytest.raises(NoPathError):
+    with pytest.raises(NoNavigablePathError):
         a_star(graph=Graph(valid_nodes, ()), start_node_index=0, goal_node_index=3, heuristic_distance=manhattan_distance)
 
 

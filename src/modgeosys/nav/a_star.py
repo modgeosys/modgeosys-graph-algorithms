@@ -2,12 +2,12 @@
 
 from heapdict import heapdict
 
-from modgeosys.nav.types import Edge, Graph, HeuristicDistanceCallable, NoPathError
 from modgeosys.nav.distance import manhattan_distance
+from modgeosys.nav.types import Edge, Graph, HeuristicDistanceCallable, NoNavigablePathError
 
 
 def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_distance: HeuristicDistanceCallable = manhattan_distance) -> list[Edge]:
-    """Implementation of the A* algorithm for finding the shortest path between two nodes in a graph."""
+    """Implement the A* algorithm for finding the shortest path between two nodes in a graph."""
 
     # Grab the nodes and adjacency map.
     nodes = graph.nodes
@@ -35,7 +35,7 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
 
         # If no path to the goal exists, raise an exception.
         if not f:
-            raise NoPathError(f'No path exists between nodes {nodes[start_node_index]} and {nodes[goal_node_index]}.')
+            raise NoNavigablePathError(start_node=nodes[start_node_index], goal_node=nodes[goal_node_index])
 
         # Pick the edge with the lowest f value.
         best_f, best_transit_edge = f.popitem()

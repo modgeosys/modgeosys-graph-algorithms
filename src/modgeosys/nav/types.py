@@ -1,9 +1,11 @@
 """Simple and complex data types for the navigation module."""
 
 import bisect
-from collections.abc import Sequence, Mapping, Callable
+from collections.abc import Callable, Mapping, Sequence
 from copy import copy
 from dataclasses import dataclass, field
+from typing import Any
+
 import numpy as np
 
 type Node = tuple[int | float, int | float]
@@ -22,20 +24,23 @@ class Edge:
     h: int | float | None = None
 
     def __post_init__(self):
+        """Validate the dataclass fields."""
         if not isinstance(self.weight, int):
-            raise TypeError(f"The field 'weight' was assigned a value of type '{type(self.weight).__name__}', but it requires a value of type 'int'")
+            raise NavigationFieldTypeError(field_name='weight', expected_types=[int], value=self.weight)
         if not isinstance(self.node_indices, frozenset):
-            raise TypeError(f"The field 'node_indices' was assigned a value of type '{type(self.node_indices).__name__}', but it requires a value of type 'frozenset'")
+            raise NavigationFieldTypeError(field_name='node_indices', expected_types=[frozenset], value=self.node_indices)
         if self.g is not None and not isinstance(self.g, (int, float, type(None))):
-            raise TypeError(f"The field 'g' was assigned a value of type '{type(self.g).__name__}', but it requires a value of type 'int', 'float', or 'NoneType'")
+            raise NavigationFieldTypeError(field_name='g', expected_types=[int, float, type(None)], value=self.g)
         if self.h is not None and not isinstance(self.h, (int, float, type(None))):
-            raise TypeError(f"The field 'h' was assigned a value of type '{type(self.h).__name__}', but it requires a value of type 'int', 'float', or 'NoneType'")
+            raise NavigationFieldTypeError(field_name='h', expected_types=[int, float, type(None)], value=self.h)
 
-    def f(self):
+    def f(self) -> int | float | None:
+        """Calculate the combined cost of the edge."""
         if self.g is not None and self.h is not None:
             return self.g + self.h
+        return None
 
-    def coordinates_of_other(self, current_index: int):
+    def coordinates_of_other(self, current_index: int) -> int:
         """Given one node index, return the other node index."""
         node_indices = list(self.node_indices)
         return node_indices[1] if node_indices[0] == current_index else node_indices[0]
@@ -52,7 +57,7 @@ class Edge:
     def __copy__(self):
         return Edge(weight=self.weight, node_indices=self.node_indices, g=self.g, h=self.h)
 
-    def __deepcopy__(self, memo: Mapping = None):
+    def __deepcopy__(self, memo: Mapping | None = None):
         return Edge(weight=self.weight, node_indices=self.node_indices, g=self.g, h=self.h)
 
 
@@ -63,9 +68,9 @@ class Graph:
 
     def __init__(self, nodes: NodeSequence, edges: EdgeSequence):
         if not (isinstance(nodes, Sequence) and not isinstance(nodes, str)):
-            raise TypeError(f"The field 'nodes' was assigned a value of type '{type(nodes).__name__}', but it requires a value of type 'Sequence'")
+            raise NavigationFieldTypeError(field_name='nodes', expected_types=[Sequence], value=nodes)
         if not (isinstance(edges, Sequence) and not isinstance(edges, str)):
-            raise TypeError(f"The field 'edges' was assigned a value of type '{type(edges).__name__}', but it requires a value of type 'Sequence'")
+            raise NavigationFieldTypeError(field_name='edges', expected_types=[Sequence], value=edges)
 
         self.nodes = [tuple(node) for node in nodes]
         self.edges = tuple(copy(edge) for edge in edges)
@@ -99,12 +104,19 @@ class Graph:
         adjacency_matrix = np.ones((len(self.nodes), len(self.nodes))) * np.inf
 
         for edge in self.edges:
-            node_indices = [node_index for node_index in edge.node_indices]
+            node_indices = list(edge.node_indices)
             adjacency_matrix[node_indices[0], node_indices[1]] = adjacency_matrix[node_indices[1], node_indices[0]] = edge.weight
 
         return adjacency_matrix
 
 
-class NoPathError(Exception):
+class NavigationFieldTypeError(TypeError):
+    """Raised when an invalid type is passed to a navigation function."""
+    def __init__(self, field_name: str, expected_types: Sequence[type], value: Any):
+        super().__init__("Expected type %s for '%s', but received type %s.", ' | '.join([t.__name__ for t in expected_types]), field_name, type(value).__name__)
+
+
+class NoNavigablePathError(Exception):
     """Raised when no path can be found to the goal node."""
-    pass
+    def __init__(self, start_node: Node, goal_node: Node):
+        super().__init__('No path exists between nodes %s and %s.', start_node, goal_node)
