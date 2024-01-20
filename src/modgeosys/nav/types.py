@@ -29,9 +29,9 @@ class Edge:
             raise NavigationFieldTypeError(field_name='weight', expected_types=[int], value=self.weight)
         if not isinstance(self.node_indices, frozenset):
             raise NavigationFieldTypeError(field_name='node_indices', expected_types=[frozenset], value=self.node_indices)
-        if self.g is not None and not isinstance(self.g, (int, float, type(None))):
+        if not isinstance(self.g, (int, float, type(None))):
             raise NavigationFieldTypeError(field_name='g', expected_types=[int, float, type(None)], value=self.g)
-        if self.h is not None and not isinstance(self.h, (int, float, type(None))):
+        if not isinstance(self.h, (int, float, type(None))):
             raise NavigationFieldTypeError(field_name='h', expected_types=[int, float, type(None)], value=self.h)
 
     def f(self) -> int | float | None:
@@ -67,9 +67,9 @@ class Graph:
     edges: EdgeSequence = field(default_factory=tuple)
 
     def __init__(self, nodes: NodeSequence, edges: EdgeSequence):
-        if not (isinstance(nodes, Sequence) and not isinstance(nodes, str)):
+        if isinstance(nodes, str) or not (isinstance(nodes, Sequence)):
             raise NavigationFieldTypeError(field_name='nodes', expected_types=[Sequence], value=nodes)
-        if not (isinstance(edges, Sequence) and not isinstance(edges, str)):
+        if isinstance(edges, str) or not isinstance(edges, Sequence):
             raise NavigationFieldTypeError(field_name='edges', expected_types=[Sequence], value=edges)
 
         self.nodes = [tuple(node) for node in nodes]
