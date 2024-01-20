@@ -6,17 +6,17 @@ from copy import copy
 from dataclasses import dataclass, field
 import numpy as np
 
-type Node = tuple[int, int]
+type Node = tuple[int | float, int | float]
 type NodeSequence = Sequence[Node]
 type EdgeSequence = Sequence[Edge]
-type AdjacencyMapping = Mapping[tuple[int, int], Sequence[Edge]]
-type HeuristicDistanceCallable = Callable[[Node, Node], int]
+type AdjacencyMapping = Mapping[tuple[int | float, int | float], Sequence[Edge]]
+type HeuristicDistanceCallable = Callable[[Node, Node], int | float]
 
 
 @dataclass(order=True)
 class Edge:
     """An edge in a graph."""
-    weight: int
+    weight: int | float
     node_indices: frozenset[int] = field(compare=False)
     g: int | float | None = None
     h: int | float | None = None
