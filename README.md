@@ -9,7 +9,7 @@ Python and/or Rust with Python bindings. I'll be adding more algorithm implement
   * code-complete in Python.
   * Needs a more thorough test suite.
   * Needs a Rust implementation.
-* Probabilistic Roadmap (PRM) - Robot navigation algorithm with obstacle avoidance.
+* [Probabilistic Roadmap (PRM)](https://en.wikipedia.org/wiki/Probabilistic_roadmap) - Robot navigation algorithm with obstacle avoidance.
   * Planned.
 
 ## Usage
