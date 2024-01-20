@@ -33,7 +33,7 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
                 candidate_edge.h = heuristic_distance(nodes[candidate_edge.coordinates_of_other(current_node_index)], nodes[goal_node_index])
                 f[candidate_edge.f()] = candidate_edge
 
-        # If no path exists, raise an exception.
+        # If no path to the goal exists, raise an exception.
         if not f:
             raise NoPathError(f'No path exists between nodes {nodes[start_node_index]} and {nodes[goal_node_index]}.')
 
