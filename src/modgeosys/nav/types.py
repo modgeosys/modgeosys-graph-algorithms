@@ -25,14 +25,10 @@ class Edge:
 
     def __post_init__(self):
         """Validate the dataclass fields."""
-        if not isinstance(self.weight, int):
-            raise NavigationFieldTypeError(field_name='weight', expected_types=[int], value=self.weight)
-        if not isinstance(self.node_indices, frozenset):
-            raise NavigationFieldTypeError(field_name='node_indices', expected_types=[frozenset], value=self.node_indices)
-        if not isinstance(self.g, (int, float, type(None))):
-            raise NavigationFieldTypeError(field_name='g', expected_types=[int, float, type(None)], value=self.g)
-        if not isinstance(self.h, (int, float, type(None))):
-            raise NavigationFieldTypeError(field_name='h', expected_types=[int, float, type(None)], value=self.h)
+        validate(field_name='weight', expected_types=(int | float), value=self.weight)
+        validate(field_name='node_indices', expected_types=(frozenset), value=self.node_indices)
+        validate(field_name='g', expected_types=(int | float | type(None)), value=self.g)
+        validate(field_name='h', expected_types=(int | float | type(None)), value=self.h)
 
     def f(self) -> int | float | None:
         """Calculate the combined cost of the edge."""
@@ -67,10 +63,9 @@ class Graph:
     edges: EdgeSequence = field(default_factory=tuple)
 
     def __init__(self, nodes: NodeSequence, edges: EdgeSequence):
-        if isinstance(nodes, str) or not (isinstance(nodes, Sequence)):
-            raise NavigationFieldTypeError(field_name='nodes', expected_types=[Sequence], value=nodes)
-        if isinstance(edges, str) or not isinstance(edges, Sequence):
-            raise NavigationFieldTypeError(field_name='edges', expected_types=[Sequence], value=edges)
+        """Initialize a graph."""
+        validate(field_name='nodes', expected_types=Sequence, excluded_types=str, value=nodes)
+        validate(field_name='edges', expected_types=Sequence, excluded_types=str, value=edges)
 
         self.nodes = [tuple(node) for node in nodes]
         self.edges = tuple(copy(edge) for edge in edges)
@@ -110,10 +105,16 @@ class Graph:
         return adjacency_matrix
 
 
+def validate(field_name: str, expected_types: type, value: Any, excluded_types: type = None):
+    """Validate a field value."""
+    if (excluded_types and isinstance(value, excluded_types)) or not isinstance(value, expected_types):
+        raise NavigationFieldTypeError(field_name=field_name, expected_types=expected_types, value=value)
+
+
 class NavigationFieldTypeError(TypeError):
     """Raised when an invalid type is passed to a navigation function."""
-    def __init__(self, field_name: str, expected_types: Sequence[type], value: Any):
-        super().__init__("Expected type %s for '%s', but received type %s.", '|'.join([t.__name__ for t in expected_types]), field_name, type(value).__name__)
+    def __init__(self, field_name: str, expected_types: type, value: Any):
+        super().__init__("Expected type %s for '%s', but received type %s.", expected_types, field_name, type(value).__name__)
 
 
 class NoNavigablePathError(Exception):

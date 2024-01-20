@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from src.modgeosys.nav.types import Edge, Graph
+from src.modgeosys.nav.types import Edge, Graph, NavigationFieldTypeError
 
 
 def test_edge_creation_with_valid_parameters():
@@ -13,7 +13,7 @@ def test_edge_creation_with_valid_parameters():
 
 
 def test_edge_creation_with_invalid_parameters():
-    with pytest.raises(TypeError):
+    with pytest.raises(NavigationFieldTypeError):
         Edge(weight="10", node_indices=frozenset((1, 2)), g=5, h=5)
 
 
@@ -39,7 +39,7 @@ def test_graph_creation_with_valid_parameters(valid_nodes, valid_edges1, valid_g
 
 
 def test_graph_creation_with_invalid_parameters():
-    with pytest.raises(TypeError):
+    with pytest.raises(NavigationFieldTypeError):
         Graph(nodes="nodes", edges="edges")
 
 
