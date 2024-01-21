@@ -4,6 +4,7 @@ import bisect
 from collections.abc import Callable, Mapping, Sequence
 from copy import copy
 from dataclasses import dataclass, field
+from types import UnionType
 from typing import Any
 
 import numpy as np
@@ -105,7 +106,7 @@ class Graph:
         return adjacency_matrix
 
 
-def validate(field_name: str, expected_types: type, value: Any, excluded_types: type | None = None) -> None:
+def validate(field_name: str, expected_types: type | UnionType, value: Any, excluded_types: UnionType | None = None) -> None:
     """Validate a field value."""
     if (excluded_types and isinstance(value, excluded_types)) or not isinstance(value, expected_types):
         raise NavigationFieldTypeError(field_name=field_name, expected_types=expected_types, value=value)
@@ -113,11 +114,11 @@ def validate(field_name: str, expected_types: type, value: Any, excluded_types: 
 
 class NavigationFieldTypeError(TypeError):
     """Raised when an invalid type is passed to a navigation function."""
-    def __init__(self, field_name: str, expected_types: type, value: Any):
-        super().__init__("Expected type %s for '%s', but received type %s.", expected_types, field_name, type(value).__name__)
+    def __init__(self, field_name: str, expected_types: type | UnionType, value: Any):
+        super().__init__(f"Expected type ({expected_types}) for '{field_name}', but received type {type(value).__name__}.")
 
 
 class NoNavigablePathError(Exception):
     """Raised when no path can be found to the goal node."""
     def __init__(self, start_node: Node, goal_node: Node):
-        super().__init__('No path exists between nodes %s and %s.', start_node, goal_node)
+        super().__init__(f'No path exists between nodes {start_node} and {goal_node}.')
