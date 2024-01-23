@@ -1,40 +1,56 @@
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::hash::{Hash, Hasher};
 use std::cmp::Ordering;
 
 use ndarray::Array2;
+use ordered_float::OrderedFloat;
 
 
-#[derive(Debug, Clone)]
-pub struct Node(pub f64, pub f64);
-
-impl PartialEq for Node
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Node
 {
-    fn eq(&self, other: &Self) -> bool
-    {
-        self.0 == other.0 && self.1 == other.1
-    }
+    pub x: OrderedFloat<f64>,
+    pub y: OrderedFloat<f64>,
 }
 
-impl Eq for Node {}
-
-impl Hash for Node
+impl Node
 {
-    fn hash<H: Hasher>(&self, state: &mut H)
+    pub fn new(x: f64, y: f64) -> Self
     {
-        self.0.to_bits().hash(state);
-        self.1.to_bits().hash(state);
+        Node
+        {
+            x: OrderedFloat(x),
+            y: OrderedFloat(y),
+        }
     }
 }
+//
+// impl PartialEq for Node
+// {
+//     fn eq(&self, other: &Self) -> bool
+//     {
+//         self.0 == other.0 && self.1 == other.1
+//     }
+// }
+//
+// impl Eq for Node {}
+//
+// impl Hash for Node
+// {
+//     fn hash<H: Hasher>(&self, state: &mut H)
+//     {
+//         self.0.to_bits().hash(state);
+//         self.1.to_bits().hash(state);
+//     }
+// }
 
 #[derive(Debug, Clone)]
 pub struct Edge
 {
-    pub weight: f64,
+    pub weight: OrderedFloat<f64>,
     pub node_indices: HashSet<usize>,
-    pub g: Option<f64>,
-    pub h: Option<f64>,
+    pub g: Option<OrderedFloat<f64>>,
+    pub h: Option<OrderedFloat<f64>>,
 }
 
 impl Edge
@@ -43,14 +59,14 @@ impl Edge
     {
         Edge
         {
-            weight,
+            weight: OrderedFloat(weight),
             node_indices,
-            g,
-            h,
+            g: g.map(OrderedFloat),
+            h: h.map(OrderedFloat),
         }
     }
 
-    pub fn f(&self) -> Option<f64>
+    pub fn f(&self) -> Option<OrderedFloat<f64>>
     {
         match (self.g, self.h)
         {
@@ -87,35 +103,48 @@ impl PartialOrd for Edge
 {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering>
     {
-        self.weight.partial_cmp(&other.weight)
+        let self_g = self.g.unwrap_or(OrderedFloat(0f64));
+        let other_g = other.g.unwrap_or(OrderedFloat(0f64));
+
+        let self_h = self.h.unwrap_or(OrderedFloat(0f64));
+        let other_h = other.h.unwrap_or(OrderedFloat(0f64));
+
+        match self.weight.partial_cmp(&other.weight)
+        {
+            Some(Ordering::Equal) => match self_g.partial_cmp(&other_g)
+            {
+                Some(Ordering::Equal) => self_h.partial_cmp(&other_h),
+                other => other,
+            },
+            other => other,
+        }
     }
 }
 
 impl Ord for Edge
 {
-    fn cmp(&self, other: &Self) -> Ordering
-    {
-        self.weight.partial_cmp(&other.weight).unwrap_or(Ordering::Equal)
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.partial_cmp(other).unwrap_or(Ordering::Equal)
     }
 }
-
-impl Hash for Edge
-{
-    fn hash<H: Hasher>(&self, state: &mut H)
-    {
-        self.weight.to_bits().hash(state);
-        match self.g
-        {
-            Some(g) => g.to_bits().hash(state),
-            None => f64::INFINITY.to_bits().hash(state),
-        }
-        match self.h
-        {
-            Some(h) => h.to_bits().hash(state),
-            None => f64::INFINITY.to_bits().hash(state),
-        }
-    }
-}
+//
+// impl Hash for Edge
+// {
+//     fn hash<H: Hasher>(&self, state: &mut H)
+//     {
+//         self.weight.to_bits().hash(state);
+//         match self.g
+//         {
+//             Some(g) => g.to_bits().hash(state),
+//             None => f64::INFINITY.to_bits().hash(state),
+//         }
+//         match self.h
+//         {
+//             Some(h) => h.to_bits().hash(state),
+//             None => f64::INFINITY.to_bits().hash(state),
+//         }
+//     }
+// }
 
 #[derive(Debug, Clone)]
 pub struct Graph
@@ -161,8 +190,8 @@ impl Graph
         for edge in &self.edges
         {
             let node_indices: Vec<usize> = edge.node_indices.iter().cloned().collect();
-            adjacency_matrix[[node_indices[0], node_indices[1]]] = edge.weight;
-            adjacency_matrix[[node_indices[1], node_indices[0]]] = edge.weight;
+            adjacency_matrix[[node_indices[0], node_indices[1]]] = f64::from(edge.weight);
+            adjacency_matrix[[node_indices[1], node_indices[0]]] = f64::from(edge.weight);
         }
 
         adjacency_matrix
@@ -200,8 +229,8 @@ mod tests
         let edge = Edge::new(10.0, [1, 2].iter().cloned().collect(), Some(5.0), Some(5.0));
         assert_eq!(edge.weight, 10.0);
         assert_eq!(edge.node_indices, [1, 2].iter().cloned().collect());
-        assert_eq!(edge.g, Some(5.0));
-        assert_eq!(edge.h, Some(5.0));
+        assert_eq!(edge.g, Some(OrderedFloat(5.0f64)));
+        assert_eq!(edge.h, Some(OrderedFloat(5.0f64)));
     }
 
     #[test]
@@ -216,7 +245,7 @@ mod tests
     fn test_edge_f_calculation()
     {
         let edge = Edge::new(10.0, [1, 2].iter().cloned().collect(), Some(5.0), Some(5.0));
-        assert_eq!(edge.f(), Some(10.0));
+        assert_eq!(edge.f(), Some(OrderedFloat(10.0f64)));
     }
 
     #[test]
@@ -237,7 +266,7 @@ mod tests
     #[test]
     fn test_graph_adjacency_map()
     {
-        let nodes = vec![Node(0.0, 1.0), Node(0.0, 2.0), Node(2.0, 3.0), Node(1.0, 4.0), Node(3.0, 4.0)];
+        let nodes = vec![Node::new(0.0, 1.0), Node::new(0.0, 2.0), Node::new(2.0, 3.0), Node::new(1.0, 4.0), Node::new(3.0, 4.0)];
         let edges = vec![Edge::new(2.0, [0, 1].iter().cloned().collect(), None, None),
                          Edge::new(1.0, [0, 2].iter().cloned().collect(), None, None),
                          Edge::new(1.0, [2, 3].iter().cloned().collect(), None, None),
@@ -247,19 +276,19 @@ mod tests
 
         let adjacency_map = graph.adjacency_map();
 
-        assert_eq(adjacency_map.len(), 5);
+        assert_eq!(adjacency_map.len(), 5);
 
-        assert_eq!(adjacency_map[&Node(0.0, 0.0)], vec![Edge::new(1.0, [0, 2].iter().cloned().collect(), None, None), Edge::new(2.0, [0, 1].iter().cloned().collect(), None, None)]);
-        assert_eq!(adjacency_map[&Node(0.0, 2.0)], vec![Edge::new(2.0, [0, 1].iter().cloned().collect(), None, None), Edge::new(3.0, [1, 4].iter().cloned().collect(), None, None)]);
-        assert_eq!(adjacency_map[&Node(1.0, 0.0)], vec![Edge::new(1.0, [0, 2].iter().cloned().collect(), None, None), Edge::new(1.0, [2, 3].iter().cloned().collect(), None, None)]);
-        assert_eq!(adjacency_map[&Node(2.0, 1.0)], vec![Edge::new(1.0, [2, 3].iter().cloned().collect(), None, None), Edge::new(1.0, [3, 4].iter().cloned().collect(), None, None)]);
-        assert_eq!(adjacency_map[&Node(2.0, 3.0)], vec![Edge::new(1.0, [3, 4].iter().cloned().collect(), None, None), Edge::new(3.0, [1, 4].iter().cloned().collect(), None, None)]);
+        assert_eq!(adjacency_map[&Node::new(0.0, 0.0)], vec![Edge::new(1.0, [0, 2].iter().cloned().collect(), None, None), Edge::new(2.0, [0, 1].iter().cloned().collect(), None, None)]);
+        assert_eq!(adjacency_map[&Node::new(0.0, 2.0)], vec![Edge::new(2.0, [0, 1].iter().cloned().collect(), None, None), Edge::new(3.0, [1, 4].iter().cloned().collect(), None, None)]);
+        assert_eq!(adjacency_map[&Node::new(1.0, 0.0)], vec![Edge::new(1.0, [0, 2].iter().cloned().collect(), None, None), Edge::new(1.0, [2, 3].iter().cloned().collect(), None, None)]);
+        assert_eq!(adjacency_map[&Node::new(2.0, 1.0)], vec![Edge::new(1.0, [2, 3].iter().cloned().collect(), None, None), Edge::new(1.0, [3, 4].iter().cloned().collect(), None, None)]);
+        assert_eq!(adjacency_map[&Node::new(2.0, 3.0)], vec![Edge::new(1.0, [3, 4].iter().cloned().collect(), None, None), Edge::new(3.0, [1, 4].iter().cloned().collect(), None, None)]);
     }
 
     #[test]
     fn test_graph_adjacency_matrix()
     {
-        let nodes = vec![Node(0.0, 1.0), Node(0.0, 2.0), Node(2.0, 3.0), Node(1.0, 4.0), Node(3.0, 4.0)];
+        let nodes = vec![Node::new(0.0, 1.0), Node::new(0.0, 2.0), Node::new(2.0, 3.0), Node::new(1.0, 4.0), Node::new(3.0, 4.0)];
         let edges = vec![Edge::new(2.0, [0, 1].iter().cloned().collect(), None, None),
                          Edge::new(1.0, [0, 2].iter().cloned().collect(), None, None),
                          Edge::new(1.0, [2, 3].iter().cloned().collect(), None, None),

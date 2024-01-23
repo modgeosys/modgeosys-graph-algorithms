@@ -1,10 +1,8 @@
-use std::collections::BinaryHeap;
-use std::cmp::Ordering;
+use std::collections::BTreeMap;
 
-use crate::modgeosys::nav::types::Node;
-use crate::modgeosys::nav::types::Edge;
-use crate::modgeosys::nav::types::Graph;
-use crate::modgeosys::nav::types::NoNavigablePathError;
+use ordered_float::OrderedFloat;
+
+use crate::modgeosys::nav::types::{Edge, Graph, NoNavigablePathError};
 use crate::modgeosys::nav::distance::manhattan_distance;
 
 
@@ -18,32 +16,33 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
 
     let mut current_node_index = start_node_index;
 
-    let mut f = BinaryHeap::new();
-    let mut g = 0.0f64;
+    let mut f = BTreeMap::new();
+    let mut g = OrderedFloat(0.0f64);
 
     while current_node_index != goal_node_index
     {
-        for candidate_edge in &adjacency_map[&nodes[current_node_index]]
+        for candidate_edge in &mut adjacency_map[&nodes[current_node_index]]
         {
             if untraversed.contains(candidate_edge)
             {
-                candidate_edge.g = candidate_edge.weight + g;
-                candidate_edge.h = manhattan_distance(&nodes[candidate_edge.coordinates_of_other(current_node_index)], &nodes[goal_node_index]);
-                f.push(candidate_edge.f());
+                candidate_edge.g = Some(candidate_edge.weight + g);
+                candidate_edge.h = Some(manhattan_distance(&nodes[candidate_edge.coordinates_of_other(current_node_index)], &nodes[goal_node_index]));
+                f.insert(candidate_edge.f().unwrap(), candidate_edge);
             }
         }
 
-        if f.is_empty()
-        {
-            return Err(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() });
-        }
+        // if f.is_empty()
+        // {
+        //     return Err(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() });
+        // }
+        //
+        // let Some((best_f, best_transit_edge)) = f.pop_first().ok_or(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() });
+        let Some((_, best_transit_edge)) = f.pop_first() else { return Err(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() }) };
 
-        let best_f = f.pop().unwrap();
-
-        g = best_f.g;
-        untraversed.retain(|edge| edge != &best_f);
-        traversed.push(best_f.clone());
-        current_node_index = best_f.coordinates_of_other(current_node_index);
+        g = best_transit_edge.g.unwrap();
+        untraversed.retain(|edge| edge != best_transit_edge);
+        traversed.push(best_transit_edge.clone());
+        current_node_index = best_transit_edge.coordinates_of_other(current_node_index);
 
         f.clear();
     }
@@ -56,11 +55,12 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
 mod tests
 {
     use super::*;
+    use crate::modgeosys::nav::types::Node;
 
     #[test]
     fn test_a_star_finds_shortest_path_manhattan_graph1()
     {
-        let nodes = vec![Node(0.0, 1.0), Node(0.0, 2.0), Node(2.0, 3.0), Node(1.0, 4.0), Node(3.0, 4.0)];
+        let nodes = vec![Node::new(0.0, 1.0), Node::new(0.0, 2.0), Node::new(2.0, 3.0), Node::new(1.0, 4.0), Node::new(3.0, 4.0)];
         let edges = vec![Edge::new(2.0, [0, 1].iter().cloned().collect(), None, None),
                          Edge::new(1.0, [0, 2].iter().cloned().collect(), None, None),
                          Edge::new(1.0, [2, 3].iter().cloned().collect(), None, None),
@@ -77,7 +77,7 @@ mod tests
     #[test]
     fn test_a_star_finds_shortest_path_manhattan_graph2()
     {
-        let nodes = vec![Node(0.0, 1.0), Node(0.0, 2.0), Node(2.0, 3.0), Node(1.0, 4.0), Node(3.0, 4.0)];
+        let nodes = vec![Node::new(0.0, 1.0), Node::new(0.0, 2.0), Node::new(2.0, 3.0), Node::new(1.0, 4.0), Node::new(3.0, 4.0)];
         let edges = vec![Edge::new(3.0, [0, 1].iter().cloned().collect(), None, None),
                          Edge::new(1.0, [0, 2].iter().cloned().collect(), None, None),
                          Edge::new(1.0, [2, 3].iter().cloned().collect(), None, None),
@@ -95,7 +95,7 @@ mod tests
     #[test]
     fn test_a_star_with_no_path_manhattan()
     {
-        let nodes = vec![Node(0.0, 1.0), Node(0.0, 2.0), Node(2.0, 3.0), Node(1.0, 4.0), Node(3.0, 4.0)];
+        let nodes = vec![Node::new(0.0, 1.0), Node::new(0.0, 2.0), Node::new(2.0, 3.0), Node::new(1.0, 4.0), Node::new(3.0, 4.0)];
         let edges: Vec<Edge> = Vec::new();
         let graph = Graph::new(nodes, edges);
 
@@ -105,7 +105,7 @@ mod tests
     #[test]
     fn test_a_star_with_single_node_path_manhattan()
     {
-        let nodes = vec![Node(0.0, 0.0)];
+        let nodes = vec![Node::new(0.0, 0.0)];
         let edges: Vec<Edge> = Vec::new();
         let graph = Graph::new(nodes, edges);
 
