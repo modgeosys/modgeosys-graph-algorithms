@@ -17,6 +17,12 @@ def test_edge_creation_with_invalid_parameters():
         Edge(weight="10", node_indices=frozenset((1, 2)), g=5, h=5)
 
 
+def test_edge_coordinates_of_other():
+    edge = Edge(weight=10, node_indices=frozenset((1, 2)))
+    assert edge.coordinates_of_other(1) == 2
+    assert edge.coordinates_of_other(2) == 1
+
+
 def test_edge_f_calculation():
     edge = Edge(weight=10, node_indices=frozenset((1, 2)), g=5, h=5)
     assert edge.f() == 10
@@ -43,20 +49,20 @@ def test_graph_creation_with_invalid_parameters():
         Graph(nodes="nodes", edges="edges")
 
 
-def test_graph_to_adj_mapping(valid_graph1):
-    adj_mapping = valid_graph1.adjacency_map()
-    assert adj_mapping == {(0, 0): [Edge(weight=1, node_indices=frozenset((0, 2)), g=None, h=None), Edge(weight=2, node_indices=frozenset((0, 1)), g=None, h=None)],
-                           (0, 2): [Edge(weight=2, node_indices=frozenset((0, 1)), g=None, h=None), Edge(weight=3, node_indices=frozenset((1, 4)), g=None, h=None)],
-                           (1, 0): [Edge(weight=1, node_indices=frozenset((0, 2)), g=None, h=None), Edge(weight=1, node_indices=frozenset((2, 3)), g=None, h=None)],
-                           (2, 1): [Edge(weight=1, node_indices=frozenset((2, 3)), g=None, h=None), Edge(weight=1, node_indices=frozenset((3, 4)), g=None, h=None)],
-                           (2, 3): [Edge(weight=1, node_indices=frozenset((3, 4)), g=None, h=None), Edge(weight=3, node_indices=frozenset((1, 4)), g=None, h=None)]}
+def test_graph_adjacency_mapping(valid_graph1):
+    adjacency_map = valid_graph1.adjacency_map()
+    assert adjacency_map == {(0, 0): [Edge(weight=1, node_indices=frozenset((0, 2)), g=None, h=None), Edge(weight=2, node_indices=frozenset((0, 1)), g=None, h=None)],
+                             (0, 2): [Edge(weight=2, node_indices=frozenset((0, 1)), g=None, h=None), Edge(weight=3, node_indices=frozenset((1, 4)), g=None, h=None)],
+                             (1, 0): [Edge(weight=1, node_indices=frozenset((0, 2)), g=None, h=None), Edge(weight=1, node_indices=frozenset((2, 3)), g=None, h=None)],
+                             (2, 1): [Edge(weight=1, node_indices=frozenset((2, 3)), g=None, h=None), Edge(weight=1, node_indices=frozenset((3, 4)), g=None, h=None)],
+                             (2, 3): [Edge(weight=1, node_indices=frozenset((3, 4)), g=None, h=None), Edge(weight=3, node_indices=frozenset((1, 4)), g=None, h=None)]}
 
 
-def test_graph_to_adj_matrix(valid_graph1):
+def test_graph_adjacency_matrix(valid_graph1):
     graph = valid_graph1
-    adj_matrix = graph.adjacency_matrix()
-    assert adj_matrix.all() == np.array([[np.inf, 2, 1, np.inf, np.inf],
-                                         [2, np.inf, np.inf, np.inf, 3],
-                                         [1, np.inf, np.inf, 1, np.inf],
-                                         [np.inf, np.inf, 1, np.inf, 1],
-                                         [np.inf, 3, np.inf, 1, np.inf]]).all()
+    adjacency_matrix = graph.adjacency_matrix()
+    assert adjacency_matrix.all() == np.array([[np.inf,      2,      1, np.inf, np.inf],
+                                               [     2, np.inf, np.inf, np.inf,      3],
+                                               [     1, np.inf, np.inf,      1, np.inf],
+                                               [np.inf, np.inf,      1, np.inf,      1],
+                                               [np.inf,      3, np.inf,      1, np.inf]]).all()
