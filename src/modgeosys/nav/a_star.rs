@@ -19,11 +19,11 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
     let mut current_node_index = start_node_index;
 
     let mut f = BinaryHeap::new();
-    let mut g = 0;
+    let mut g = 0.0f64;
 
     while current_node_index != goal_node_index
     {
-        for candidate_edge in &adjacency_map[nodes[current_node_index]]
+        for candidate_edge in &adjacency_map[&nodes[current_node_index]]
         {
             if untraversed.contains(candidate_edge)
             {

@@ -1,14 +1,34 @@
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::hash::{Hash, Hasher};
 use std::cmp::Ordering;
 
 use ndarray::Array2;
 
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct Node(f64, f64);
+#[derive(Debug, Clone)]
+pub struct Node(pub f64, pub f64);
 
-#[derive(Debug, Clone, Hash)]
+impl PartialEq for Node
+{
+    fn eq(&self, other: &Self) -> bool
+    {
+        self.0 == other.0 && self.1 == other.1
+    }
+}
+
+impl Eq for Node {}
+
+impl Hash for Node
+{
+    fn hash<H: Hasher>(&self, state: &mut H)
+    {
+        self.0.to_bits().hash(state);
+        self.1.to_bits().hash(state);
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct Edge
 {
     pub weight: f64,
@@ -67,7 +87,7 @@ impl PartialOrd for Edge
 {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering>
     {
-        Some(self.cmp(other))
+        self.weight.partial_cmp(&other.weight)
     }
 }
 
@@ -75,14 +95,24 @@ impl Ord for Edge
 {
     fn cmp(&self, other: &Self) -> Ordering
     {
-        match self.weight.partial_cmp(&other.weight)
+        self.weight.partial_cmp(&other.weight).unwrap_or(Ordering::Equal)
+    }
+}
+
+impl Hash for Edge
+{
+    fn hash<H: Hasher>(&self, state: &mut H)
+    {
+        self.weight.to_bits().hash(state);
+        match self.g
         {
-            Some(Ordering::Equal) => match self.g.partial_cmp(&other.g)
-            {
-                Some(Ordering::Equal) => self.h.partial_cmp(&other.h).unwrap_or(Ordering::Equal),
-                other => other.unwrap_or(Ordering::Equal),
-            },
-            other => other.unwrap_or(Ordering::Equal),
+            Some(g) => g.to_bits().hash(state),
+            None => f64::INFINITY.to_bits().hash(state),
+        }
+        match self.h
+        {
+            Some(h) => h.to_bits().hash(state),
+            None => f64::INFINITY.to_bits().hash(state),
         }
     }
 }
@@ -90,8 +120,8 @@ impl Ord for Edge
 #[derive(Debug, Clone)]
 pub struct Graph
 {
-    nodes: Vec<Node>,
-    edges: Vec<Edge>,
+    pub nodes: Vec<Node>,
+    pub edges: Vec<Edge>,
 }
 
 impl Graph
@@ -217,7 +247,7 @@ mod tests
 
         let adjacency_map = graph.adjacency_map();
 
-        assert_eq(len(adjacency_map), 5);
+        assert_eq(adjacency_map.len(), 5);
 
         assert_eq!(adjacency_map[&Node(0.0, 0.0)], vec![Edge::new(1.0, [0, 2].iter().cloned().collect(), None, None), Edge::new(2.0, [0, 1].iter().cloned().collect(), None, None)]);
         assert_eq!(adjacency_map[&Node(0.0, 2.0)], vec![Edge::new(2.0, [0, 1].iter().cloned().collect(), None, None), Edge::new(3.0, [1, 4].iter().cloned().collect(), None, None)]);
