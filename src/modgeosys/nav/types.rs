@@ -173,11 +173,13 @@ impl Graph
         {
             for node_index in &edge.node_indices
             {
-                // TODO: Fully implement an insertion sort.
-                // NOTE: Rust doesn't have a direct equivalent for Python's bisect.insort function and Python's dynamic typing.
-                //       Therefore, we just append the edge to the node's list without sorting it.
                 adjacency_map.get_mut(&self.nodes[*node_index]).unwrap().push(edge.clone());
             }
+        }
+
+        for node in &self.nodes
+        {
+            adjacency_map.get_mut(node).unwrap().sort();
         }
 
         adjacency_map
