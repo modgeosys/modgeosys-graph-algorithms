@@ -38,7 +38,7 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
             raise NoNavigablePathError(start_node=nodes[start_node_index], goal_node=nodes[goal_node_index])
 
         # Pick the edge with the lowest f value.
-        best_f, best_transit_edge = f.popitem()
+        _, best_transit_edge = f.popitem()
 
         # Update cumulative g, edge traversal lists, and the index of the currently-visited node.
         g = best_transit_edge.g
