@@ -203,8 +203,8 @@ impl Graph
 #[derive(Debug, Clone)]
 pub struct NoNavigablePathError
 {
-    start_node: Node,
-    goal_node: Node,
+    pub start_node: Node,
+    pub goal_node: Node,
 }
 
 impl NoNavigablePathError
