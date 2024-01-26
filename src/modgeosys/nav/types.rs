@@ -228,9 +228,9 @@ mod tests
     #[test]
     fn test_edge_creation_with_valid_parameters()
     {
-        let edge = Edge::new(10.0, [1, 2].iter().cloned().collect(), Some(5.0), Some(5.0));
+        let edge = Edge::new(10.0, HashSet::from([1, 2]), Some(5.0), Some(5.0));
         assert_eq!(edge.weight, 10.0);
-        assert_eq!(edge.node_indices, [1, 2].iter().cloned().collect());
+        assert_eq!(edge.node_indices, HashSet::from([1, 2]));
         assert_eq!(edge.g, Some(OrderedFloat(5.0f64)));
         assert_eq!(edge.h, Some(OrderedFloat(5.0f64)));
     }
@@ -238,7 +238,7 @@ mod tests
     #[test]
     fn test_edge_coordinates_of_other()
     {
-        let edge = Edge::new(10.0, [1, 2].iter().cloned().collect(), None, None);
+        let edge = Edge::new(10.0, HashSet::from([1, 2]), None, None);
         assert_eq!(edge.coordinates_of_other(1), 2);
         assert_eq!(edge.coordinates_of_other(2), 1);
     }
@@ -246,22 +246,22 @@ mod tests
     #[test]
     fn test_edge_f_calculation()
     {
-        let edge = Edge::new(10.0, [1, 2].iter().cloned().collect(), Some(5.0), Some(5.0));
+        let edge = Edge::new(10.0, HashSet::from([1, 2]), Some(5.0), Some(5.0));
         assert_eq!(edge.f(), Some(OrderedFloat(10.0f64)));
     }
 
     #[test]
     fn test_edge_f_with_none_values()
     {
-        let edge = Edge::new(10.0, [1, 2].iter().cloned().collect(), None, None);
+        let edge = Edge::new(10.0, HashSet::from([1, 2]), None, None);
         assert_eq!(edge.f(), None);
     }
 
     #[test]
     fn test_edge_equality()
     {
-        let edge_1 = Edge::new(10.0, [1, 2].iter().cloned().collect(), Some(5.0), Some(5.0));
-        let edge_2 = Edge::new(10.0, [1, 2].iter().cloned().collect(), Some(5.0), Some(5.0));
+        let edge_1 = Edge::new(10.0, HashSet::from([1, 2]), Some(5.0), Some(5.0));
+        let edge_2 = Edge::new(10.0, HashSet::from([1, 2]), Some(5.0), Some(5.0));
         assert_eq!(edge_1, edge_2);
     }
 
@@ -269,33 +269,33 @@ mod tests
     fn test_graph_adjacency_map()
     {
         let nodes = vec![Node::new(0.0, 1.0), Node::new(0.0, 2.0), Node::new(2.0, 3.0), Node::new(1.0, 4.0), Node::new(3.0, 4.0)];
-        let edges = vec![Edge::new(2.0, [0, 1].iter().cloned().collect(), None, None),
-                         Edge::new(1.0, [0, 2].iter().cloned().collect(), None, None),
-                         Edge::new(1.0, [2, 3].iter().cloned().collect(), None, None),
-                         Edge::new(3.0, [1, 4].iter().cloned().collect(), None, None),
-                         Edge::new(1.0, [3, 4].iter().cloned().collect(), None, None)];
+        let edges = vec![Edge::new(2.0, HashSet::from([0, 1]), None, None),
+                         Edge::new(1.0, HashSet::from([0, 2]), None, None),
+                         Edge::new(1.0, HashSet::from([2, 3]), None, None),
+                         Edge::new(3.0, HashSet::from([1, 4]), None, None),
+                         Edge::new(1.0, HashSet::from([3, 4]), None, None)];
         let graph = Graph::new(nodes, edges);
 
         let adjacency_map = graph.adjacency_map();
 
         assert_eq!(adjacency_map.len(), 5);
 
-        assert_eq!(adjacency_map[&Node::new(0.0, 0.0)], vec![Edge::new(1.0, [0, 2].iter().cloned().collect(), None, None), Edge::new(2.0, [0, 1].iter().cloned().collect(), None, None)]);
-        assert_eq!(adjacency_map[&Node::new(0.0, 2.0)], vec![Edge::new(2.0, [0, 1].iter().cloned().collect(), None, None), Edge::new(3.0, [1, 4].iter().cloned().collect(), None, None)]);
-        assert_eq!(adjacency_map[&Node::new(1.0, 0.0)], vec![Edge::new(1.0, [0, 2].iter().cloned().collect(), None, None), Edge::new(1.0, [2, 3].iter().cloned().collect(), None, None)]);
-        assert_eq!(adjacency_map[&Node::new(2.0, 1.0)], vec![Edge::new(1.0, [2, 3].iter().cloned().collect(), None, None), Edge::new(1.0, [3, 4].iter().cloned().collect(), None, None)]);
-        assert_eq!(adjacency_map[&Node::new(2.0, 3.0)], vec![Edge::new(1.0, [3, 4].iter().cloned().collect(), None, None), Edge::new(3.0, [1, 4].iter().cloned().collect(), None, None)]);
+        assert_eq!(adjacency_map[&Node::new(0.0, 0.0)], vec![Edge::new(1.0, HashSet::from([0, 2]), None, None), Edge::new(2.0, HashSet::from([0, 1]), None, None)]);
+        assert_eq!(adjacency_map[&Node::new(0.0, 2.0)], vec![Edge::new(2.0, HashSet::from([0, 1]), None, None), Edge::new(3.0, HashSet::from([1, 4]), None, None)]);
+        assert_eq!(adjacency_map[&Node::new(1.0, 0.0)], vec![Edge::new(1.0, HashSet::from([0, 2]), None, None), Edge::new(1.0, HashSet::from([2, 3]), None, None)]);
+        assert_eq!(adjacency_map[&Node::new(2.0, 1.0)], vec![Edge::new(1.0, HashSet::from([2, 3]), None, None), Edge::new(1.0, HashSet::from([3, 4]), None, None)]);
+        assert_eq!(adjacency_map[&Node::new(2.0, 3.0)], vec![Edge::new(1.0, HashSet::from([3, 4]), None, None), Edge::new(3.0, HashSet::from([1, 4]), None, None)]);
     }
 
     #[test]
     fn test_graph_adjacency_matrix()
     {
         let nodes = vec![Node::new(0.0, 1.0), Node::new(0.0, 2.0), Node::new(2.0, 3.0), Node::new(1.0, 4.0), Node::new(3.0, 4.0)];
-        let edges = vec![Edge::new(2.0, [0, 1].iter().cloned().collect(), None, None),
-                         Edge::new(1.0, [0, 2].iter().cloned().collect(), None, None),
-                         Edge::new(1.0, [2, 3].iter().cloned().collect(), None, None),
-                         Edge::new(3.0, [1, 4].iter().cloned().collect(), None, None),
-                         Edge::new(1.0, [3, 4].iter().cloned().collect(), None, None)];
+        let edges = vec![Edge::new(2.0, HashSet::from([0, 1]), None, None),
+                         Edge::new(1.0, HashSet::from([0, 2]), None, None),
+                         Edge::new(1.0, HashSet::from([2, 3]), None, None),
+                         Edge::new(3.0, HashSet::from([1, 4]), None, None),
+                         Edge::new(1.0, HashSet::from([3, 4]), None, None)];
         let graph = Graph::new(nodes, edges);
 
         let adjacency_matrix = graph.adjacency_matrix();
