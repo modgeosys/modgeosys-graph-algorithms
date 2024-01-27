@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use ordered_float::OrderedFloat;
 
-use crate::modgeosys::nav::types::{Edge, EdgeTransit, Graph, NoNavigablePathError};
+use crate::modgeosys::nav::types::{EdgeTransit, Graph, NoNavigablePathError};
 use crate::modgeosys::nav::distance::manhattan_distance;
 
 
@@ -25,10 +25,10 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
         {
             if untraversed.contains(candidate_edge)
             {
-                let mut candidate_transit = EdgeTransit::new(candidate_edge.clone(),
-                                                             *candidate_edge.weight + *g,
-                                                             *manhattan_distance(&nodes[candidate_edge.index_of_other_node(current_node_index)],
-                                                                                 &nodes[goal_node_index]));
+                let candidate_transit = EdgeTransit::new(candidate_edge.clone(),
+                                                         *candidate_edge.weight + *g,
+                                                         *manhattan_distance(&nodes[candidate_edge.index_of_other_node(current_node_index)],
+                                                                             &nodes[goal_node_index]));
                 f.insert(candidate_transit.f(), candidate_transit);
             }
         }
@@ -36,7 +36,7 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
         let Some((_, best_transit)) = f.pop_first() else { return Err(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() }) };
 
         g = best_transit.g;
-        untraversed.retain(|edge| *edge != best_transit.edge);
+        untraversed.retain(|edge_ref| *edge_ref != best_transit.edge);
         traversed.push(best_transit.clone());
         current_node_index = best_transit.edge.index_of_other_node(current_node_index);
 
@@ -51,7 +51,7 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
 mod tests
 {
     use super::*;
-    use crate::modgeosys::nav::types::Node;
+    use crate::modgeosys::nav::types::{Node, Edge};
     use std::collections::HashSet;
 
     #[test]

@@ -62,7 +62,7 @@ impl PartialEq for Edge
 {
     fn eq(&self, other: &Self) -> bool
     {
-        self.weight == other.weight
+        self.weight == other.weight && self.node_indices == other.node_indices
     }
 }
 
@@ -248,6 +248,14 @@ mod tests
         let edge_1 = Edge::new(10.0, HashSet::from([1, 2]));
         let edge_2 = Edge::new(10.0, HashSet::from([1, 2]));
         assert_eq!(edge_1, edge_2);
+    }
+
+    #[test]
+    fn test_edge_inequality()
+    {
+        let edge_1 = Edge::new(10.0, HashSet::from([1, 2]));
+        let edge_2 = Edge::new(10.0, HashSet::from([1, 3]));
+        assert_ne!(edge_1, edge_2);
     }
 
     #[test]
