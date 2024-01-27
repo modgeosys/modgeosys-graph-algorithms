@@ -22,11 +22,6 @@ class Edge:
     weight: int | float
     node_indices: frozenset[int] = field(compare=False)
 
-    def __post_init__(self):
-        """Validate the dataclass fields."""
-        validate(field_name='weight',       expected_types=(int | float),              value=self.weight)
-        validate(field_name='node_indices', expected_types=frozenset,                  value=self.node_indices)
-
     def index_of_other_node(self, current_index: int) -> int:
         """Given one node index, return the other node index."""
         node_indices = list(self.node_indices)
@@ -55,12 +50,6 @@ class EdgeTransit:
     edge: Edge
     g: int | float
     h: int | float
-
-    def __post_init__(self):
-        """Validate the dataclass fields."""
-        # validate(field_name='edge',         expected_types=Edge,                       value=self.edge)
-        validate(field_name='g',            expected_types=(int | float), value=self.g)
-        validate(field_name='h',            expected_types=(int | float), value=self.h)
 
     def f(self) -> int | float | None:
         """Calculate the combined cost of the edge."""
@@ -92,9 +81,6 @@ class Graph:
 
     def __init__(self, nodes: NodeSequence, edges: EdgeSequence):
         """Initialize a graph."""
-        validate(field_name='nodes', expected_types=Sequence, excluded_types=str, value=nodes)
-        validate(field_name='edges', expected_types=Sequence, excluded_types=str, value=edges)
-
         self.nodes = [tuple(node) for node in nodes]
         self.edges = tuple(copy(edge) for edge in edges)
 
@@ -131,12 +117,6 @@ class Graph:
             adjacency_matrix[node_indices[0], node_indices[1]] = adjacency_matrix[node_indices[1], node_indices[0]] = edge.weight
 
         return adjacency_matrix
-
-
-def validate(field_name: str, expected_types: type | UnionType, value: Any, excluded_types: UnionType | None = None) -> None:
-    """Validate a field value."""
-    if (excluded_types and isinstance(value, excluded_types)) or not isinstance(value, expected_types):
-        raise NavigationFieldTypeError(field_name=field_name, expected_types=expected_types, value=value)
 
 
 class NavigationFieldTypeError(TypeError):

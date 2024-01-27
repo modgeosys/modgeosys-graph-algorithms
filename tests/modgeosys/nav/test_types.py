@@ -1,18 +1,12 @@
 import numpy as np
-import pytest
 
-from src.modgeosys.nav.types import Edge, EdgeTransit, Graph, NavigationFieldTypeError
+from modgeosys.nav.types import Edge, EdgeTransit, Graph, NavigationFieldTypeError
 
 
-def test_edge_creation_with_valid_parameters():
+def test_edge_creation():
     edge = Edge(weight=10.0, node_indices=frozenset((1, 2)))
     assert edge.weight == 10.0
     assert edge.node_indices == frozenset((1, 2))
-
-
-def test_edge_creation_with_invalid_parameters():
-    with pytest.raises(NavigationFieldTypeError):
-        Edge(weight="10.0", node_indices=frozenset((1, 2)))
 
 
 def test_edge_index_of_other_node():
@@ -27,7 +21,7 @@ def test_edge_equality():
     assert edge1 == edge2
 
 
-def test_edge_transit_creation_with_valid_parameters():
+def test_edge_transit_creation():
     edge_transit = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
     assert edge_transit.edge == Edge(weight=10.0, node_indices=frozenset((1, 2)))
     assert edge_transit.g == 5.0
@@ -39,25 +33,15 @@ def test_edge_transit_f_calculation():
     assert edge_transit.f() == 10.0
 
 
-def test_edge_transit_f_calculation_with_none_values():
-    with pytest.raises(NavigationFieldTypeError):
-        EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=None, h=None)
-
-
 def test_edge_transit_equality():
     edge_transit1 = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
     edge_transit2 = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
     assert edge_transit1 == edge_transit2
 
 
-def test_graph_creation_with_valid_parameters(valid_nodes, valid_edges1, valid_graph1):
+def test_graph_creation(valid_nodes, valid_edges1, valid_graph1):
     assert valid_graph1.nodes == valid_nodes
     assert valid_graph1.edges == valid_edges1
-
-
-def test_graph_creation_with_invalid_parameters():
-    with pytest.raises(NavigationFieldTypeError):
-        Graph(nodes="nodes", edges="edges")
 
 
 def test_graph_adjacency_mapping(valid_graph1):
