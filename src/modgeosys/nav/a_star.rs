@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use ordered_float::OrderedFloat;
 
-use crate::modgeosys::nav::types::{Node, EdgeTransit, Graph, NoNavigablePathError};
+use crate::modgeosys::nav::types::{EdgeTransit, Graph, Node, NoNavigablePathError};
 
 
 pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, heuristic_distance: fn(&Node, &Node) -> OrderedFloat<f64>) -> Result<Vec<EdgeTransit>, NoNavigablePathError>
@@ -49,54 +49,38 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, he
 #[cfg(test)]
 mod tests
 {
+    use std::collections::HashSet;
     use super::*;
     use crate::modgeosys::nav::distance::manhattan_distance;
-    use crate::modgeosys::nav::types::{Node, Edge};
-    use std::collections::HashSet;
+    use crate::modgeosys::nav::types::{Edge, Node};
+    use crate::modgeosys::nav::test_fixtures::tests::{valid_nodes, valid_graph1, valid_graph2};
 
     #[test]
     fn test_a_star_finds_shortest_path_manhattan_graph1()
     {
-        let nodes = vec![Node::new(0.0, 0.0), Node::new(0.0, 2.0), Node::new(1.0, 0.0), Node::new(2.0, 1.0), Node::new(2.0, 3.0)];
-        let edges = vec![Edge::new(2.0, HashSet::from([0, 1])),
-                         Edge::new(1.0, HashSet::from([0, 2])),
-                         Edge::new(1.0, HashSet::from([2, 3])),
-                         Edge::new(3.0, HashSet::from([1, 4])),
-                         Edge::new(1.0, HashSet::from([3, 4]))];
-        let graph = Graph::new(nodes, edges);
-
         let expected = vec![EdgeTransit::new(Edge::new(2.0, HashSet::from([0, 1])), 2.0, 3.0),
                             EdgeTransit::new(Edge::new(3.0, HashSet::from([1, 4])), 5.0, 0.0)];
 
-        assert_eq!(a_star(&graph, 0, 4, manhattan_distance).unwrap(), expected);
+        assert_eq!(a_star(&valid_graph1(), 0, 4, manhattan_distance).unwrap(), expected);
     }
 
     #[test]
     fn test_a_star_finds_shortest_path_manhattan_graph2()
     {
-        let nodes = vec![Node::new(0.0, 0.0), Node::new(0.0, 2.0), Node::new(1.0, 0.0), Node::new(2.0, 1.0), Node::new(2.0, 3.0)];
-        let edges = vec![Edge::new(3.0, HashSet::from([0, 1])),
-                         Edge::new(1.0, HashSet::from([0, 2])),
-                         Edge::new(1.0, HashSet::from([2, 3])),
-                         Edge::new(3.0, HashSet::from([1, 4])),
-                         Edge::new(1.0, HashSet::from([3, 4]))];
-        let graph = Graph::new(nodes, edges);
-
         let expected = vec![EdgeTransit::new(Edge::new(1.0, HashSet::from([0, 2])), 1.0, 4.0),
                             EdgeTransit::new(Edge::new(1.0, HashSet::from([2, 3])), 2.0, 2.0),
                             EdgeTransit::new(Edge::new(1.0, HashSet::from([3, 4])), 3.0, 0.0)];
 
-        assert_eq!(a_star(&graph, 0, 4, manhattan_distance).unwrap(), expected);
+        assert_eq!(a_star(&valid_graph2(), 0, 4, manhattan_distance).unwrap(), expected);
     }
 
     #[test]
     fn test_a_star_with_no_path_manhattan()
     {
-        let nodes = vec![Node::new(0.0, 0.0), Node::new(0.0, 2.0), Node::new(1.0, 0.0), Node::new(2.0, 1.0), Node::new(2.0, 3.0)];
+        let nodes = valid_nodes();
         let edges: Vec<Edge> = Vec::new();
-        let graph = Graph::new(nodes, edges);
 
-        assert!(a_star(&graph, 0, 3, manhattan_distance).is_err());
+        assert!(a_star(&Graph::new(nodes, edges), 0, 3, manhattan_distance).is_err());
     }
 
     #[test]
@@ -104,11 +88,10 @@ mod tests
     {
         let nodes = vec![Node::new(0.0, 0.0)];
         let edges: Vec<Edge> = Vec::new();
-        let graph = Graph::new(nodes, edges);
 
         let expected: Vec<EdgeTransit> = Vec::new();
 
-        assert_eq!(a_star(&graph, 0, 0, manhattan_distance).unwrap(), expected);
+        assert_eq!(a_star(&Graph::new(nodes, edges), 0, 0, manhattan_distance).unwrap(), expected);
     }
 }
 

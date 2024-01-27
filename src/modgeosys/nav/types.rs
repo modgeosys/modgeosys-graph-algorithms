@@ -225,6 +225,7 @@ impl NoNavigablePathError
 mod tests
 {
     use super::*;
+    use crate::modgeosys::nav::test_fixtures::tests::{valid_nodes, valid_edges1, valid_graph1};
 
     #[test]
     fn test_edge_creation_()
@@ -283,14 +284,17 @@ mod tests
     }
 
     #[test]
+    fn test_graph_creation()
+    {
+        assert_eq!(valid_graph1().nodes, valid_nodes());
+        assert_eq!(valid_graph1().edges, valid_edges1());
+    }
+
+    #[test]
     fn test_graph_adjacency_map()
     {
-        let nodes = vec![Node::new(0.0, 0.0), Node::new(0.0, 2.0), Node::new(1.0, 0.0), Node::new(2.0, 1.0), Node::new(2.0, 3.0)];
-        let edges = vec![Edge::new(2.0, HashSet::from([0, 1])),
-                         Edge::new(1.0, HashSet::from([0, 2])),
-                         Edge::new(1.0, HashSet::from([2, 3])),
-                         Edge::new(3.0, HashSet::from([1, 4])),
-                         Edge::new(1.0, HashSet::from([3, 4]))];
+        let nodes = valid_nodes();
+        let edges = valid_edges1();
         let graph = Graph::new(nodes, edges);
 
         let adjacency_map = graph.adjacency_map();
@@ -308,12 +312,8 @@ mod tests
     #[test]
     fn test_graph_adjacency_matrix()
     {
-        let nodes = vec![Node::new(0.0, 1.0), Node::new(0.0, 2.0), Node::new(2.0, 3.0), Node::new(1.0, 4.0), Node::new(3.0, 4.0)];
-        let edges = vec![Edge::new(2.0, HashSet::from([0, 1])),
-                         Edge::new(1.0, HashSet::from([0, 2])),
-                         Edge::new(1.0, HashSet::from([2, 3])),
-                         Edge::new(3.0, HashSet::from([1, 4])),
-                         Edge::new(1.0, HashSet::from([3, 4]))];
+        let nodes = valid_nodes();
+        let edges = valid_edges1();
         let graph = Graph::new(nodes, edges);
 
         let adjacency_matrix = graph.adjacency_matrix();
