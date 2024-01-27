@@ -6,7 +6,7 @@ from modgeosys.nav.distance import manhattan_distance
 from modgeosys.nav.types import Edge, EdgeTransit, Graph, HeuristicDistanceCallable, NoNavigablePathError
 
 
-def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_distance: HeuristicDistanceCallable = manhattan_distance) -> list[Edge]:
+def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_distance: HeuristicDistanceCallable) -> list[Edge]:
     """Implement the A* algorithm for finding the shortest path between two nodes in a graph."""
 
     # Grab the nodes and adjacency map.
