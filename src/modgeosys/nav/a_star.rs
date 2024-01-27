@@ -36,9 +36,9 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
         let Some((_, best_transit)) = f.pop_first() else { return Err(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() }) };
 
         g = best_transit.g;
-        untraversed.retain(|edge_ref| *edge_ref != best_transit.edge);
-        traversed.push(best_transit.clone());
         current_node_index = best_transit.edge.index_of_other_node(current_node_index);
+        untraversed.retain(|edge_ref| *edge_ref != best_transit.edge);
+        traversed.push(best_transit);
 
         f.clear();
     }
