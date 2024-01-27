@@ -11,7 +11,7 @@ pub fn euclidean_distance(a: &Node, b: &Node) -> OrderedFloat<f64>
 {
     let dx = a.x - b.x;
     let dy = a.y - b.y;
-    OrderedFloat((dx * dx + dy * dy).sqrt())
+    OrderedFloat(((dx * dx) + (dy * dy)).sqrt())
 }
 
 
@@ -65,6 +65,6 @@ mod tests
     {
         let a = Node::new(0.0, 0.0);
         let b = Node::new(3.0, 4.0);
-        assert_eq!(euclidean_distance(&a, &b), (OrderedFloat(5.0f64)).sqrt());
+        assert_eq!(euclidean_distance(&a, &b), (OrderedFloat(5.0f64)));
     }
 }

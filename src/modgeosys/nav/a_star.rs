@@ -27,7 +27,7 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
             {
                 let mut candidate_edge = candidate_edge.clone();
                 candidate_edge.g = Some(candidate_edge.weight + g);
-                candidate_edge.h = Some(manhattan_distance(&nodes[candidate_edge.coordinates_of_other(current_node_index)], &nodes[goal_node_index]));
+                candidate_edge.h = Some(manhattan_distance(&nodes[candidate_edge.index_of_other_node(current_node_index)], &nodes[goal_node_index]));
                 f.insert(candidate_edge.f().unwrap(), candidate_edge);
             }
         }
@@ -37,7 +37,7 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
         g = best_transit_edge.g.unwrap();
         untraversed.retain(|edge| edge != &best_transit_edge);
         traversed.push(best_transit_edge.clone());
-        current_node_index = best_transit_edge.coordinates_of_other(current_node_index);
+        current_node_index = best_transit_edge.index_of_other_node(current_node_index);
 
         f.clear();
     }
@@ -56,7 +56,7 @@ mod tests
     #[test]
     fn test_a_star_finds_shortest_path_manhattan_graph1()
     {
-        let nodes = vec![Node::new(0.0, 1.0), Node::new(0.0, 2.0), Node::new(2.0, 3.0), Node::new(1.0, 4.0), Node::new(3.0, 4.0)];
+        let nodes = vec![Node::new(0.0, 0.0), Node::new(0.0, 2.0), Node::new(1.0, 0.0), Node::new(2.0, 1.0), Node::new(2.0, 3.0)];
         let edges = vec![Edge::new(2.0, HashSet::from([0, 1]), None, None),
                          Edge::new(1.0, HashSet::from([0, 2]), None, None),
                          Edge::new(1.0, HashSet::from([2, 3]), None, None),
@@ -73,7 +73,7 @@ mod tests
     #[test]
     fn test_a_star_finds_shortest_path_manhattan_graph2()
     {
-        let nodes = vec![Node::new(0.0, 1.0), Node::new(0.0, 2.0), Node::new(2.0, 3.0), Node::new(1.0, 4.0), Node::new(3.0, 4.0)];
+        let nodes = vec![Node::new(0.0, 0.0), Node::new(0.0, 2.0), Node::new(1.0, 0.0), Node::new(2.0, 1.0), Node::new(2.0, 3.0)];
         let edges = vec![Edge::new(3.0, HashSet::from([0, 1]), None, None),
                          Edge::new(1.0, HashSet::from([0, 2]), None, None),
                          Edge::new(1.0, HashSet::from([2, 3]), None, None),
@@ -91,7 +91,7 @@ mod tests
     #[test]
     fn test_a_star_with_no_path_manhattan()
     {
-        let nodes = vec![Node::new(0.0, 1.0), Node::new(0.0, 2.0), Node::new(2.0, 3.0), Node::new(1.0, 4.0), Node::new(3.0, 4.0)];
+        let nodes = vec![Node::new(0.0, 0.0), Node::new(0.0, 2.0), Node::new(1.0, 0.0), Node::new(2.0, 1.0), Node::new(2.0, 3.0)];
         let edges: Vec<Edge> = Vec::new();
         let graph = Graph::new(nodes, edges);
 

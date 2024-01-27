@@ -6,7 +6,7 @@ use ndarray::Array2;
 use ordered_float::OrderedFloat;
 
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Node
 {
     pub x: OrderedFloat<f64>,
@@ -44,6 +44,7 @@ impl Node
 //     }
 // }
 
+
 #[derive(Debug, Clone)]
 pub struct Edge
 {
@@ -75,7 +76,7 @@ impl Edge
         }
     }
 
-    pub fn coordinates_of_other(&self, current_index: usize) -> usize
+    pub fn index_of_other_node(&self, current_index: usize) -> usize
     {
         let node_indices: Vec<usize> = self.node_indices.iter().cloned().collect();
         if node_indices[0] == current_index
@@ -145,6 +146,7 @@ impl Ord for Edge
 //         }
 //     }
 // }
+
 
 #[derive(Debug, Clone)]
 pub struct Graph
@@ -236,11 +238,11 @@ mod tests
     }
 
     #[test]
-    fn test_edge_coordinates_of_other()
+    fn test_edge_index_of_other_node()
     {
         let edge = Edge::new(10.0, HashSet::from([1, 2]), None, None);
-        assert_eq!(edge.coordinates_of_other(1), 2);
-        assert_eq!(edge.coordinates_of_other(2), 1);
+        assert_eq!(edge.index_of_other_node(1), 2);
+        assert_eq!(edge.index_of_other_node(2), 1);
     }
 
     #[test]
@@ -268,7 +270,7 @@ mod tests
     #[test]
     fn test_graph_adjacency_map()
     {
-        let nodes = vec![Node::new(0.0, 1.0), Node::new(0.0, 2.0), Node::new(2.0, 3.0), Node::new(1.0, 4.0), Node::new(3.0, 4.0)];
+        let nodes = vec![Node::new(0.0, 0.0), Node::new(0.0, 2.0), Node::new(1.0, 0.0), Node::new(2.0, 1.0), Node::new(2.0, 3.0)];
         let edges = vec![Edge::new(2.0, HashSet::from([0, 1]), None, None),
                          Edge::new(1.0, HashSet::from([0, 2]), None, None),
                          Edge::new(1.0, HashSet::from([2, 3]), None, None),
@@ -279,12 +281,13 @@ mod tests
         let adjacency_map = graph.adjacency_map();
 
         assert_eq!(adjacency_map.len(), 5);
+        assert_eq!(adjacency_map.keys().collect::<Vec<&Node>>().sort(), vec![&Node::new(0.0, 1.0), &Node::new(0.0, 2.0), &Node::new(2.0, 3.0), &Node::new(1.0, 4.0), &Node::new(3.0, 4.0)].sort());
 
-        assert_eq!(adjacency_map[&Node::new(0.0, 0.0)], vec![Edge::new(1.0, HashSet::from([0, 2]), None, None), Edge::new(2.0, HashSet::from([0, 1]), None, None)]);
-        assert_eq!(adjacency_map[&Node::new(0.0, 2.0)], vec![Edge::new(2.0, HashSet::from([0, 1]), None, None), Edge::new(3.0, HashSet::from([1, 4]), None, None)]);
-        assert_eq!(adjacency_map[&Node::new(1.0, 0.0)], vec![Edge::new(1.0, HashSet::from([0, 2]), None, None), Edge::new(1.0, HashSet::from([2, 3]), None, None)]);
-        assert_eq!(adjacency_map[&Node::new(2.0, 1.0)], vec![Edge::new(1.0, HashSet::from([2, 3]), None, None), Edge::new(1.0, HashSet::from([3, 4]), None, None)]);
-        assert_eq!(adjacency_map[&Node::new(2.0, 3.0)], vec![Edge::new(1.0, HashSet::from([3, 4]), None, None), Edge::new(3.0, HashSet::from([1, 4]), None, None)]);
+        assert_eq!(adjacency_map[&graph.nodes[0]], vec![Edge::new(1.0, HashSet::from([0, 2]), None, None), Edge::new(2.0, HashSet::from([0, 1]), None, None)]);
+        assert_eq!(adjacency_map[&graph.nodes[1]], vec![Edge::new(2.0, HashSet::from([0, 1]), None, None), Edge::new(3.0, HashSet::from([1, 4]), None, None)]);
+        assert_eq!(adjacency_map[&graph.nodes[2]], vec![Edge::new(1.0, HashSet::from([0, 2]), None, None), Edge::new(1.0, HashSet::from([2, 3]), None, None)]);
+        assert_eq!(adjacency_map[&graph.nodes[3]], vec![Edge::new(1.0, HashSet::from([2, 3]), None, None), Edge::new(1.0, HashSet::from([3, 4]), None, None)]);
+        assert_eq!(adjacency_map[&graph.nodes[4]], vec![Edge::new(1.0, HashSet::from([3, 4]), None, None), Edge::new(3.0, HashSet::from([1, 4]), None, None)]);
     }
 
     #[test]
