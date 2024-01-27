@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from src.modgeosys.nav.types import Edge, EdgeTraversal, Graph, NavigationFieldTypeError
+from src.modgeosys.nav.types import Edge, EdgeTransit, Graph, NavigationFieldTypeError
 
 
 def test_edge_creation_with_valid_parameters():
@@ -27,26 +27,26 @@ def test_edge_equality():
     assert edge1 == edge2
 
 
-def test_edge_traversal_creation_with_valid_parameters():
-    edge_traversal = EdgeTraversal(Edge(weight=10, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    assert edge_traversal.g == 5.0
-    assert edge_traversal.h == 5.0
+def test_edge_creation_with_valid_parameters():
+    edge = EdgeTransit(Edge(weight=10, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    assert edge.g == 5.0
+    assert edge.h == 5.0
 
 
-def test_edge_traversal_f_calculation():
-    edge_traversal = EdgeTraversal(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    assert edge_traversal.f() == 10.0
+def test_edge_f_calculation():
+    edge = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    assert edge.f() == 10.0
 
 
-def test_edge_traversal_f_calculation_with_none_values():
-    edge_traversal = EdgeTraversal(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=None, h=None)
-    assert edge_traversal.f() is None
+def test_edge_f_calculation_with_none_values():
+    edge = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=None, h=None)
+    assert edge.f() is None
 
 
-def test_edge_traversal_equality():
-    edge_traversal1 = EdgeTraversal(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    edge_traversal2 = EdgeTraversal(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    assert edge_traversal1 == edge_traversal2
+def test_edge_equality():
+    edge1 = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    edge2 = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    assert edge1 == edge2
 
 
 def test_graph_creation_with_valid_parameters(valid_nodes, valid_edges1, valid_graph1):

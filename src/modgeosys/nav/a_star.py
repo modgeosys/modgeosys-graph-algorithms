@@ -3,7 +3,7 @@
 from heapdict import heapdict
 
 from modgeosys.nav.distance import manhattan_distance
-from modgeosys.nav.types import Edge, EdgeTraversal, Graph, HeuristicDistanceCallable, NoNavigablePathError
+from modgeosys.nav.types import Edge, EdgeTransit, Graph, HeuristicDistanceCallable, NoNavigablePathError
 
 
 def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_distance: HeuristicDistanceCallable = manhattan_distance) -> list[Edge]:
@@ -29,23 +29,23 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
         # Calculate f for each candidate edge we could traverse next.
         for candidate_edge in adjacency_map[nodes[current_node_index]]:
             if candidate_edge in untraversed:
-                candidate_traversal = EdgeTraversal(edge=candidate_edge,
-                                                    g=candidate_edge.weight + g,
-                                                    h=heuristic_distance(nodes[candidate_edge.index_of_other_node(current_node_index)], nodes[goal_node_index]))
-                f[candidate_traversal.f()] = candidate_traversal
+                candidate = EdgeTransit(edge=candidate_edge,
+                                                  g=candidate_edge.weight + g,
+                                                  h=heuristic_distance(nodes[candidate_edge.index_of_other_node(current_node_index)], nodes[goal_node_index]))
+                f[candidate.f()] = candidate
 
         # If no path to the goal exists, raise an exception.
         if not f:
             raise NoNavigablePathError(start_node=nodes[start_node_index], goal_node=nodes[goal_node_index])
 
         # Pick the edge with the lowest f value.
-        _, best_traversal = f.popitem()
+        _, best = f.popitem()
 
         # Update cumulative g, edge traversal lists, and the index of the currently-visited node.
-        g = best_traversal.g
-        untraversed.remove(best_traversal.edge)
-        traversed.append(best_traversal)
-        current_node_index = best_traversal.edge.index_of_other_node(current_node_index)
+        g = best.g
+        untraversed.remove(best.edge)
+        traversed.append(best)
+        current_node_index = best.edge.index_of_other_node(current_node_index)
 
         # Clear the auto-sorted f heapdict for reuse with the next traversal calculation.
         f.clear()

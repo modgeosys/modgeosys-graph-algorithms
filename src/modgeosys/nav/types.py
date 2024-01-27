@@ -50,8 +50,8 @@ class Edge:
 
 
 @dataclass(order=True)
-class EdgeTraversal:
-    """An edge traversal in a graph."""
+class EdgeTransit:
+    """An edge transit in a graph."""
     edge: Edge
     g: int | float | None = None
     h: int | float | None = None
@@ -78,10 +78,10 @@ class EdgeTraversal:
         return hash(self.edge)
 
     def __copy__(self):
-        return EdgeTraversal(edge=self.edge, g=self.g, h=self.h)
+        return EdgeTransit(edge=self.edge, g=self.g, h=self.h)
 
     def __deepcopy__(self, memo: Mapping | None = None):
-        return EdgeTraversal(edge=self.edge, g=self.g, h=self.h)
+        return EdgeTransit(edge=self.edge, g=self.g, h=self.h)
 
 
 
