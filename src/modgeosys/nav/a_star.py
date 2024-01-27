@@ -29,23 +29,23 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
         # Calculate f for each candidate edge we could traverse next.
         for candidate_edge in adjacency_map[nodes[current_node_index]]:
             if candidate_edge in untraversed:
-                candidate = EdgeTransit(edge=candidate_edge,
-                                                  g=candidate_edge.weight + g,
-                                                  h=heuristic_distance(nodes[candidate_edge.index_of_other_node(current_node_index)], nodes[goal_node_index]))
-                f[candidate.f()] = candidate
+                candidate_transit = EdgeTransit(edge=candidate_edge,
+                                                g=candidate_edge.weight + g,
+                                                h=heuristic_distance(nodes[candidate_edge.index_of_other_node(current_node_index)], nodes[goal_node_index]))
+                f[candidate_transit.f()] = candidate_transit
 
         # If no path to the goal exists, raise an exception.
         if not f:
             raise NoNavigablePathError(start_node=nodes[start_node_index], goal_node=nodes[goal_node_index])
 
         # Pick the edge with the lowest f value.
-        _, best = f.popitem()
+        _, best_transit = f.popitem()
 
         # Update cumulative g, edge traversal lists, and the index of the currently-visited node.
-        g = best.g
-        untraversed.remove(best.edge)
-        traversed.append(best)
-        current_node_index = best.edge.index_of_other_node(current_node_index)
+        g = best_transit.g
+        untraversed.remove(best_transit.edge)
+        traversed.append(best_transit)
+        current_node_index = best_transit.edge.index_of_other_node(current_node_index)
 
         # Clear the auto-sorted f heapdict for reuse with the next traversal calculation.
         f.clear()

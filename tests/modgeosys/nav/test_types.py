@@ -27,26 +27,27 @@ def test_edge_equality():
     assert edge1 == edge2
 
 
-def test_edge_creation_with_valid_parameters():
-    edge = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    assert edge.g == 5.0
-    assert edge.h == 5.0
+def test_edge_transit_creation_with_valid_parameters():
+    edge_transit = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    assert edge_transit.edge == Edge(weight=10.0, node_indices=frozenset((1, 2)))
+    assert edge_transit.g == 5.0
+    assert edge_transit.h == 5.0
 
 
-def test_edge_f_calculation():
-    edge = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    assert edge.f() == 10.0
+def test_edge_transit_f_calculation():
+    edge_transit = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    assert edge_transit.f() == 10.0
 
 
-def test_edge_f_calculation_with_none_values():
-    edge = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=None, h=None)
-    assert edge.f() is None
+def test_edge_transit_f_calculation_with_none_values():
+    edge_transit = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=None, h=None)
+    assert edge_transit.f() is None
 
 
-def test_edge_equality():
-    edge1 = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    edge2 = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    assert edge1 == edge2
+def test_edge_transit_equality():
+    edge_transit1 = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    edge_transit2 = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    assert edge_transit1 == edge_transit2
 
 
 def test_graph_creation_with_valid_parameters(valid_nodes, valid_edges1, valid_graph1):
