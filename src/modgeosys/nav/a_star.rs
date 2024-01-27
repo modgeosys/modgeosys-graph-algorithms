@@ -2,11 +2,10 @@ use std::collections::BTreeMap;
 
 use ordered_float::OrderedFloat;
 
-use crate::modgeosys::nav::types::{EdgeTransit, Graph, NoNavigablePathError};
-use crate::modgeosys::nav::distance::manhattan_distance;
+use crate::modgeosys::nav::types::{Node, EdgeTransit, Graph, NoNavigablePathError};
 
 
-pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) -> Result<Vec<EdgeTransit>, NoNavigablePathError>
+pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, heuristic_distance: fn(&Node, &Node) -> OrderedFloat<f64>) -> Result<Vec<EdgeTransit>, NoNavigablePathError>
 {
     let nodes = &graph.nodes;
     let adjacency_map = graph.adjacency_map();
@@ -27,7 +26,7 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
             {
                 let candidate_transit = EdgeTransit::new(candidate_edge.clone(),
                                                          *candidate_edge.weight + *g,
-                                                         *manhattan_distance(&nodes[candidate_edge.index_of_other_node(current_node_index)],
+                                                         *heuristic_distance(&nodes[candidate_edge.index_of_other_node(current_node_index)],
                                                                              &nodes[goal_node_index]));
                 f.insert(candidate_transit.f(), candidate_transit);
             }
@@ -51,6 +50,7 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
 mod tests
 {
     use super::*;
+    use crate::modgeosys::nav::distance::manhattan_distance;
     use crate::modgeosys::nav::types::{Node, Edge};
     use std::collections::HashSet;
 
@@ -68,7 +68,7 @@ mod tests
         let expected = vec![EdgeTransit::new(Edge::new(2.0, HashSet::from([0, 1])), 2.0, 3.0),
                             EdgeTransit::new(Edge::new(3.0, HashSet::from([1, 4])), 5.0, 0.0)];
 
-        assert_eq!(a_star(&graph, 0, 4).unwrap(), expected);
+        assert_eq!(a_star(&graph, 0, 4, manhattan_distance).unwrap(), expected);
     }
 
     #[test]
@@ -86,7 +86,7 @@ mod tests
                             EdgeTransit::new(Edge::new(1.0, HashSet::from([2, 3])), 2.0, 2.0),
                             EdgeTransit::new(Edge::new(1.0, HashSet::from([3, 4])), 3.0, 0.0)];
 
-        assert_eq!(a_star(&graph, 0, 4).unwrap(), expected);
+        assert_eq!(a_star(&graph, 0, 4, manhattan_distance).unwrap(), expected);
     }
 
     #[test]
@@ -96,7 +96,7 @@ mod tests
         let edges: Vec<Edge> = Vec::new();
         let graph = Graph::new(nodes, edges);
 
-        assert!(a_star(&graph, 0, 3).is_err());
+        assert!(a_star(&graph, 0, 3, manhattan_distance).is_err());
     }
 
     #[test]
@@ -108,7 +108,7 @@ mod tests
 
         let expected: Vec<EdgeTransit> = Vec::new();
 
-        assert_eq!(a_star(&graph, 0, 0).unwrap(), expected);
+        assert_eq!(a_star(&graph, 0, 0, manhattan_distance).unwrap(), expected);
     }
 }
 
