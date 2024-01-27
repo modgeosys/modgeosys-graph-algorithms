@@ -30,7 +30,7 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
         for candidate_edge in adjacency_map[nodes[current_node_index]]:
             if candidate_edge in untraversed:
                 candidate_edge.g = candidate_edge.weight + g
-                candidate_edge.h = heuristic_distance(nodes[candidate_edge.index_of_other(current_node_index)], nodes[goal_node_index])
+                candidate_edge.h = heuristic_distance(nodes[candidate_edge.index_of_other_node(current_node_index)], nodes[goal_node_index])
                 f[candidate_edge.f()] = candidate_edge
 
         # If no path to the goal exists, raise an exception.
@@ -44,7 +44,7 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
         g = best_transit_edge.g
         untraversed.remove(best_transit_edge)
         traversed.append(best_transit_edge)
-        current_node_index = best_transit_edge.index_of_other(current_node_index)
+        current_node_index = best_transit_edge.index_of_other_node(current_node_index)
 
         # Clear the auto-sorted f heapdict for reuse with the next traversal calculation.
         f.clear()

@@ -17,10 +17,10 @@ def test_edge_creation_with_invalid_parameters():
         Edge(weight="10", node_indices=frozenset((1, 2)), g=5.0, h=5.0)
 
 
-def test_edge_index_of_other():
+def test_edge_index_of_other_node():
     edge = Edge(weight=10, node_indices=frozenset((1, 2)))
-    assert edge.index_of_other(1) == 2
-    assert edge.index_of_other(2) == 1
+    assert edge.index_of_other_node(1) == 2
+    assert edge.index_of_other_node(2) == 1
 
 
 def test_edge_f_calculation():
