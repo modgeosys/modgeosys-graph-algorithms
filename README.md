@@ -6,7 +6,7 @@ Python and/or Rust with Python bindings. I'll be adding more algorithm implement
 
 ## Algorithms: Currently implemented + planned
 * [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) - Graph path search algorithm.
-  * code-complete in both Python and Rust, but Rust needs to be modified to accept other distance heuristics.
+  * code-complete in both Python and Rust, but Rust needs to be modified to accept other distance heuristics, and probably some efficiency enhancements.
   * Needs a more thorough test suite.
 * [Probabilistic Roadmap (PRM)](https://en.wikipedia.org/wiki/Probabilistic_roadmap) - Robot navigation algorithm with obstacle avoidance.
   * Planned.
