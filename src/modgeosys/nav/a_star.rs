@@ -23,20 +23,20 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
     {
         for candidate_edge in adjacency_map[&nodes[current_node_index]].iter()
         {
-            if untraversed.contains(&candidate_edge)
+            if untraversed.contains(candidate_edge)
             {
-                let mut candidate_transit = EdgeTransit::new(&candidate_edge,
-                                                             Some(*candidate_edge.weight + *g),
-                                                             Some(*manhattan_distance(&nodes[candidate_edge.index_of_other_node(current_node_index)],
-                                                                                      &nodes[goal_node_index])));
-                f.insert(candidate_transit.f().unwrap(), candidate_transit);
+                let mut candidate_transit = EdgeTransit::new(candidate_edge.clone(),
+                                                             *candidate_edge.weight + *g,
+                                                             *manhattan_distance(&nodes[candidate_edge.index_of_other_node(current_node_index)],
+                                                                                 &nodes[goal_node_index]));
+                f.insert(candidate_transit.f(), candidate_transit);
             }
         }
 
         let Some((_, best_transit)) = f.pop_first() else { return Err(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() }) };
 
-        g = best_transit.g.unwrap();
-        untraversed.retain(|edge| edge != best_transit.edge);
+        g = best_transit.g;
+        untraversed.retain(|edge| *edge != best_transit.edge);
         traversed.push(best_transit.clone());
         current_node_index = best_transit.edge.index_of_other_node(current_node_index);
 
@@ -58,15 +58,15 @@ mod tests
     fn test_a_star_finds_shortest_path_manhattan_graph1()
     {
         let nodes = vec![Node::new(0.0, 0.0), Node::new(0.0, 2.0), Node::new(1.0, 0.0), Node::new(2.0, 1.0), Node::new(2.0, 3.0)];
-        let edges = vec![Edge::new(2.0, HashSet::from([0, 1]), None, None),
-                         Edge::new(1.0, HashSet::from([0, 2]), None, None),
-                         Edge::new(1.0, HashSet::from([2, 3]), None, None),
-                         Edge::new(3.0, HashSet::from([1, 4]), None, None),
-                         Edge::new(1.0, HashSet::from([3, 4]), None, None)];
+        let edges = vec![Edge::new(2.0, HashSet::from([0, 1])),
+                         Edge::new(1.0, HashSet::from([0, 2])),
+                         Edge::new(1.0, HashSet::from([2, 3])),
+                         Edge::new(3.0, HashSet::from([1, 4])),
+                         Edge::new(1.0, HashSet::from([3, 4]))];
         let graph = Graph::new(nodes, edges);
 
-        let expected = vec![Edge::new(2.0, HashSet::from([0, 1]), Some(2.0), Some(3.0)),
-                            Edge::new(3.0, HashSet::from([1, 4]), Some(5.0), Some(0.0))];
+        let expected = vec![EdgeTransit::new(Edge::new(2.0, HashSet::from([0, 1])), 2.0, 3.0),
+                            EdgeTransit::new(Edge::new(3.0, HashSet::from([1, 4])), 5.0, 0.0)];
 
         assert_eq!(a_star(&graph, 0, 4).unwrap(), expected);
     }
@@ -75,16 +75,16 @@ mod tests
     fn test_a_star_finds_shortest_path_manhattan_graph2()
     {
         let nodes = vec![Node::new(0.0, 0.0), Node::new(0.0, 2.0), Node::new(1.0, 0.0), Node::new(2.0, 1.0), Node::new(2.0, 3.0)];
-        let edges = vec![Edge::new(3.0, HashSet::from([0, 1]), None, None),
-                         Edge::new(1.0, HashSet::from([0, 2]), None, None),
-                         Edge::new(1.0, HashSet::from([2, 3]), None, None),
-                         Edge::new(3.0, HashSet::from([1, 4]), None, None),
-                         Edge::new(1.0, HashSet::from([3, 4]), None, None)];
+        let edges = vec![Edge::new(3.0, HashSet::from([0, 1])),
+                         Edge::new(1.0, HashSet::from([0, 2])),
+                         Edge::new(1.0, HashSet::from([2, 3])),
+                         Edge::new(3.0, HashSet::from([1, 4])),
+                         Edge::new(1.0, HashSet::from([3, 4]))];
         let graph = Graph::new(nodes, edges);
 
-        let expected = vec![Edge::new(1.0, HashSet::from([0, 2]), Some(1.0), Some(4.0)),
-                            Edge::new(1.0, HashSet::from([2, 3]), Some(2.0), Some(2.0)),
-                            Edge::new(1.0, HashSet::from([3, 4]), Some(3.0), Some(0.0))];
+        let expected = vec![EdgeTransit::new(Edge::new(1.0, HashSet::from([0, 2])), 1.0, 4.0),
+                            EdgeTransit::new(Edge::new(1.0, HashSet::from([2, 3])), 2.0, 2.0),
+                            EdgeTransit::new(Edge::new(1.0, HashSet::from([3, 4])), 3.0, 0.0)];
 
         assert_eq!(a_star(&graph, 0, 4).unwrap(), expected);
     }
@@ -106,7 +106,7 @@ mod tests
         let edges: Vec<Edge> = Vec::new();
         let graph = Graph::new(nodes, edges);
 
-        let expected: Vec<Edge> = Vec::new();
+        let expected: Vec<EdgeTransit> = Vec::new();
 
         assert_eq!(a_star(&graph, 0, 0).unwrap(), expected);
     }

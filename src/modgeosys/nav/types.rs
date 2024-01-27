@@ -86,36 +86,32 @@ impl Ord for Edge
 
 
 #[derive(Debug, Clone)]
-pub struct EdgeTransit<'a>
+pub struct EdgeTransit
 {
-    pub edge: &'a Edge,
-    pub g: Option<OrderedFloat<f64>>,
-    pub h: Option<OrderedFloat<f64>>,
+    pub edge: Edge,
+    pub g: OrderedFloat<f64>,
+    pub h: OrderedFloat<f64>,
 }
 
-impl <'a> EdgeTransit<'_>
+impl EdgeTransit
 {
-    pub fn new(edge: &'a Edge, g: Option<f64>, h: Option<f64>) -> Self
+    pub fn new(edge: Edge, g: f64, h: f64) -> Self
     {
         EdgeTransit
         {
-            edge: edge,
-            g: g.map(OrderedFloat),
-            h: h.map(OrderedFloat),
+            edge: edge.clone(),
+            g: OrderedFloat(g),
+            h: OrderedFloat(h),
         }
     }
 
-    pub fn f(&self) -> Option<OrderedFloat<f64>>
+    pub fn f(&self) -> OrderedFloat<f64>
     {
-        match (self.g, self.h)
-        {
-            (Some(g), Some(h)) => Some(g + h),
-            _ => None,
-        }
+        self.g + self.h
     }
 }
 
-impl PartialEq for EdgeTransit<'_>
+impl PartialEq for EdgeTransit
 {
     fn eq(&self, other: &Self) -> bool
     {
@@ -123,31 +119,27 @@ impl PartialEq for EdgeTransit<'_>
     }
 }
 
-impl Eq for EdgeTransit<'_> {}
+impl Eq for EdgeTransit {}
 
-impl PartialOrd for EdgeTransit<'_>
+impl PartialOrd for EdgeTransit
 {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering>
     {
-        let self_g = self.g.unwrap_or(OrderedFloat(0f64));
-        let other_g = other.g.unwrap_or(OrderedFloat(0f64));
-
-        let self_h = self.h.unwrap_or(OrderedFloat(0f64));
-        let other_h = other.h.unwrap_or(OrderedFloat(0f64));
-
-        match self.edge.partial_cmp(&other.edge)
-        {
-            Some(Ordering::Equal) => match self_g.partial_cmp(&other_g)
+        self.edge.partial_cmp(&other.edge)
+            .and_then(|ordering| match ordering
             {
-                Some(Ordering::Equal) => self_h.partial_cmp(&other_h),
-                other => other,
-            },
-            other => other,
-        }
+                Ordering::Equal => self.g.partial_cmp(&other.g)
+                    .and_then(|ordering| match ordering
+                    {
+                        Ordering::Equal => self.h.partial_cmp(&other.h),
+                        _ => Some(ordering),
+                    }),
+                _ => Some(ordering),
+            })
     }
 }
 
-impl Ord for EdgeTransit<'_>
+impl Ord for EdgeTransit
 {
     fn cmp(&self, other: &Self) -> Ordering {
         self.partial_cmp(other).unwrap_or(Ordering::Equal)
@@ -261,31 +253,24 @@ mod tests
     #[test]
     fn test_edge_transit_creation()
     {
-        let edge_transit = EdgeTransit::new(&Edge::new(10.0, HashSet::from([1, 2])), Some(5.0), Some(5.0));
-        assert_eq!(edge_transit.edge, &Edge::new(10.0, HashSet::from([1, 2])));
-        assert_eq!(edge_transit.g, Some(OrderedFloat(5.0f64)));
-        assert_eq!(edge_transit.h, Some(OrderedFloat(5.0f64)));
+        let edge_transit = EdgeTransit::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
+        assert_eq!(edge_transit.edge, Edge::new(10.0, HashSet::from([1, 2])));
+        assert_eq!(edge_transit.g, OrderedFloat(5.0f64));
+        assert_eq!(edge_transit.h, OrderedFloat(5.0f64));
     }
 
     #[test]
     fn test_edge_transit_f_calculation()
     {
-        let edge_transit = EdgeTransit::new(&Edge::new(10.0, HashSet::from([1, 2])), Some(5.0), Some(5.0));
-        assert_eq!(edge_transit.f(), Some(OrderedFloat(10.0f64)));
-    }
-
-    #[test]
-    fn test_edge_transit_f_with_none_values()
-    {
-        let edge_transit = EdgeTransit::new(&Edge::new(10.0, HashSet::from([1, 2])), None, None);
-        assert_eq!(edge_transit.f(), None);
+        let edge_transit = EdgeTransit::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
+        assert_eq!(edge_transit.f(), OrderedFloat(10.0f64));
     }
 
     #[test]
     fn test_edge_transit_equality()
     {
-        let edge_transit1 = EdgeTransit::new(&Edge::new(10.0, HashSet::from([1, 2])), Some(5.0), Some(5.0));
-        let edge_transit2 = EdgeTransit::new(&Edge::new(10.0, HashSet::from([1, 2])), Some(5.0), Some(5.0));
+        let edge_transit1 = EdgeTransit::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
+        let edge_transit2 = EdgeTransit::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
         assert_eq!(edge_transit1, edge_transit2);
     }
 
