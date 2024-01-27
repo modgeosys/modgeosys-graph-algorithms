@@ -21,13 +21,44 @@ class Edge:
     """An edge in a graph."""
     weight: int | float
     node_indices: frozenset[int] = field(compare=False)
-    g: int | float | None = None
-    h: int | float | None = None
 
     def __post_init__(self):
         """Validate the dataclass fields."""
         validate(field_name='weight',       expected_types=(int | float),              value=self.weight)
         validate(field_name='node_indices', expected_types=frozenset,                  value=self.node_indices)
+
+    def index_of_other_node(self, current_index: int) -> int:
+        """Given one node index, return the other node index."""
+        node_indices = list(self.node_indices)
+        return node_indices[1] if node_indices[0] == current_index else node_indices[0]
+
+    def __eq__(self, other):
+        return self.weight == other.weight and self.node_indices == other.node_indices
+
+    def __repr__(self):
+        return f'Edge(weight={self.weight}, node_indices={self.node_indices})'
+
+    def __hash__(self):
+        return hash(self.node_indices)
+
+    def __copy__(self):
+        return Edge(weight=self.weight, node_indices=self.node_indices)
+
+    def __deepcopy__(self, memo: Mapping | None = None):
+        return Edge(weight=self.weight, node_indices=self.node_indices)
+
+
+
+@dataclass(order=True)
+class EdgeTraversal:
+    """An edge traversal in a graph."""
+    edge: Edge
+    g: int | float | None = None
+    h: int | float | None = None
+
+    def __post_init__(self):
+        """Validate the dataclass fields."""
+        # validate(field_name='edge',         expected_types=Edge,                       value=self.edge)
         validate(field_name='g',            expected_types=(int | float | type(None)), value=self.g)
         validate(field_name='h',            expected_types=(int | float | type(None)), value=self.h)
 
@@ -37,25 +68,21 @@ class Edge:
             return self.g + self.h
         return None
 
-    def index_of_other_node(self, current_index: int) -> int:
-        """Given one node index, return the other node index."""
-        node_indices = list(self.node_indices)
-        return node_indices[1] if node_indices[0] == current_index else node_indices[0]
-
     def __eq__(self, other):
-        return self.weight == other.weight and self.node_indices == other.node_indices and self.g == other.g and self.h == other.h
+        return self.edge == other.edge and self.g == other.g and self.h == other.h
 
     def __repr__(self):
-        return f'Edge(weight={self.weight}, node_indices={self.node_indices}, f={self.f()}, g={self.g}, h={self.h})'
+        return f'Edge(edge={self.edge}, f={self.f()}, g={self.g}, h={self.h})'
 
     def __hash__(self):
-        return hash(self.node_indices)
+        return hash(self.edge)
 
     def __copy__(self):
-        return Edge(weight=self.weight, node_indices=self.node_indices, g=self.g, h=self.h)
+        return EdgeTraversal(edge=self.edge, g=self.g, h=self.h)
 
     def __deepcopy__(self, memo: Mapping | None = None):
-        return Edge(weight=self.weight, node_indices=self.node_indices, g=self.g, h=self.h)
+        return EdgeTraversal(edge=self.edge, g=self.g, h=self.h)
+
 
 
 class Graph:
