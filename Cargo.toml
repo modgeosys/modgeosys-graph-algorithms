@@ -1,5 +1,5 @@
 [package]
-name = "nav-algorithms"
+name = "nav_algorithms"
 version = "0.1.0"
 edition = "2021"
 
