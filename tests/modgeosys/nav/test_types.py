@@ -5,18 +5,18 @@ from src.modgeosys.nav.types import Edge, EdgeTransit, Graph, NavigationFieldTyp
 
 
 def test_edge_creation_with_valid_parameters():
-    edge = Edge(weight=10, node_indices=frozenset((1, 2)))
+    edge = Edge(weight=10.0, node_indices=frozenset((1, 2)))
     assert edge.weight == 10.0
     assert edge.node_indices == frozenset((1, 2))
 
 
 def test_edge_creation_with_invalid_parameters():
     with pytest.raises(NavigationFieldTypeError):
-        Edge(weight="10", node_indices=frozenset((1, 2)))
+        Edge(weight="10.0", node_indices=frozenset((1, 2)))
 
 
 def test_edge_index_of_other_node():
-    edge = Edge(weight=10, node_indices=frozenset((1, 2)))
+    edge = Edge(weight=10.0, node_indices=frozenset((1, 2)))
     assert edge.index_of_other_node(1) == 2
     assert edge.index_of_other_node(2) == 1
 
@@ -28,7 +28,7 @@ def test_edge_equality():
 
 
 def test_edge_creation_with_valid_parameters():
-    edge = EdgeTransit(Edge(weight=10, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    edge = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
     assert edge.g == 5.0
     assert edge.h == 5.0
 
