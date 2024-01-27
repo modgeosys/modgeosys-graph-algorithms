@@ -25,6 +25,7 @@ impl Node
     }
 }
 
+
 #[derive(Debug, Clone)]
 pub struct Edge
 {
