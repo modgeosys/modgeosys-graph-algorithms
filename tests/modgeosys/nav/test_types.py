@@ -21,6 +21,12 @@ def test_edge_equality():
     assert edge1 == edge2
 
 
+def test_edge_inequality():
+    edge1 = Edge(weight=10.0, node_indices=frozenset((1, 2)))
+    edge2 = Edge(weight=10.0, node_indices=frozenset((1, 3)))
+    assert edge1 != edge2
+
+
 def test_edge_transit_creation():
     edge_transit = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
     assert edge_transit.edge == Edge(weight=10.0, node_indices=frozenset((1, 2)))

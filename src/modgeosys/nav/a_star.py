@@ -43,9 +43,9 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
 
         # Update cumulative g, edge traversal lists, and the index of the currently-visited node.
         g = best_transit.g
+        current_node_index = best_transit.edge.index_of_other_node(current_node_index)
         untraversed.remove(best_transit.edge)
         traversed.append(best_transit)
-        current_node_index = best_transit.edge.index_of_other_node(current_node_index)
 
         # Clear the auto-sorted f heapdict for reuse with the next traversal calculation.
         f.clear()
