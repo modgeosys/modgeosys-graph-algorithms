@@ -31,29 +31,16 @@ pub struct Edge
 {
     pub weight: OrderedFloat<f64>,
     pub node_indices: HashSet<usize>,
-    pub g: Option<OrderedFloat<f64>>,
-    pub h: Option<OrderedFloat<f64>>,
 }
 
 impl Edge
 {
-    pub fn new(weight: f64, node_indices: HashSet<usize>, g: Option<f64>, h: Option<f64>) -> Self
+    pub fn new(weight: f64, node_indices: HashSet<usize>) -> Self
     {
         Edge
         {
             weight: OrderedFloat(weight),
             node_indices,
-            g: g.map(OrderedFloat),
-            h: h.map(OrderedFloat),
-        }
-    }
-
-    pub fn f(&self) -> Option<OrderedFloat<f64>>
-    {
-        match (self.g, self.h)
-        {
-            (Some(g), Some(h)) => Some(g + h),
-            _ => None,
         }
     }
 
@@ -75,7 +62,7 @@ impl PartialEq for Edge
 {
     fn eq(&self, other: &Self) -> bool
     {
-        self.weight == other.weight && self.g == other.g && self.h == other.h
+        self.weight == other.weight
     }
 }
 
@@ -85,13 +72,70 @@ impl PartialOrd for Edge
 {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering>
     {
+        self.weight.partial_cmp(&other.weight)
+    }
+}
+
+impl Ord for Edge
+{
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.partial_cmp(other).unwrap_or(Ordering::Equal)
+    }
+}
+
+
+
+#[derive(Debug, Clone)]
+pub struct EdgeTransit<'a>
+{
+    pub edge: &'a Edge,
+    pub g: Option<OrderedFloat<f64>>,
+    pub h: Option<OrderedFloat<f64>>,
+}
+
+impl <'a> EdgeTransit<'_>
+{
+    pub fn new(edge: &'a Edge, g: Option<f64>, h: Option<f64>) -> Self
+    {
+        EdgeTransit
+        {
+            edge: edge,
+            g: g.map(OrderedFloat),
+            h: h.map(OrderedFloat),
+        }
+    }
+
+    pub fn f(&self) -> Option<OrderedFloat<f64>>
+    {
+        match (self.g, self.h)
+        {
+            (Some(g), Some(h)) => Some(g + h),
+            _ => None,
+        }
+    }
+}
+
+impl PartialEq for EdgeTransit<'_>
+{
+    fn eq(&self, other: &Self) -> bool
+    {
+        self.edge == other.edge && self.g == other.g && self.h == other.h
+    }
+}
+
+impl Eq for EdgeTransit<'_> {}
+
+impl PartialOrd for EdgeTransit<'_>
+{
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering>
+    {
         let self_g = self.g.unwrap_or(OrderedFloat(0f64));
         let other_g = other.g.unwrap_or(OrderedFloat(0f64));
 
         let self_h = self.h.unwrap_or(OrderedFloat(0f64));
         let other_h = other.h.unwrap_or(OrderedFloat(0f64));
 
-        match self.weight.partial_cmp(&other.weight)
+        match self.edge.partial_cmp(&other.edge)
         {
             Some(Ordering::Equal) => match self_g.partial_cmp(&other_g)
             {
@@ -103,7 +147,7 @@ impl PartialOrd for Edge
     }
 }
 
-impl Ord for Edge
+impl Ord for EdgeTransit<'_>
 {
     fn cmp(&self, other: &Self) -> Ordering {
         self.partial_cmp(other).unwrap_or(Ordering::Equal)
@@ -191,54 +235,69 @@ mod tests
     use super::*;
 
     #[test]
-    fn test_edge_creation_with_valid_parameters()
+    fn test_edge_creation_()
     {
-        let edge = Edge::new(10.0, HashSet::from([1, 2]), Some(5.0), Some(5.0));
+        let edge = Edge::new(10.0, HashSet::from([1, 2]));
         assert_eq!(edge.weight, 10.0);
         assert_eq!(edge.node_indices, HashSet::from([1, 2]));
-        assert_eq!(edge.g, Some(OrderedFloat(5.0f64)));
-        assert_eq!(edge.h, Some(OrderedFloat(5.0f64)));
     }
 
     #[test]
     fn test_edge_index_of_other_node()
     {
-        let edge = Edge::new(10.0, HashSet::from([1, 2]), None, None);
+        let edge = Edge::new(10.0, HashSet::from([1, 2]));
         assert_eq!(edge.index_of_other_node(1), 2);
         assert_eq!(edge.index_of_other_node(2), 1);
     }
 
     #[test]
-    fn test_edge_f_calculation()
-    {
-        let edge = Edge::new(10.0, HashSet::from([1, 2]), Some(5.0), Some(5.0));
-        assert_eq!(edge.f(), Some(OrderedFloat(10.0f64)));
-    }
-
-    #[test]
-    fn test_edge_f_with_none_values()
-    {
-        let edge = Edge::new(10.0, HashSet::from([1, 2]), None, None);
-        assert_eq!(edge.f(), None);
-    }
-
-    #[test]
     fn test_edge_equality()
     {
-        let edge_1 = Edge::new(10.0, HashSet::from([1, 2]), Some(5.0), Some(5.0));
-        let edge_2 = Edge::new(10.0, HashSet::from([1, 2]), Some(5.0), Some(5.0));
+        let edge_1 = Edge::new(10.0, HashSet::from([1, 2]));
+        let edge_2 = Edge::new(10.0, HashSet::from([1, 2]));
         assert_eq!(edge_1, edge_2);
+    }
+
+    #[test]
+    fn test_edge_transit_creation()
+    {
+        let edge_transit = EdgeTransit::new(&Edge::new(10.0, HashSet::from([1, 2])), Some(5.0), Some(5.0));
+        assert_eq!(edge_transit.edge, &Edge::new(10.0, HashSet::from([1, 2])));
+        assert_eq!(edge_transit.g, Some(OrderedFloat(5.0f64)));
+        assert_eq!(edge_transit.h, Some(OrderedFloat(5.0f64)));
+    }
+
+    #[test]
+    fn test_edge_transit_f_calculation()
+    {
+        let edge_transit = EdgeTransit::new(&Edge::new(10.0, HashSet::from([1, 2])), Some(5.0), Some(5.0));
+        assert_eq!(edge_transit.f(), Some(OrderedFloat(10.0f64)));
+    }
+
+    #[test]
+    fn test_edge_transit_f_with_none_values()
+    {
+        let edge_transit = EdgeTransit::new(&Edge::new(10.0, HashSet::from([1, 2])), None, None);
+        assert_eq!(edge_transit.f(), None);
+    }
+
+    #[test]
+    fn test_edge_transit_equality()
+    {
+        let edge_transit1 = EdgeTransit::new(&Edge::new(10.0, HashSet::from([1, 2])), Some(5.0), Some(5.0));
+        let edge_transit2 = EdgeTransit::new(&Edge::new(10.0, HashSet::from([1, 2])), Some(5.0), Some(5.0));
+        assert_eq!(edge_transit1, edge_transit2);
     }
 
     #[test]
     fn test_graph_adjacency_map()
     {
         let nodes = vec![Node::new(0.0, 0.0), Node::new(0.0, 2.0), Node::new(1.0, 0.0), Node::new(2.0, 1.0), Node::new(2.0, 3.0)];
-        let edges = vec![Edge::new(2.0, HashSet::from([0, 1]), None, None),
-                         Edge::new(1.0, HashSet::from([0, 2]), None, None),
-                         Edge::new(1.0, HashSet::from([2, 3]), None, None),
-                         Edge::new(3.0, HashSet::from([1, 4]), None, None),
-                         Edge::new(1.0, HashSet::from([3, 4]), None, None)];
+        let edges = vec![Edge::new(2.0, HashSet::from([0, 1])),
+                         Edge::new(1.0, HashSet::from([0, 2])),
+                         Edge::new(1.0, HashSet::from([2, 3])),
+                         Edge::new(3.0, HashSet::from([1, 4])),
+                         Edge::new(1.0, HashSet::from([3, 4]))];
         let graph = Graph::new(nodes, edges);
 
         let adjacency_map = graph.adjacency_map();
@@ -246,22 +305,22 @@ mod tests
         assert_eq!(adjacency_map.len(), 5);
         assert_eq!(adjacency_map.keys().collect::<Vec<&Node>>().sort(), vec![&Node::new(0.0, 1.0), &Node::new(0.0, 2.0), &Node::new(2.0, 3.0), &Node::new(1.0, 4.0), &Node::new(3.0, 4.0)].sort());
 
-        assert_eq!(adjacency_map[&graph.nodes[0]], vec![Edge::new(1.0, HashSet::from([0, 2]), None, None), Edge::new(2.0, HashSet::from([0, 1]), None, None)]);
-        assert_eq!(adjacency_map[&graph.nodes[1]], vec![Edge::new(2.0, HashSet::from([0, 1]), None, None), Edge::new(3.0, HashSet::from([1, 4]), None, None)]);
-        assert_eq!(adjacency_map[&graph.nodes[2]], vec![Edge::new(1.0, HashSet::from([0, 2]), None, None), Edge::new(1.0, HashSet::from([2, 3]), None, None)]);
-        assert_eq!(adjacency_map[&graph.nodes[3]], vec![Edge::new(1.0, HashSet::from([2, 3]), None, None), Edge::new(1.0, HashSet::from([3, 4]), None, None)]);
-        assert_eq!(adjacency_map[&graph.nodes[4]], vec![Edge::new(1.0, HashSet::from([3, 4]), None, None), Edge::new(3.0, HashSet::from([1, 4]), None, None)]);
+        assert_eq!(adjacency_map[&graph.nodes[0]], vec![Edge::new(1.0, HashSet::from([0, 2])), Edge::new(2.0, HashSet::from([0, 1]))]);
+        assert_eq!(adjacency_map[&graph.nodes[1]], vec![Edge::new(2.0, HashSet::from([0, 1])), Edge::new(3.0, HashSet::from([1, 4]))]);
+        assert_eq!(adjacency_map[&graph.nodes[2]], vec![Edge::new(1.0, HashSet::from([0, 2])), Edge::new(1.0, HashSet::from([2, 3]))]);
+        assert_eq!(adjacency_map[&graph.nodes[3]], vec![Edge::new(1.0, HashSet::from([2, 3])), Edge::new(1.0, HashSet::from([3, 4]))]);
+        assert_eq!(adjacency_map[&graph.nodes[4]], vec![Edge::new(1.0, HashSet::from([3, 4])), Edge::new(3.0, HashSet::from([1, 4]))]);
     }
 
     #[test]
     fn test_graph_adjacency_matrix()
     {
         let nodes = vec![Node::new(0.0, 1.0), Node::new(0.0, 2.0), Node::new(2.0, 3.0), Node::new(1.0, 4.0), Node::new(3.0, 4.0)];
-        let edges = vec![Edge::new(2.0, HashSet::from([0, 1]), None, None),
-                         Edge::new(1.0, HashSet::from([0, 2]), None, None),
-                         Edge::new(1.0, HashSet::from([2, 3]), None, None),
-                         Edge::new(3.0, HashSet::from([1, 4]), None, None),
-                         Edge::new(1.0, HashSet::from([3, 4]), None, None)];
+        let edges = vec![Edge::new(2.0, HashSet::from([0, 1])),
+                         Edge::new(1.0, HashSet::from([0, 2])),
+                         Edge::new(1.0, HashSet::from([2, 3])),
+                         Edge::new(3.0, HashSet::from([1, 4])),
+                         Edge::new(1.0, HashSet::from([3, 4]))];
         let graph = Graph::new(nodes, edges);
 
         let adjacency_matrix = graph.adjacency_matrix();

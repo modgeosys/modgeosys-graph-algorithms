@@ -2,11 +2,11 @@ use std::collections::BTreeMap;
 
 use ordered_float::OrderedFloat;
 
-use crate::modgeosys::nav::types::{Edge, Graph, NoNavigablePathError};
+use crate::modgeosys::nav::types::{Edge, EdgeTransit, Graph, NoNavigablePathError};
 use crate::modgeosys::nav::distance::manhattan_distance;
 
 
-pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) -> Result<Vec<Edge>, NoNavigablePathError>
+pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) -> Result<Vec<EdgeTransit>, NoNavigablePathError>
 {
     let nodes = &graph.nodes;
     let adjacency_map = graph.adjacency_map();
@@ -25,19 +25,20 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
         {
             if untraversed.contains(&candidate_edge)
             {
-                let mut candidate_edge = candidate_edge.clone();
-                candidate_edge.g = Some(candidate_edge.weight + g);
-                candidate_edge.h = Some(manhattan_distance(&nodes[candidate_edge.index_of_other_node(current_node_index)], &nodes[goal_node_index]));
-                f.insert(candidate_edge.f().unwrap(), candidate_edge);
+                let mut candidate_transit = EdgeTransit::new(&candidate_edge,
+                                                             Some(*candidate_edge.weight + *g),
+                                                             Some(*manhattan_distance(&nodes[candidate_edge.index_of_other_node(current_node_index)],
+                                                                                      &nodes[goal_node_index])));
+                f.insert(candidate_transit.f().unwrap(), candidate_transit);
             }
         }
 
-        let Some((_, best_transit_edge)) = f.pop_first() else { return Err(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() }) };
+        let Some((_, best_transit)) = f.pop_first() else { return Err(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() }) };
 
-        g = best_transit_edge.g.unwrap();
-        untraversed.retain(|edge| edge != &best_transit_edge);
-        traversed.push(best_transit_edge.clone());
-        current_node_index = best_transit_edge.index_of_other_node(current_node_index);
+        g = best_transit.g.unwrap();
+        untraversed.retain(|edge| edge != best_transit.edge);
+        traversed.push(best_transit.clone());
+        current_node_index = best_transit.edge.index_of_other_node(current_node_index);
 
         f.clear();
     }
