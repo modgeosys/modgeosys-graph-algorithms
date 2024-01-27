@@ -53,14 +53,14 @@ class Edge:
 class EdgeTransit:
     """An edge transit in a graph."""
     edge: Edge
-    g: int | float | None = None
-    h: int | float | None = None
+    g: int | float
+    h: int | float
 
     def __post_init__(self):
         """Validate the dataclass fields."""
         # validate(field_name='edge',         expected_types=Edge,                       value=self.edge)
-        validate(field_name='g',            expected_types=(int | float | type(None)), value=self.g)
-        validate(field_name='h',            expected_types=(int | float | type(None)), value=self.h)
+        validate(field_name='g',            expected_types=(int | float), value=self.g)
+        validate(field_name='h',            expected_types=(int | float), value=self.h)
 
     def f(self) -> int | float | None:
         """Calculate the combined cost of the edge."""

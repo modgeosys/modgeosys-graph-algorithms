@@ -40,8 +40,8 @@ def test_edge_transit_f_calculation():
 
 
 def test_edge_transit_f_calculation_with_none_values():
-    edge_transit = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=None, h=None)
-    assert edge_transit.f() is None
+    with pytest.raises(NavigationFieldTypeError):
+        EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=None, h=None)
 
 
 def test_edge_transit_equality():
