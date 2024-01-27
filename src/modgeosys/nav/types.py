@@ -37,7 +37,7 @@ class Edge:
             return self.g + self.h
         return None
 
-    def index_of_other(self, current_index: int) -> int:
+    def index_of_other_node(self, current_index: int) -> int:
         """Given one node index, return the other node index."""
         node_indices = list(self.node_indices)
         return node_indices[1] if node_indices[0] == current_index else node_indices[0]
