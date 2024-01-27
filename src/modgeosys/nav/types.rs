@@ -24,25 +24,6 @@ impl Node
         }
     }
 }
-//
-// impl PartialEq for Node
-// {
-//     fn eq(&self, other: &Self) -> bool
-//     {
-//         self.0 == other.0 && self.1 == other.1
-//     }
-// }
-//
-// impl Eq for Node {}
-//
-// impl Hash for Node
-// {
-//     fn hash<H: Hasher>(&self, state: &mut H)
-//     {
-//         self.0.to_bits().hash(state);
-//         self.1.to_bits().hash(state);
-//     }
-// }
 
 
 #[derive(Debug, Clone)]
@@ -128,24 +109,6 @@ impl Ord for Edge
         self.partial_cmp(other).unwrap_or(Ordering::Equal)
     }
 }
-//
-// impl Hash for Edge
-// {
-//     fn hash<H: Hasher>(&self, state: &mut H)
-//     {
-//         self.weight.to_bits().hash(state);
-//         match self.g
-//         {
-//             Some(g) => g.to_bits().hash(state),
-//             None => f64::INFINITY.to_bits().hash(state),
-//         }
-//         match self.h
-//         {
-//             Some(h) => h.to_bits().hash(state),
-//             None => f64::INFINITY.to_bits().hash(state),
-//         }
-//     }
-// }
 
 
 #[derive(Debug, Clone)]
