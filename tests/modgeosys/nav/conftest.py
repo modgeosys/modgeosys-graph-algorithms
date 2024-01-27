@@ -4,11 +4,6 @@ from src.modgeosys.nav.types import Edge, Graph
 
 
 @pytest.fixture
-def valid_edge():
-    return Edge(weight=10, node_indices=frozenset((1, 2)), g=5, h=5)
-
-
-@pytest.fixture
 def valid_nodes():
     return [(0.0, 0.0), (0.0, 2.0), (1.0, 0.0), (2.0, 1.0), (2.0, 3.0)]
 

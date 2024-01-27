@@ -50,7 +50,7 @@ def test_graph_creation(valid_nodes, valid_edges1, valid_graph1):
     assert valid_graph1.edges == valid_edges1
 
 
-def test_graph_adjacency_mapping(valid_graph1):
+def test_graph_adjacency_map(valid_graph1):
     adjacency_map = valid_graph1.adjacency_map()
     assert adjacency_map == {(0.0, 0.0): [Edge(weight=1, node_indices=frozenset((0, 2))), Edge(weight=2, node_indices=frozenset((0, 1)))],
                              (0.0, 2.0): [Edge(weight=2, node_indices=frozenset((0, 1))), Edge(weight=3, node_indices=frozenset((1, 4)))],
