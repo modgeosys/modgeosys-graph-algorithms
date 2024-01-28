@@ -4,9 +4,8 @@ from modgeosys.nav.types import Node, Edge, EdgeTransit
 
 
 def test_node_creation():
-    node1 = Node((0.0, 0.0))
-    node2 = Node((0.0, 0.0))
-    assert node1 == node2
+    node = Node((0.0, 0.0))
+    assert node.coordinates.all() == np.array([0.0, 0.0]).all()
 
 
 def test_node_equality():

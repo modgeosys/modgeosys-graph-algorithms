@@ -4,28 +4,64 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::cmp::Ordering;
 
-use ndarray::Array2;
+use ndarray::{Array1, Array2, Ix1};
+use ndarray::iter::Iter;
 use ordered_float::OrderedFloat;
 
 
 
 // A node in a graph.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct Node
-{
-    pub x: OrderedFloat<f64>,
-    pub y: OrderedFloat<f64>,
-}
+#[derive(Debug, Clone, Eq, Hash)]
+pub struct Node(pub Array1<OrderedFloat<f64>>);
 
 impl Node
 {
-    pub fn new(x: f64, y: f64) -> Self
+    pub fn new(coordinates: Vec<f64>) -> Self
     {
-        Node
+        Node(Array1::from_vec(coordinates).mapv(OrderedFloat))
+    }
+}
+
+impl PartialOrd for Node
+{
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering>
+    {
+        for (self_coord, other_coord) in self.0.iter().zip(other.0.iter())
         {
-            x: OrderedFloat(x),
-            y: OrderedFloat(y),
+            match self_coord.cmp(other_coord)
+            {
+                Ordering::Equal => continue,
+                non_equal => return Some(non_equal),
+            }
         }
+        Some(Ordering::Equal)
+    }
+}
+
+impl PartialEq for Node
+{
+    fn eq(&self, other: &Self) -> bool
+    {
+        self.0.iter().zip(other.0.iter()).all(|(a, b)| a == b)
+    }
+}
+
+impl Ord for Node
+{
+    fn cmp(&self, other: &Self) -> Ordering
+    {
+        self.partial_cmp(other).unwrap_or(Ordering::Equal)
+    }
+}
+
+impl<'a> IntoIterator for &'a Node
+{
+    type Item = &'a OrderedFloat<f64>;
+    type IntoIter = Iter<'a, OrderedFloat<f64>, Ix1>;
+
+    fn into_iter(self) -> Self::IntoIter
+    {
+        self.0.iter()
     }
 }
 
@@ -90,8 +126,7 @@ impl Ord for Edge
 }
 
 
-
-// A wrapper for an edge that includes the g and h values for A*.
+// A wrapper for an edge that includes the f() function, and the g and h values to support A*.
 #[derive(Debug, Clone)]
 pub struct EdgeTransit
 {
@@ -242,6 +277,14 @@ mod tests
     use crate::test_fixtures::tests::{valid_nodes, valid_edges1, valid_graph1};
 
     #[test]
+    fn test_node_equality()
+    {
+        let node1 = Node::new(vec![0.0, 0.0]);
+        let node2 = Node::new(vec![0.0, 0.0]);
+        assert_eq!(node1, node2);
+    }
+
+    #[test]
     fn test_edge_creation_()
     {
         let edge = Edge::new(10.0, HashSet::from([1, 2]));
@@ -314,7 +357,7 @@ mod tests
         let adjacency_map = graph.adjacency_map();
 
         assert_eq!(adjacency_map.len(), 5);
-        assert_eq!(adjacency_map.keys().collect::<Vec<&Node>>().sort(), vec![&Node::new(0.0, 1.0), &Node::new(0.0, 2.0), &Node::new(2.0, 3.0), &Node::new(1.0, 4.0), &Node::new(3.0, 4.0)].sort());
+        assert_eq!(adjacency_map.keys().collect::<Vec<&Node>>().sort(), vec![&Node::new(vec![0.0, 1.0]), &Node::new(vec![0.0, 2.0]), &Node::new(vec![2.0, 3.0]), &Node::new(vec![1.0, 4.0]), &Node::new(vec![3.0, 4.0])].sort());
 
         assert_eq!(adjacency_map[&graph.nodes[0]], vec![Edge::new(1.0, HashSet::from([0, 2])), Edge::new(2.0, HashSet::from([0, 1]))]);
         assert_eq!(adjacency_map[&graph.nodes[1]], vec![Edge::new(2.0, HashSet::from([0, 1])), Edge::new(3.0, HashSet::from([1, 4]))]);

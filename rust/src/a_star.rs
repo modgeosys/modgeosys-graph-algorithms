@@ -99,7 +99,7 @@ mod tests
     #[test]
     fn test_a_star_with_single_node_path_manhattan()
     {
-        let nodes = vec![Node::new(0.0, 0.0)];
+        let nodes = vec![Node::new(vec![0.0, 0.0])];
         let edges: Vec<Edge> = Vec::new();
 
         let expected: Vec<EdgeTransit> = Vec::new();

@@ -46,7 +46,11 @@ use modgeosys_nav::distance::manhattan_distance;
 fn main()
 {
   // Define a graph.
-  let nodes = vec![Node::new(0.0, 0.0), Node::new(0.0, 2.0), Node::new(1.0, 0.0), Node::new(2.0, 1.0), Node::new(2.0, 3.0)];
+  let nodes = vec![Node::new(vec![0.0, 0.0]),
+                   Node::new(vec![0.0, 2.0]),
+                   Node::new(vec![1.0, 0.0]),
+                   Node::new(vec![2.0, 1.0]),
+                   Node::new(vec![2.0, 3.0])];
   let edges = vec![Edge::new(2.0, HashSet::from([0, 1])),
                    Edge::new(1.0, HashSet::from([0, 2])),
                    Edge::new(1.0, HashSet::from([2, 3])),

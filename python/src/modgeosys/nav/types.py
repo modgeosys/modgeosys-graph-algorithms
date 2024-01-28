@@ -96,7 +96,7 @@ class Edge:
 
 @dataclass(order=True)
 class EdgeTransit:
-    """Wrapper for an edge that includes the f() function, and tthe g and h values to support A*."""
+    """A wrapper for an edge that includes the f() function, and the g and h values to support A*."""
     edge: Edge
     g: int | float
     h: int | float

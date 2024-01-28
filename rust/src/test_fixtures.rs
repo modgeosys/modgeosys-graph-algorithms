@@ -6,7 +6,11 @@ pub mod tests
 
     pub fn valid_nodes() -> Vec<Node>
     {
-        let nodes = vec![Node::new(0.0, 0.0), Node::new(0.0, 2.0), Node::new(1.0, 0.0), Node::new(2.0, 1.0), Node::new(2.0, 3.0)];
+        let nodes = vec![Node::new(vec![0.0, 0.0]),
+                         Node::new(vec![0.0, 2.0]),
+                         Node::new(vec![1.0, 0.0]),
+                         Node::new(vec![2.0, 1.0]),
+                         Node::new(vec![2.0, 3.0])];
         nodes
     }
 
