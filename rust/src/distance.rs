@@ -4,6 +4,8 @@ use ordered_float::OrderedFloat;
 
 use crate::types::Node;
 
+
+
 // Calculate the Manhattan distance between two points.
 pub fn manhattan_distance(a: &Node, b: &Node) -> OrderedFloat<f64>
 {

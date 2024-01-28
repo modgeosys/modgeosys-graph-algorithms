@@ -7,6 +7,7 @@ use ordered_float::OrderedFloat;
 use crate::types::{EdgeTransit, Graph, Node, NoNavigablePathError};
 
 
+
 // Implement the A* algorithm for finding the shortest path between two nodes in a graph.
 pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, heuristic_distance: fn(&Node, &Node) -> OrderedFloat<f64>) -> Result<Vec<EdgeTransit>, NoNavigablePathError>
 {
