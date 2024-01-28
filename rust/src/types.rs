@@ -285,6 +285,14 @@ mod tests
     }
 
     #[test]
+    fn test_node_inequality()
+    {
+        let node1 = Node::new(vec![0.0, 0.0]);
+        let node2 = Node::new(vec![0.0, 1.0]);
+        assert_ne!(node1, node2);
+    }
+
+    #[test]
     fn test_edge_creation_()
     {
         let edge = Edge::new(10.0, HashSet::from([1, 2]));
