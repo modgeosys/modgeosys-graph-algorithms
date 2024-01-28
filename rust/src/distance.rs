@@ -25,6 +25,8 @@ pub fn euclidean_distance(a: &Node, b: &Node) -> OrderedFloat<f64>
 #[cfg(test)]
 mod tests
 {
+    // TODO: Add tests for n-dimensional points.
+
     use super::*;
 
     #[test]
