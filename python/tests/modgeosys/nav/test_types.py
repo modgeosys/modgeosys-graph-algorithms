@@ -1,6 +1,24 @@
 import numpy as np
 
-from modgeosys.nav.types import Edge, EdgeTransit
+from modgeosys.nav.types import Node, Edge, EdgeTransit
+
+
+def test_node_creation():
+    node1 = Node((0.0, 0.0))
+    node2 = Node((0.0, 0.0))
+    assert node1 == node2
+
+
+def test_node_equality():
+    node1 = Node((0.0, 0.0))
+    node2 = Node((0.0, 0.0))
+    assert node1 == node2
+
+
+def test_node_inequality():
+    node1 = Node((0.0, 0.0))
+    node2 = Node((0.0, 1.0))
+    assert node1 != node2
 
 
 def test_edge_creation():
@@ -52,11 +70,11 @@ def test_graph_creation(valid_nodes, valid_edges1, valid_graph1):
 
 def test_graph_adjacency_map(valid_graph1):
     adjacency_map = valid_graph1.adjacency_map()
-    assert adjacency_map == {(0.0, 0.0): [Edge(weight=1, node_indices=frozenset((0, 2))), Edge(weight=2, node_indices=frozenset((0, 1)))],
-                             (0.0, 2.0): [Edge(weight=2, node_indices=frozenset((0, 1))), Edge(weight=3, node_indices=frozenset((1, 4)))],
-                             (1.0, 0.0): [Edge(weight=1, node_indices=frozenset((0, 2))), Edge(weight=1, node_indices=frozenset((2, 3)))],
-                             (2.0, 1.0): [Edge(weight=1, node_indices=frozenset((2, 3))), Edge(weight=1, node_indices=frozenset((3, 4)))],
-                             (2.0, 3.0): [Edge(weight=1, node_indices=frozenset((3, 4))), Edge(weight=3, node_indices=frozenset((1, 4)))]}
+    assert adjacency_map == {Node((0.0, 0.0)): [Edge(weight=1, node_indices=frozenset((0, 2))), Edge(weight=2, node_indices=frozenset((0, 1)))],
+                             Node((0.0, 2.0)): [Edge(weight=2, node_indices=frozenset((0, 1))), Edge(weight=3, node_indices=frozenset((1, 4)))],
+                             Node((1.0, 0.0)): [Edge(weight=1, node_indices=frozenset((0, 2))), Edge(weight=1, node_indices=frozenset((2, 3)))],
+                             Node((2.0, 1.0)): [Edge(weight=1, node_indices=frozenset((2, 3))), Edge(weight=1, node_indices=frozenset((3, 4)))],
+                             Node((2.0, 3.0)): [Edge(weight=1, node_indices=frozenset((3, 4))), Edge(weight=3, node_indices=frozenset((1, 4)))]}
 
 
 def test_graph_adjacency_matrix(valid_graph1):

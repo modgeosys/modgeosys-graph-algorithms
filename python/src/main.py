@@ -1,3 +1,5 @@
+"""Usage example(s)."""
+
 from modgeosys.nav.a_star import a_star
 from modgeosys.nav.types import Edge, Graph
 from modgeosys.nav.distance import manhattan_distance, euclidean_distance

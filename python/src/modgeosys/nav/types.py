@@ -4,16 +4,66 @@ import bisect
 from collections.abc import Callable, Mapping, Sequence
 from copy import copy
 from dataclasses import dataclass, field
-from types import UnionType
-from typing import Any
+from typing import Annotated, Literal, TypeVar
 
 import numpy as np
+import numpy.typing as npt
 
-type Node = tuple[int | float, int | float]
+
+NDType = TypeVar("NDType", bound=np.generic)
+Vector = Annotated[npt.NDArray[NDType], Literal["N", 1]]
+
 type NodeSequence = Sequence[Node]
 type EdgeSequence = Sequence[Edge]
-type AdjacencyMapping = Mapping[tuple[int | float, int | float], Sequence[Edge]]
+type AdjacencyMap = Mapping[Node, Sequence[Edge]]
 type HeuristicDistanceCallable = Callable[[Node, Node], int | float]
+
+
+@dataclass
+class Node:
+    """A node in a graph."""
+    coordinates: Vector[np.float64]
+
+    def __init__(self, coordinates: tuple):
+        self.coordinates = np.array(coordinates, dtype=np.float64)
+
+    def __hash__(self):
+        return hash(self.coordinates.tobytes()) # May not work for mixed array shapes; intended for Vectors only.
+
+    def __eq__(self, other):
+        return np.all(self.coordinates == other.coordinates)
+
+    def __lt__(self, other: 'Node') -> bool:
+        return not np.all(self.coordinates < other.coordinates)
+
+    def __add__(self, other):
+        if isinstance(other, Node):
+            other = other.coordinates
+        return Node(self.coordinates + other)
+
+    def __sub__(self, other):
+        if isinstance(other, Node):
+            other = other.coordinates
+        return Node(self.coordinates - other)
+
+    def __mul__(self, other):
+        if isinstance(other, Node):
+            other = other.coordinates
+        return Node(self.coordinates * other)
+
+    def __truediv__(self, other):
+        if isinstance(other, Node):
+            other = other.coordinates
+        return Node(self.coordinates / other)
+
+    def __floordiv__(self, other):
+        if isinstance(other, Node):
+            other = other.coordinates
+        return Node(self.coordinates // other)
+
+    def __array__(self):
+        return self.coordinates
+
 
 
 @dataclass(order=True)
@@ -46,7 +96,7 @@ class Edge:
 
 @dataclass(order=True)
 class EdgeTransit:
-    """ wrapper for an edge that includes the g and h values for A*."""
+    """Wrapper for an edge that includes the f() function, and tthe g and h values to support A*."""
     edge: Edge
     g: int | float
     h: int | float
@@ -79,7 +129,7 @@ class Graph:
 
     def __init__(self, nodes: NodeSequence, edges: EdgeSequence):
         """Initialize a graph."""
-        self.nodes = [tuple(node) for node in nodes]
+        self.nodes = copy(nodes)
         self.edges = tuple(copy(edge) for edge in edges)
 
     def __repr__(self):
@@ -94,7 +144,7 @@ class Graph:
     def __hash__(self):
         return hash((self.nodes, self.edges))
 
-    def adjacency_map(self) -> AdjacencyMapping:
+    def adjacency_map(self) -> AdjacencyMap:
         """Render an adjacency map."""
 
         adjacency_map = {node: [] for node in self.nodes}

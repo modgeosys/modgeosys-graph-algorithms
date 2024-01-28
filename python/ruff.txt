@@ -1,0 +1,4 @@
+src/main.py:5:56: F401 [*] `modgeosys.nav.distance.euclidean_distance` imported but unused
+src/main.py:20:1: T201 `print` found
+Found 2 errors.
+[*] 1 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option).

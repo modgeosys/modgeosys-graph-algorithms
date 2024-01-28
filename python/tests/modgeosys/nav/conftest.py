@@ -1,11 +1,11 @@
 import pytest
 
-from src.modgeosys.nav.types import Edge, Graph
+from src.modgeosys.nav.types import Node, Edge, Graph
 
 
 @pytest.fixture
 def valid_nodes():
-    return [(0.0, 0.0), (0.0, 2.0), (1.0, 0.0), (2.0, 1.0), (2.0, 3.0)]
+    return [Node((0.0, 0.0)), Node((0.0, 2.0)), Node((1.0, 0.0)), Node((2.0, 1.0)), Node((2.0, 3.0))]
 
 
 @pytest.fixture

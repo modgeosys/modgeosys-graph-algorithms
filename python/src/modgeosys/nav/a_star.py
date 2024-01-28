@@ -2,7 +2,6 @@
 
 from heapdict import heapdict
 
-from modgeosys.nav.distance import manhattan_distance
 from modgeosys.nav.types import Edge, EdgeTransit, Graph, HeuristicDistanceCallable, NoNavigablePathError
 
 
