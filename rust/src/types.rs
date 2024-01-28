@@ -99,7 +99,7 @@ impl EdgeTransit
     {
         EdgeTransit
         {
-            edge: edge,
+            edge,
             g: OrderedFloat(g),
             h: OrderedFloat(h),
         }

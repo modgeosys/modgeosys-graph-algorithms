@@ -65,6 +65,6 @@ mod tests
     {
         let a = Node::new(0.0, 0.0);
         let b = Node::new(3.0, 4.0);
-        assert_eq!(euclidean_distance(&a, &b), (OrderedFloat(5.0f64)));
+        assert_eq!(euclidean_distance(&a, &b), OrderedFloat(5.0f64));
     }
 }
