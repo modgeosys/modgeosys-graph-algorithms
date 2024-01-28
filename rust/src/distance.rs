@@ -1,6 +1,6 @@
 use ordered_float::OrderedFloat;
 
-use crate::modgeosys::nav::types::Node;
+use crate::types::Node;
 
 pub fn manhattan_distance(a: &Node, b: &Node) -> OrderedFloat<f64>
 {

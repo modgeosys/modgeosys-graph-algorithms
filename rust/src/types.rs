@@ -225,7 +225,7 @@ impl NoNavigablePathError
 mod tests
 {
     use super::*;
-    use crate::modgeosys::nav::test_fixtures::tests::{valid_nodes, valid_edges1, valid_graph1};
+    use crate::test_fixtures::tests::{valid_nodes, valid_edges1, valid_graph1};
 
     #[test]
     fn test_edge_creation_()

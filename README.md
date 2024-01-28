@@ -17,7 +17,7 @@ Python and/or Rust with Python bindings. I'll be adding more algorithm implement
 ```python
 from modgeosys.nav.a_star import a_star
 from modgeosys.nav.types import Edge, Graph
-from modgeosys.nav.distance import manhattan_distance, euclidean_distance
+from modgeosys.nav.distance import manhattan_distance
 
 # Define a graph.
 nodes = [(0.0, 0.0), (0.0, 2.0), (1.0, 0.0), (2.0, 1.0), (2.0, 3.0)]
@@ -38,9 +38,10 @@ print(path)
 ### A\* (Rust)
 ```rust
 use std::collections::HashSet;
-use nav_algorithms::modgeosys::nav::a_star::a_star;
-use nav_algorithms::modgeosys::nav::types::{Node, Edge, Graph};
-use nav_algorithms::modgeosys::nav::distance::manhattan_distance;
+
+use modgeosys_nav::a_star::a_star;
+use modgeosys_nav::types::{Node, Edge, Graph};
+use modgeosys_nav::distance::manhattan_distance;
 
 fn main()
 {

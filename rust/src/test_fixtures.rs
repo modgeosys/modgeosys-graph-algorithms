@@ -2,7 +2,7 @@
 pub mod tests
 {
     use std::collections::HashSet;
-    use crate::modgeosys::nav::types::{Edge, Graph, Node};
+    use crate::types::{Edge, Graph, Node};
 
     pub fn valid_nodes() -> Vec<Node>
     {

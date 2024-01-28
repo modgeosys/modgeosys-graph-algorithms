@@ -1,7 +1,8 @@
 use std::collections::HashSet;
-use nav_algorithms::modgeosys::nav::a_star::a_star;
-use nav_algorithms::modgeosys::nav::types::{Node, Edge, Graph};
-use nav_algorithms::modgeosys::nav::distance::manhattan_distance;
+
+use modgeosys_nav::a_star::a_star;
+use modgeosys_nav::types::{Node, Edge, Graph};
+use modgeosys_nav::distance::manhattan_distance;
 
 fn main()
 {

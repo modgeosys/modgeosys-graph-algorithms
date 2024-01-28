@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use ordered_float::OrderedFloat;
 
-use crate::modgeosys::nav::types::{EdgeTransit, Graph, Node, NoNavigablePathError};
+use crate::types::{EdgeTransit, Graph, Node, NoNavigablePathError};
 
 
 pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, heuristic_distance: fn(&Node, &Node) -> OrderedFloat<f64>) -> Result<Vec<EdgeTransit>, NoNavigablePathError>
@@ -51,9 +51,9 @@ mod tests
 {
     use std::collections::HashSet;
     use super::*;
-    use crate::modgeosys::nav::distance::manhattan_distance;
-    use crate::modgeosys::nav::types::{Edge, Node};
-    use crate::modgeosys::nav::test_fixtures::tests::{valid_nodes, valid_graph1, valid_graph2};
+    use crate::distance::manhattan_distance;
+    use crate::types::{Edge, Node};
+    use crate::test_fixtures::tests::{valid_nodes, valid_graph1, valid_graph2};
 
     #[test]
     fn test_a_star_finds_shortest_path_manhattan_graph1()
