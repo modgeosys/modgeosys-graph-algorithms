@@ -57,6 +57,7 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, he
 }
 
 
+
 #[cfg(test)]
 mod tests
 {

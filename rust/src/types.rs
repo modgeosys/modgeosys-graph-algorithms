@@ -8,6 +8,7 @@ use ndarray::Array2;
 use ordered_float::OrderedFloat;
 
 
+
 // A node in a graph.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Node
@@ -231,6 +232,7 @@ impl NoNavigablePathError
         }
     }
 }
+
 
 
 #[cfg(test)]

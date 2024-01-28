@@ -21,6 +21,7 @@ pub fn euclidean_distance(a: &Node, b: &Node) -> OrderedFloat<f64>
 }
 
 
+
 #[cfg(test)]
 mod tests
 {
