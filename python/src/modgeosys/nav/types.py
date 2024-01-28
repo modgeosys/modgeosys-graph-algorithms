@@ -51,11 +51,9 @@ class EdgeTransit:
     g: int | float
     h: int | float
 
-    def f(self) -> int | float | None:
+    def f(self) -> int | float:
         """Calculate the combined cost of the edge."""
-        if self.g is not None and self.h is not None:
-            return self.g + self.h
-        return None
+        return self.g + self.h
 
     def __eq__(self, other):
         return self.edge == other.edge and self.g == other.g and self.h == other.h

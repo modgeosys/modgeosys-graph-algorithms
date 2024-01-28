@@ -41,7 +41,8 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, he
         }
 
         // Pick the edge with the lowest f value; if no path to the goal exists, return an error.
-        let Some((_, best_transit)) = f.pop_first() else { return Err(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() }) };
+        let Some((_, best_transit)) = f.pop_first()
+            else { return Err(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() }) };
 
         // Update cumulative g, the index of the currently-visited node, and the edge traversal lists.
         g                  = best_transit.g;
