@@ -1,6 +1,6 @@
 import numpy as np
 
-from modgeosys.nav.types import Edge, EdgeTransit, Graph, NavigationFieldTypeError
+from modgeosys.nav.types import Edge, EdgeTransit
 
 
 def test_edge_creation():

@@ -46,7 +46,7 @@ class Edge:
 
 @dataclass(order=True)
 class EdgeTransit:
-    """An edge transit in a graph."""
+    """ wrapper for an edge that includes the g and h values for A*."""
     edge: Edge
     g: int | float
     h: int | float
@@ -117,12 +117,6 @@ class Graph:
             adjacency_matrix[node_indices[0], node_indices[1]] = adjacency_matrix[node_indices[1], node_indices[0]] = edge.weight
 
         return adjacency_matrix
-
-
-class NavigationFieldTypeError(TypeError):
-    """Raised when an invalid type is passed to a navigation function."""
-    def __init__(self, field_name: str, expected_types: type | UnionType, value: Any):
-        super().__init__(f"Expected type ({expected_types}) for '{field_name}', but received type {type(value).__name__}.")
 
 
 class NoNavigablePathError(Exception):

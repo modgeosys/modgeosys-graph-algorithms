@@ -1,12 +1,16 @@
+// Heuristic distance functions.
+
 use ordered_float::OrderedFloat;
 
 use crate::types::Node;
 
+// Calculate the Manhattan distance between two points.
 pub fn manhattan_distance(a: &Node, b: &Node) -> OrderedFloat<f64>
 {
     OrderedFloat((a.x - b.x).abs() + (a.y - b.y).abs())
 }
 
+// Calculate the Euclidean distance between two points.
 pub fn euclidean_distance(a: &Node, b: &Node) -> OrderedFloat<f64>
 {
     let dx = a.x - b.x;

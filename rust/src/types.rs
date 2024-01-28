@@ -1,3 +1,5 @@
+// Simple and complex data types for the navigation module.
+
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::cmp::Ordering;
@@ -6,6 +8,7 @@ use ndarray::Array2;
 use ordered_float::OrderedFloat;
 
 
+// A node in a graph.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Node
 {
@@ -26,6 +29,7 @@ impl Node
 }
 
 
+// An edge in a graph.
 #[derive(Debug, Clone)]
 pub struct Edge
 {
@@ -44,6 +48,7 @@ impl Edge
         }
     }
 
+    // Given one node index, return the other node index.
     pub fn index_of_other_node(&self, current_index: usize) -> usize
     {
         let node_indices: Vec<usize> = self.node_indices.iter().cloned().collect();
@@ -85,6 +90,7 @@ impl Ord for Edge
 
 
 
+// A wrapper for an edge that includes the g and h values for A*.
 #[derive(Debug, Clone)]
 pub struct EdgeTransit
 {
@@ -105,6 +111,7 @@ impl EdgeTransit
         }
     }
 
+    // Calculate the combined cost of the edge.
     pub fn f(&self) -> OrderedFloat<f64>
     {
         self.g + self.h
@@ -147,6 +154,7 @@ impl Ord for EdgeTransit
 }
 
 
+// A graph.
 #[derive(Debug, Clone)]
 pub struct Graph
 {
@@ -161,6 +169,7 @@ impl Graph
         Graph { nodes, edges }
     }
 
+    // Render an adjacency map.
     pub fn adjacency_map(&self) -> HashMap<Node, Vec<Edge>>
     {
         let mut adjacency_map: HashMap<Node, Vec<Edge>> = HashMap::new();
@@ -186,6 +195,7 @@ impl Graph
         adjacency_map
     }
 
+    // Render an adjacency matrix.
     pub fn adjacency_matrix(&self) -> Array2<f64>
     {
         let mut adjacency_matrix = Array2::from_elem((self.nodes.len(), self.nodes.len()), f64::INFINITY);
@@ -201,6 +211,8 @@ impl Graph
     }
 }
 
+
+// Returned when no path can be found to the goal node.
 #[derive(Debug, Clone)]
 pub struct NoNavigablePathError
 {

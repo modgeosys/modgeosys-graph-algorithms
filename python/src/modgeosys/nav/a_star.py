@@ -9,7 +9,7 @@ from modgeosys.nav.types import Edge, EdgeTransit, Graph, HeuristicDistanceCalla
 def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_distance: HeuristicDistanceCallable) -> list[Edge]:
     """Implement the A* algorithm for finding the shortest path between two nodes in a graph."""
 
-    # Grab the nodes and adjacency map.
+    # Grab the nodes and adjacency map from the graph.
     nodes = graph.nodes
     adjacency_map = graph.adjacency_map()
 
@@ -41,7 +41,7 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
         # Pick the edge with the lowest f value.
         _, best_transit = f.popitem()
 
-        # Update cumulative g, edge traversal lists, and the index of the currently-visited node.
+        # Update cumulative g, the index of the currently-visited node, and the edge traversal lists.
         g = best_transit.g
         current_node_index = best_transit.edge.index_of_other_node(current_node_index)
         untraversed.remove(best_transit.edge)
