@@ -12,9 +12,9 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
     nodes         = graph.nodes
     adjacency_map = graph.adjacency_map()
 
-    # Initialize the edge traversal lists.
-    untraversed   = list(graph.edges)
-    traversed     = []
+    # Initialize the edge transit lists.
+    untransited   = list(graph.edges)
+    transited     = []
 
     # Current node begins with the starting node.
     current_node_index = start_node_index
@@ -25,9 +25,9 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
 
     while current_node_index != goal_node_index:
 
-        # Calculate f for each candidate edge we could traverse next.
+        # Calculate f for each candidate edge we could transit next.
         for candidate_edge in adjacency_map[nodes[current_node_index]]:
-            if candidate_edge in untraversed:
+            if candidate_edge in untransited:
                 candidate_transit = EdgeTransit(edge=candidate_edge,
                                                 g=candidate_edge.weight + g,
                                                 h=heuristic_distance(nodes[candidate_edge.index_of_other_node(current_node_index)], nodes[goal_node_index]))
@@ -40,13 +40,13 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
         # Pick the edge with the lowest f value.
         _, best_transit = f.popitem()
 
-        # Update cumulative g, the index of the currently-visited node, and the edge traversal lists.
+        # Update cumulative g, the index of the currently-visited node, and the edge transit lists.
         g                  = best_transit.g
         current_node_index = best_transit.edge.index_of_other_node(current_node_index)
-        untraversed.remove(best_transit.edge)
-        traversed.append(best_transit)
+        untransited.remove(best_transit.edge)
+        transited.append(best_transit)
 
-        # Clear the auto-sorted f heapdict for reuse with the next traversal calculation.
+        # Clear the auto-sorted f heapdict for reuse with the next transit calculation.
         f.clear()
 
-    return traversed
+    return transited

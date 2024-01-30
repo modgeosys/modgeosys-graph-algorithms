@@ -15,9 +15,9 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, he
     let nodes           = &graph.nodes;
     let adjacency_map   = graph.adjacency_map();
 
-    // Initialize the edge traversal lists.
-    let mut untraversed = graph.edges.clone();
-    let mut traversed   = Vec::new();
+    // Initialize the edge transit lists.
+    let mut untransited = graph.edges.clone();
+    let mut transited   = Vec::new();
 
     // Current node begins with the start node.
     let mut current_node_index = start_node_index;
@@ -27,10 +27,10 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, he
 
     while current_node_index != goal_node_index
     {
-        // Calculate f for each candidate edge we could traverse next.
+        // Calculate f for each candidate edge we could transit next.
         for candidate_edge in adjacency_map[&nodes[current_node_index]].iter()
         {
-            if untraversed.contains(candidate_edge)
+            if untransited.contains(candidate_edge)
             {
                 let candidate_transit = EdgeTransit::new(candidate_edge.clone(),
                                                          *candidate_edge.weight + *g,
@@ -44,17 +44,17 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, he
         let Some((_, best_transit)) = f.pop_first()
             else { return Err(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() }) };
 
-        // Update cumulative g, the index of the currently-visited node, and the edge traversal lists.
+        // Update cumulative g, the index of the currently-visited node, and the edge transit lists.
         g                  = best_transit.g;
         current_node_index = best_transit.edge.index_of_other_node(current_node_index);
-        untraversed.retain(|edge_ref| *edge_ref != best_transit.edge);
-        traversed.push(best_transit);
+        untransited.retain(|edge_ref| *edge_ref != best_transit.edge);
+        transited.push(best_transit);
 
-        // Clear the auto-sorted f BTreeMap for reuse with the next traversal calculation.
+        // Clear the auto-sorted f BTreeMap for reuse with the next transit calculation.
         f.clear();
     }
 
-    Ok(traversed)
+    Ok(transited)
 }
 
 
