@@ -93,7 +93,15 @@ mod tests
     }
 
     #[test]
-    fn test_least_squares_distance_is_sum_of_squared_differences()
+    fn test_least_squares_distance_between_points_on_same_axis_is_sum_of_squared_differences()
+    {
+        let a = Node::new(vec![1.0, 2.0]);
+        let b = Node::new(vec![1.0, 5.0]);
+        assert_eq!(least_squares_distance(&a, &b), OrderedFloat(9.0f64));
+    }
+
+    #[test]
+    fn test_least_squares_distance_on_different_axes_is_sum_of_squared_differences()
     {
         let a = Node::new(vec![0.0, 0.0]);
         let b = Node::new(vec![3.0, 4.0]);
