@@ -93,7 +93,7 @@ mod tests
     }
 
     #[test]
-    fn test_squared_euclidean_distance_between_points_on_same_axis_is_sum_of_squared_differences()
+    fn test_squared_euclidean_distance_between_points_on_same_axis_is_squared_absolute_difference()
     {
         let a = Node::new(vec![1.0, 2.0]);
         let b = Node::new(vec![1.0, 5.0]);
@@ -101,7 +101,7 @@ mod tests
     }
 
     #[test]
-    fn test_squared_euclidean_distance_on_different_axes_is_sum_of_squared_differences()
+    fn test_squared_euclidean_distance_on_different_axes_follows_pythagorean_theorem()
     {
         let a = Node::new(vec![0.0, 0.0]);
         let b = Node::new(vec![3.0, 4.0]);
