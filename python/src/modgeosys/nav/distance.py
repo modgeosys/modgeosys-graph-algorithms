@@ -17,6 +17,6 @@ def euclidean_distance(a: Node, b: Node) -> int | float:
 
 
 def squared_euclidean_distance(a: Node, b: Node) -> int | float:
-    """Calculate the squared Euclidean distance between two points."""
+    """Calculate the Squared Euclidean distance between two points."""
     diff = (a - b).coordinates
     return np.sum(np.square(diff))

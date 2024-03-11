@@ -20,7 +20,7 @@ pub fn euclidean_distance(a: &Node, b: &Node) -> OrderedFloat<f64>
     OrderedFloat(distance)
 }
 
-// Calculate the Least Squares distance between two points.
+// Calculate the Squared Euclidean distance between two points.
 pub fn squared_euclidean_distance(a: &Node, b: &Node) -> OrderedFloat<f64>
 {
     let distance: f64 = a.0.iter().zip(b.0.iter()).map(|(a, b)| (*a - *b).powi(2)).sum();
