@@ -20,6 +20,13 @@ pub fn euclidean_distance(a: &Node, b: &Node) -> OrderedFloat<f64>
     OrderedFloat(distance)
 }
 
+// Calculate the Least Squares distance between two points.
+pub fn least_squares_distance(a: &Node, b: &Node) -> OrderedFloat<f64>
+{
+    let distance: f64 = a.0.iter().zip(b.0.iter()).map(|(a, b)| (*a - *b).powi(2)).sum();
+    OrderedFloat(distance)
+}
+
 
 
 #[cfg(test)]
@@ -75,5 +82,21 @@ mod tests
         let a = Node::new(vec![0.0, 0.0]);
         let b = Node::new(vec![3.0, 4.0]);
         assert_eq!(euclidean_distance(&a, &b), OrderedFloat(5.0f64));
+    }
+
+    #[test]
+    fn test_least_squares_distance_between_identical_points_is_zero()
+    {
+        let a = Node::new(vec![1.0, 2.0]);
+        let b = Node::new(vec![1.0, 2.0]);
+        assert_eq!(least_squares_distance(&a, &b), OrderedFloat(0.0f64));
+    }
+
+    #[test]
+    fn test_least_squares_distance_is_sum_of_squared_differences()
+    {
+        let a = Node::new(vec![0.0, 0.0]);
+        let b = Node::new(vec![3.0, 4.0]);
+        assert_eq!(least_squares_distance(&a, &b), OrderedFloat(25.0f64));
     }
 }
