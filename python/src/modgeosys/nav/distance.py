@@ -14,3 +14,9 @@ def euclidean_distance(a: Node, b: Node) -> int | float:
     """Calculate the Euclidean distance between two points."""
     diff = (a - b).coordinates
     return np.hypot(*diff)
+
+
+def least_squares_distance(a: Node, b: Node) -> int | float:
+    """Calculate the least squares distance between two points."""
+    diff = (a - b).coordinates
+    return np.sum(np.square(diff))
