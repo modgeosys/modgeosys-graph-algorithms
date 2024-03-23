@@ -17,3 +17,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.dev-dependencies]
 pytest = "^7.4.4"
 ruff = "^0.1.13"
+
+[tool.maturin]
+rust-source = "../rust"
+module-name = "nav_algorithms"
