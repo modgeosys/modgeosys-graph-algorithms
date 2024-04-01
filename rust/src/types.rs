@@ -128,18 +128,18 @@ impl Ord for Edge
 
 // A wrapper for an edge that includes the f() function, and the g and h values to support A*.
 #[derive(Debug, Clone)]
-pub struct EdgeTransit
+pub struct Hop
 {
     pub edge: Edge,
     pub g: OrderedFloat<f64>,
     pub h: OrderedFloat<f64>,
 }
 
-impl EdgeTransit
+impl Hop
 {
     pub fn new(edge: Edge, g: f64, h: f64) -> Self
     {
-        EdgeTransit
+        Hop
         {
             edge,
             g: OrderedFloat(g),
@@ -154,7 +154,7 @@ impl EdgeTransit
     }
 }
 
-impl PartialEq for EdgeTransit
+impl PartialEq for Hop
 {
     fn eq(&self, other: &Self) -> bool
     {
@@ -162,9 +162,9 @@ impl PartialEq for EdgeTransit
     }
 }
 
-impl Eq for EdgeTransit {}
+impl Eq for Hop {}
 
-impl PartialOrd for EdgeTransit
+impl PartialOrd for Hop
 {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering>
     {
@@ -182,7 +182,7 @@ impl PartialOrd for EdgeTransit
     }
 }
 
-impl Ord for EdgeTransit
+impl Ord for Hop
 {
     fn cmp(&self, other: &Self) -> Ordering {
         self.partial_cmp(other).unwrap_or(Ordering::Equal)
@@ -325,27 +325,27 @@ mod tests
     }
 
     #[test]
-    fn test_edge_transit_creation()
+    fn test_hop_creation()
     {
-        let edge_transit = EdgeTransit::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
-        assert_eq!(edge_transit.edge, Edge::new(10.0, HashSet::from([1, 2])));
-        assert_eq!(edge_transit.g, OrderedFloat(5.0f64));
-        assert_eq!(edge_transit.h, OrderedFloat(5.0f64));
+        let hop = Hop::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
+        assert_eq!(hop.edge, Edge::new(10.0, HashSet::from([1, 2])));
+        assert_eq!(hop.g, OrderedFloat(5.0f64));
+        assert_eq!(hop.h, OrderedFloat(5.0f64));
     }
 
     #[test]
-    fn test_edge_transit_f_calculation()
+    fn test_hop_f_calculation()
     {
-        let edge_transit = EdgeTransit::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
-        assert_eq!(edge_transit.f(), OrderedFloat(10.0f64));
+        let hop = Hop::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
+        assert_eq!(hop.f(), OrderedFloat(10.0f64));
     }
 
     #[test]
-    fn test_edge_transit_equality()
+    fn test_hop_equality()
     {
-        let edge_transit1 = EdgeTransit::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
-        let edge_transit2 = EdgeTransit::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
-        assert_eq!(edge_transit1, edge_transit2);
+        let hop1 = Hop::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
+        let hop2 = Hop::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
+        assert_eq!(hop1, hop2);
     }
 
     #[test]
