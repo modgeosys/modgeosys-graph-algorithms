@@ -1,6 +1,7 @@
 // Heuristic distance functions.
 
 use ordered_float::OrderedFloat;
+use pyo3::{pyclass, pyfunction};
 
 use crate::types::Node;
 

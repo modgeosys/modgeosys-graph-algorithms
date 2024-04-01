@@ -7,10 +7,11 @@ use std::cmp::Ordering;
 use ndarray::{Array1, Array2, Ix1};
 use ndarray::iter::Iter;
 use ordered_float::OrderedFloat;
-
+use pyo3::pyclass;
 
 
 // A node in a graph.
+#[pyclass]
 #[derive(Debug, Clone, Eq, Hash)]
 pub struct Node(pub Array1<OrderedFloat<f64>>);
 
@@ -67,6 +68,7 @@ impl<'a> IntoIterator for &'a Node
 
 
 // An edge in a graph.
+#[pyclass]
 #[derive(Debug, Clone)]
 pub struct Edge
 {
@@ -127,6 +129,7 @@ impl Ord for Edge
 
 
 // A wrapper for an edge that includes the f() function, and the g and h values to support A*.
+#[pyclass]
 #[derive(Debug, Clone)]
 pub struct EdgeTransit
 {
@@ -191,6 +194,7 @@ impl Ord for EdgeTransit
 
 
 // A graph.
+#[pyclass]
 #[derive(Debug, Clone)]
 pub struct Graph
 {
@@ -249,6 +253,7 @@ impl Graph
 
 
 // Returned when no path can be found to the goal node.
+#[pyclass]
 #[derive(Debug, Clone)]
 pub struct NoNavigablePathError
 {
