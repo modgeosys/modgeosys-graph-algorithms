@@ -95,7 +95,7 @@ class Edge:
 
 
 @dataclass(order=True)
-class EdgeTransit:
+class Hop:
     """A wrapper for an edge that includes the f() function, and the g and h values to support A*."""
     edge: Edge
     g: int | float
@@ -115,10 +115,10 @@ class EdgeTransit:
         return hash(self.edge)
 
     def __copy__(self):
-        return EdgeTransit(edge=self.edge, g=self.g, h=self.h)
+        return Hop(edge=self.edge, g=self.g, h=self.h)
 
     def __deepcopy__(self, memo: Mapping | None = None):
-        return EdgeTransit(edge=self.edge, g=self.g, h=self.h)
+        return Hop(edge=self.edge, g=self.g, h=self.h)
 
 
 

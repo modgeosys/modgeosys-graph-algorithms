@@ -1,6 +1,6 @@
 import numpy as np
 
-from modgeosys.nav.types import Node, Edge, EdgeTransit
+from modgeosys.nav.types import Node, Edge, Hop
 
 
 def test_node_creation():
@@ -44,22 +44,22 @@ def test_edge_inequality():
     assert edge1 != edge2
 
 
-def test_edge_transit_creation():
-    edge_transit = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    assert edge_transit.edge == Edge(weight=10.0, node_indices=frozenset((1, 2)))
-    assert edge_transit.g == 5.0
-    assert edge_transit.h == 5.0
+def test_hop_creation():
+    hop = Hop(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    assert hop.edge == Edge(weight=10.0, node_indices=frozenset((1, 2)))
+    assert hop.g == 5.0
+    assert hop.h == 5.0
 
 
-def test_edge_transit_f_calculation():
-    edge_transit = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    assert edge_transit.f() == 10.0
+def test_hop_f_calculation():
+    hop = Hop(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    assert hop.f() == 10.0
 
 
-def test_edge_transit_equality():
-    edge_transit1 = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    edge_transit2 = EdgeTransit(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    assert edge_transit1 == edge_transit2
+def test_hop_equality():
+    hop1 = Hop(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    hop2 = Hop(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    assert hop1 == hop2
 
 
 def test_graph_creation(valid_nodes, valid_edges1, valid_graph1):

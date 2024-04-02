@@ -2,7 +2,7 @@
 
 from heapdict import heapdict
 
-from modgeosys.nav.types import Edge, EdgeTransit, Graph, HeuristicDistanceCallable, NoNavigablePathError
+from modgeosys.nav.types import Edge, Hop, Graph, HeuristicDistanceCallable, NoNavigablePathError
 
 
 def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_distance: HeuristicDistanceCallable) -> list[Edge]:
@@ -12,9 +12,9 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
     nodes         = graph.nodes
     adjacency_map = graph.adjacency_map()
 
-    # Initialize the edge transit lists.
-    untransited   = list(graph.edges)
-    transited     = []
+    # Initialize the edge hop lists.
+    unhopped   = list(graph.edges)
+    hopped     = []
 
     # Current node begins with the starting node.
     current_node_index = start_node_index
@@ -25,28 +25,28 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_
 
     while current_node_index != goal_node_index:
 
-        # Calculate f for each candidate edge we could transit next.
+        # Calculate f for each candidate edge we could hop next.
         for candidate_edge in adjacency_map[nodes[current_node_index]]:
-            if candidate_edge in untransited:
-                candidate_transit = EdgeTransit(edge=candidate_edge,
-                                                g=candidate_edge.weight + g,
-                                                h=heuristic_distance(nodes[candidate_edge.index_of_other_node(current_node_index)], nodes[goal_node_index]))
-                f[candidate_transit.f()] = candidate_transit
+            if candidate_edge in unhopped:
+                candidate_hop = Hop(edge=candidate_edge,
+                                        g=candidate_edge.weight + g,
+                                        h=heuristic_distance(nodes[candidate_edge.index_of_other_node(current_node_index)], nodes[goal_node_index]))
+                f[candidate_hop.f()] = candidate_hop
 
         # If no path to the goal exists, raise an exception.
         if not f:
             raise NoNavigablePathError(start_node=nodes[start_node_index], goal_node=nodes[goal_node_index])
 
         # Pick the edge with the lowest f value.
-        _, best_transit = f.popitem()
+        _, best_hop = f.popitem()
 
-        # Update cumulative g, the index of the currently-visited node, and the edge transit lists.
-        g                  = best_transit.g
-        current_node_index = best_transit.edge.index_of_other_node(current_node_index)
-        untransited.remove(best_transit.edge)
-        transited.append(best_transit)
+        # Update cumulative g, the index of the currently-visited node, and the edge hop lists.
+        g                  = best_hop.g
+        current_node_index = best_hop.edge.index_of_other_node(current_node_index)
+        unhopped.remove(best_hop.edge)
+        hopped.append(best_hop)
 
-        # Clear the auto-sorted f heapdict for reuse with the next transit calculation.
+        # Clear the auto-sorted f heapdict for reuse with the next hop calculation.
         f.clear()
 
-    return transited
+    return hopped
