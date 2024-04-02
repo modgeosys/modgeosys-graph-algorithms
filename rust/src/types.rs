@@ -1,4 +1,4 @@
-// Simple and complex data types for the navigation module.
+// Simple and complex data types for the graph module.
 
 use std::collections::HashMap;
 use std::collections::HashSet;

@@ -2,9 +2,9 @@
 
 use std::collections::HashSet;
 
-use modgeosys_nav::a_star::a_star;
-use modgeosys_nav::types::{Node, Edge, Graph};
-use modgeosys_nav::distance::manhattan_distance;
+use modgeosys_graph::a_star::a_star;
+use modgeosys_graph::types::{Node, Edge, Graph};
+use modgeosys_graph::distance::manhattan_distance;
 
 
 

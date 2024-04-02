@@ -1,4 +1,4 @@
-"""Simple and complex data types for the navigation module."""
+"""Simple and complex data types for the graph module."""
 
 import bisect
 from collections.abc import Callable, Mapping, Sequence

@@ -1,5 +1,5 @@
 [package]
-name = "modgeosys_nav"
+name = "modgeosys_graph"
 version = "0.1.0"
 edition = "2021"
 
