@@ -1,4 +1,4 @@
-# modgeosys-graph-algorithms: Navigation Algorithms
+# modgeosys-graph-algorithms: Graph Algorithms
 
 A repository for [hopefully] clean, readable, and easily-called implementations of some navigation,
 path planning, and obstacle avoidance algorithms I will be using in the near future, written in modern
@@ -14,10 +14,11 @@ Python and/or Rust with Python bindings. I'll be adding more algorithm implement
 ## Usage
 
 ### A\* (Python)
+
 ```python
-from modgeosys.nav.a_star import a_star
-from modgeosys.nav.types import Node, Edge, Graph
-from modgeosys.nav.distance import manhattan_distance, euclidean_distance
+from modgeosys.graph.a_star import a_star
+from modgeosys.graph.types import Node, Edge, Graph
+from modgeosys.graph.distance import manhattan_distance, euclidean_distance
 
 # Define a graph.
 nodes = [Node(coordinates=(0.0, 0.0)),

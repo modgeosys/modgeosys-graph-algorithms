@@ -1,8 +1,8 @@
 """Usage example(s)."""
 
-from modgeosys.nav.a_star import a_star
-from modgeosys.nav.types import Node, Edge, Graph
-from modgeosys.nav.distance import manhattan_distance, euclidean_distance
+from modgeosys.graph.a_star import a_star
+from modgeosys.graph.types import Node, Edge, Graph
+from modgeosys.graph.distance import manhattan_distance, euclidean_distance
 
 # Define a graph.
 nodes = [Node(coordinates=(0.0, 0.0)),

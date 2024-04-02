@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from modgeosys.nav.types import Node
+from modgeosys.graph.types import Node
 
 
 def manhattan_distance(a: Node, b: Node) -> int | float:

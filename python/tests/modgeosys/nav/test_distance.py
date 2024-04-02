@@ -1,5 +1,5 @@
-from modgeosys.nav.distance import manhattan_distance, euclidean_distance, squared_euclidean_distance
-from modgeosys.nav.types import Node
+from modgeosys.graph.distance import manhattan_distance, euclidean_distance, squared_euclidean_distance
+from modgeosys.graph.types import Node
 
 
 # TODO: Add tests for n-dimensional points.

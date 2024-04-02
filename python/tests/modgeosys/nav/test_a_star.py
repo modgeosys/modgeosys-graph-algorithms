@@ -1,8 +1,8 @@
 import pytest
 
-from modgeosys.nav.a_star import a_star
-from modgeosys.nav.distance import manhattan_distance, euclidean_distance
-from modgeosys.nav.types import Edge, Hop, Graph, NoNavigablePathError
+from modgeosys.graph.a_star import a_star
+from modgeosys.graph.distance import manhattan_distance, euclidean_distance
+from modgeosys.graph.types import Edge, Hop, Graph, NoNavigablePathError
 
 
 def test_a_star_finds_shortest_path_manhattan_graph1(valid_graph1):

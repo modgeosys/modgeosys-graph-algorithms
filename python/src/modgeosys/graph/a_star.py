@@ -2,7 +2,7 @@
 
 from heapdict import heapdict
 
-from modgeosys.nav.types import Edge, Hop, Graph, HeuristicDistanceCallable, NoNavigablePathError
+from modgeosys.graph.types import Edge, Hop, Graph, HeuristicDistanceCallable, NoNavigablePathError
 
 
 def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_distance: HeuristicDistanceCallable) -> list[Edge]:

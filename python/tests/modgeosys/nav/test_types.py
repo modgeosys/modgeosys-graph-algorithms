@@ -1,6 +1,6 @@
 import numpy as np
 
-from modgeosys.nav.types import Node, Edge, Hop
+from modgeosys.graph.types import Node, Edge, Hop
 
 
 def test_node_creation():

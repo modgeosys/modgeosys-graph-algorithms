@@ -1,6 +1,6 @@
 import pytest
 
-from src.modgeosys.nav.types import Node, Edge, Graph
+from src.modgeosys.graph.types import Node, Edge, Graph
 
 
 @pytest.fixture
