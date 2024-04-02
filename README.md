@@ -1,4 +1,4 @@
-# nav-algorithms: Navigation Algorithms
+# modgeosys-graph-algorithms: Navigation Algorithms
 
 A repository for [hopefully] clean, readable, and easily-called implementations of some navigation,
 path planning, and obstacle avoidance algorithms I will be using in the near future, written in modern

@@ -1,1 +1,1 @@
-"""Root package for nav-algorithms library."""
+"""Root package for modgeosys-graph-algorithms library."""

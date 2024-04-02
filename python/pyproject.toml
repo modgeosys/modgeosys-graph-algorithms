@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "nav-algorithms"
+name = "modgeosys-graph-algorithms"
 version = "0.1.0"
 description = ""
 authors = ["Kevin Weller <klweller@icloud.com>"]

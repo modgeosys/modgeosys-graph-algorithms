@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/nav-algorithms.iml" filepath="$PROJECT_DIR$/.idea/nav-algorithms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../modgeosys-graph-algorithms/.idea/modgeosys-graph-algorithms.iml" filepath="$PROJECT_DIR$/../modgeosys-graph-algorithms/.idea/modgeosys-graph-algorithms.iml" />
     </modules>
   </component>
 </project>
