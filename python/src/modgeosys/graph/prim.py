@@ -2,7 +2,7 @@
 
 import itertools
 
-from modgeosys.graph.types import Edge, Hop, Graph, ValidEdgeCallable, NoNavigablePathError
+from modgeosys.graph.types import Edge, Graph, ValidEdgeCallable, NoNavigablePathError
 from modgeosys.graph.edge_validation import edge_is_always_valid
 
 
