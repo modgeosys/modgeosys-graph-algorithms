@@ -126,70 +126,6 @@ impl Ord for Edge
 }
 
 
-// A wrapper for an edge that includes the f() function, and the g and h values to support A*.
-#[derive(Debug, Clone)]
-pub struct Hop
-{
-    pub edge: Edge,
-    pub g: OrderedFloat<f64>,
-    pub h: OrderedFloat<f64>,
-}
-
-impl Hop
-{
-    pub fn new(edge: Edge, g: f64, h: f64) -> Self
-    {
-        Hop
-        {
-            edge,
-            g: OrderedFloat(g),
-            h: OrderedFloat(h),
-        }
-    }
-
-    // Calculate the combined cost of the edge.
-    pub fn f(&self) -> OrderedFloat<f64>
-    {
-        self.g + self.h
-    }
-}
-
-impl PartialEq for Hop
-{
-    fn eq(&self, other: &Self) -> bool
-    {
-        self.edge == other.edge && self.g == other.g && self.h == other.h
-    }
-}
-
-impl Eq for Hop {}
-
-impl PartialOrd for Hop
-{
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering>
-    {
-        self.edge.partial_cmp(&other.edge)
-            .and_then(|ordering| match ordering
-            {
-                Ordering::Equal => self.g.partial_cmp(&other.g)
-                    .and_then(|ordering| match ordering
-                    {
-                        Ordering::Equal => self.h.partial_cmp(&other.h),
-                        _ => Some(ordering),
-                    }),
-                _ => Some(ordering),
-            })
-    }
-}
-
-impl Ord for Hop
-{
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.partial_cmp(other).unwrap_or(Ordering::Equal)
-    }
-}
-
-
 // A graph.
 #[derive(Debug, Clone)]
 pub struct Graph
@@ -322,30 +258,6 @@ mod tests
         let edge_1 = Edge::new(10.0, HashSet::from([1, 2]));
         let edge_2 = Edge::new(10.0, HashSet::from([1, 3]));
         assert_ne!(edge_1, edge_2);
-    }
-
-    #[test]
-    fn test_hop_creation()
-    {
-        let hop = Hop::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
-        assert_eq!(hop.edge, Edge::new(10.0, HashSet::from([1, 2])));
-        assert_eq!(hop.g, OrderedFloat(5.0f64));
-        assert_eq!(hop.h, OrderedFloat(5.0f64));
-    }
-
-    #[test]
-    fn test_hop_f_calculation()
-    {
-        let hop = Hop::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
-        assert_eq!(hop.f(), OrderedFloat(10.0f64));
-    }
-
-    #[test]
-    fn test_hop_equality()
-    {
-        let hop1 = Hop::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
-        let hop2 = Hop::new(Edge::new(10.0, HashSet::from([1, 2])), 5.0, 5.0);
-        assert_eq!(hop1, hop2);
     }
 
     #[test]
