@@ -1,6 +1,6 @@
 import numpy as np
 
-from modgeosys.graph.types import Node, Edge, Hop
+from modgeosys.graph.types import Node, Edge
 
 
 def test_node_creation():
@@ -42,24 +42,6 @@ def test_edge_inequality():
     edge1 = Edge(weight=10.0, node_indices=frozenset((1, 2)))
     edge2 = Edge(weight=10.0, node_indices=frozenset((1, 3)))
     assert edge1 != edge2
-
-
-def test_hop_creation():
-    hop = Hop(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    assert hop.edge == Edge(weight=10.0, node_indices=frozenset((1, 2)))
-    assert hop.g == 5.0
-    assert hop.h == 5.0
-
-
-def test_hop_f_calculation():
-    hop = Hop(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    assert hop.f() == 10.0
-
-
-def test_hop_equality():
-    hop1 = Hop(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    hop2 = Hop(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
-    assert hop1 == hop2
 
 
 def test_graph_creation(valid_nodes, valid_edges1, valid_graph1):

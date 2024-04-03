@@ -95,34 +95,6 @@ class Edge:
 
 
 
-@dataclass(order=True)
-class Hop:
-    """A wrapper for an edge that includes the f() function, and the g and h values to support A*."""
-    edge: Edge
-    g: int | float
-    h: int | float
-
-    def f(self) -> int | float:
-        """Calculate the combined cost of the edge."""
-        return self.g + self.h
-
-    def __eq__(self, other):
-        return self.edge == other.edge and self.g == other.g and self.h == other.h
-
-    def __repr__(self):
-        return f'Edge(edge={self.edge}, f={self.f()}, g={self.g}, h={self.h})'
-
-    def __hash__(self):
-        return hash(self.edge)
-
-    def __copy__(self):
-        return Hop(edge=self.edge, g=self.g, h=self.h)
-
-    def __deepcopy__(self, memo: Mapping | None = None):
-        return Hop(edge=self.edge, g=self.g, h=self.h)
-
-
-
 class Graph:
     """A graph."""
     nodes: NodeSequence = field(default_factory=list)

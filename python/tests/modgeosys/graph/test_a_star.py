@@ -1,8 +1,26 @@
 import pytest
 
-from modgeosys.graph.a_star import a_star
+from modgeosys.graph.a_star import a_star, Hop
 from modgeosys.graph.distance import manhattan_distance, euclidean_distance
-from modgeosys.graph.types import Edge, Hop, Graph, NoNavigablePathError
+from modgeosys.graph.types import Edge, Graph, NoNavigablePathError
+
+
+def test_hop_creation():
+    hop = Hop(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    assert hop.edge == Edge(weight=10.0, node_indices=frozenset((1, 2)))
+    assert hop.g == 5.0
+    assert hop.h == 5.0
+
+
+def test_hop_f_calculation():
+    hop = Hop(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    assert hop.f() == 10.0
+
+
+def test_hop_equality():
+    hop1 = Hop(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    hop2 = Hop(Edge(weight=10.0, node_indices=frozenset((1, 2))), g=5.0, h=5.0)
+    assert hop1 == hop2
 
 
 def test_a_star_finds_shortest_path_manhattan_graph1(valid_graph1):
