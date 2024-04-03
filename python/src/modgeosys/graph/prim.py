@@ -1,40 +1,44 @@
 """A module containing an implementation of Prim's algorithm for finding the minimum spanning tree of a graph."""
 
-from heapdict import heapdict
+import itertools
 
-from modgeosys.graph.types import Edge, Hop, Graph, NoNavigablePathError
+from modgeosys.graph.types import Edge, Hop, Graph, ValidEdgeCallable, NoNavigablePathError
+from modgeosys.graph.edge_validation import edge_is_always_valid
 
 
-def prim(graph: Graph, start_node_index: int) -> list[Edge]:
+def prim(graph: Graph, start_node_index: int, edge_is_valid: ValidEdgeCallable = edge_is_always_valid) -> list[Edge]:
     """Implement Prim's algorithm for finding the minimum spanning tree of a graph."""
 
     nodes = graph.nodes
-    edges = graph.edges
-    adjacency_map = graph.adjacency_map()
+    excluded_edges_adjacency_map = graph.adjacency_map()
 
-    included_nodes = [start_node_index]
-    excluded_nodes = [node_index for node_index in range(len(nodes)) if node_index != start_node_index]
+    included_node_indices = [start_node_index]
+    excluded_node_indices = list(range(len(nodes))).remove(start_node_index)
 
     included_edges = []
-    excluded_edges = tuple(edges)
 
-    while excluded_nodes:
+    while excluded_node_indices:
 
-        # Initialize the f heapdict.
-        f = heapdict()
+        next_included_node_index = included_node_indices[-1]
+        next_included_node = nodes[next_included_node_index]
+        best_edge = None
 
-        for candidate_edge in excluded_edges:
-            if candidate_edge.node_indices[0] in included_nodes and candidate_edge.node_indices[1] in excluded_nodes:
-                f[candidate_edge.weight] = candidate_edge
+        # Find the candidate edge with the lowest weight that passes validity test.
+        for i, candidate_edge in enumerate(excluded_edges_adjacency_map[next_included_node]):
+            if edge_is_valid(candidate_edge):
+                best_edge = candidate_edge
+                included_node_indices.append(best_edge.index_of_other_node(next_included_node_index))
+                excluded_node_indices.remove(best_edge.index_of_other_node(next_included_node_index))
+                included_edges.append(best_edge)
+            excluded_edges_adjacency_map[next_included_node][i] = None
 
-        # Pick the edge with the lowest f value.
-        _, best_edge = f.popitem()
+        if not best_edge:
+            raise NoNavigablePathError(start_node=nodes[start_node_index])
 
-        # Update the included and excluded nodes and edges.
-        included_nodes.extend([node_index for node_index in best_edge.node_indices if node_index not in included_nodes])
-        excluded_nodes = [node_index for node_index in excluded_nodes if node_index not in included_nodes]
-
-        included_edges.append(best_edge)
-        excluded_edges = tuple(edge for edge in excluded_edges if edge != best_edge)
+        # Remove all edges from the node entry in the adjacency map that are set to None.
+        excluded_edges_adjacency_map[next_included_node] = list(itertools.compress(excluded_edges_adjacency_map[next_included_node], excluded_edges_adjacency_map[next_included_node]))
+        # If the resulting node list is empty, remove the node from the adjacency map.
+        if not excluded_edges_adjacency_map[next_included_node]:
+            del excluded_edges_adjacency_map[next_included_node]
 
     return included_edges

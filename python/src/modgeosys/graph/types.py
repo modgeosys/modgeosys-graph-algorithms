@@ -17,6 +17,7 @@ type NodeSequence = Sequence[Node]
 type EdgeSequence = Sequence[Edge]
 type AdjacencyMap = Mapping[Node, Sequence[Edge]]
 type HeuristicDistanceCallable = Callable[[Node, Node], int | float]
+type ValidEdgeCallable = Callable[[Edge], bool]
 
 
 @dataclass
@@ -169,5 +170,5 @@ class Graph:
 
 class NoNavigablePathError(Exception):
     """Raised when no path can be found to the goal node."""
-    def __init__(self, start_node: Node, goal_node: Node):
+    def __init__(self, start_node: Node, goal_node: Node='N/A'):
         super().__init__(f'No path exists between nodes {start_node} and {goal_node}.')
