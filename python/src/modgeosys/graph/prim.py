@@ -13,7 +13,8 @@ def prim(graph: Graph, start_node_index: int, edge_is_valid: ValidEdgeCallable =
     excluded_edges_adjacency_map = graph.adjacency_map()
 
     included_node_indices = [start_node_index]
-    excluded_node_indices = list(range(len(nodes))).remove(start_node_index)
+    excluded_node_indices = (list(range(len(nodes))))
+    excluded_node_indices.remove(start_node_index)
 
     included_edges = []
 
