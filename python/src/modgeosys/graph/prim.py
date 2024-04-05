@@ -11,38 +11,26 @@ def prim(graph: Graph, start_node_index: int, edge_is_valid: ValidEdgeCallable =
     edges = graph.edges
 
     included_node_indices = {start_node_index}
-    excluded_node_indices = (set(range(len(nodes))))
-    excluded_node_indices.remove(start_node_index)
+    excluded_node_indices = (set(range(len(nodes))) - included_node_indices)
 
     included_edges = set()
-    excluded_edges = sorted(edges, key=lambda edge: edge.weight)
-
-    next_included_node_index_1 = start_node_index
-    next_included_node_index_2 = None
+    excluded_edges = set(edges)
 
     while excluded_node_indices:
 
+        candidate_edges = sorted(edge for edge in excluded_edges if edge.node_indices & included_node_indices)
+
         best_edge = None
 
-        # Find the candidate edge with the lowest weight that passes the validity test.
-        while excluded_edges and not best_edge:
+        for edge in candidate_edges:
+            if edge_is_valid(edge):
+                best_edge = edge
+                new_node_index = next(iter(best_edge.node_indices - included_node_indices))
 
-            candidate_edge = find_first_edge_with_node_index(excluded_edges, next_included_node_index_1, next_included_node_index_2)
-
-            if candidate_edge and edge_is_valid(candidate_edge):
-
-                best_edge = candidate_edge
-                new_node_index = best_edge.index_of_other_node(best_edge.node_indices - included_node_indices)
-
-                if new_node_index not in included_node_indices:
-                    included_node_indices.add(new_node_index)
-                if new_node_index in excluded_node_indices:
-                    excluded_node_indices.remove(new_node_index)
+                included_node_indices.add(new_node_index)
+                excluded_node_indices.remove(new_node_index)
                 included_edges.add(best_edge)
                 excluded_edges.remove(best_edge)
-
-                next_included_node_index_2 = next_included_node_index_1
-                next_included_node_index_1 = new_node_index
 
                 break
 
@@ -50,11 +38,3 @@ def prim(graph: Graph, start_node_index: int, edge_is_valid: ValidEdgeCallable =
             raise NoNavigablePathError(start_node=nodes[start_node_index])
 
     return included_edges
-
-
-def find_first_edge_with_node_index(edges: list[Edge], node_index_1: int, node_index_2: int = None) -> Edge or None:
-    """Perform a sequential search for the first edge with the given node index."""
-    for edge in edges:
-        if node_index_1 in edge.node_indices or (node_index_2 and node_index_2 in edge.node_indices):
-            return edge
-    return None
