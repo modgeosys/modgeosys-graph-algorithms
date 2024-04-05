@@ -4,6 +4,10 @@ version = "0.1.0"
 description = ""
 authors = ["Kevin Weller <klweller@icloud.com>"]
 readme = "README.md"
+packages = [
+    { include = "modgeosys", from = "src" },
+    { include = "tests", from = "." },
+]
 
 [tool.poetry.dependencies]
 python = "^3.12"
