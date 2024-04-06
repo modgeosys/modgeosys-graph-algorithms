@@ -23,16 +23,24 @@ edges = (Edge(weight=2.0, node_indices=frozenset((0, 1))),
 toy_graph = Graph(nodes=nodes, edges=edges)
 
 # Load a bigger graph from a pickle file.
-with open('python/data/graph.pickle', 'rb') as f:
-    larger_graph = pickle.load(f)
+with open('python/data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
+    larger_graph = pickle.load(pickled_sample_larger_graph_file)
 
 # Call the A* function.
-path = a_star(graph=toy_graph, start_node_index=0, goal_node_index=4, heuristic_distance=manhattan_distance)
-print(f'A* Path:')
-pprint(path)
+toy_a_star_path = a_star(graph=toy_graph, start_node_index=0, goal_node_index=4, heuristic_distance=manhattan_distance)
+print(f'Toy A* Path:')
+pprint(toy_a_star_path)
+larger_a_star_path = a_star(graph=larger_graph, start_node_index=0, goal_node_index=4, heuristic_distance=manhattan_distance)
+print()
+print(f'Large A* Path:')
+pprint(larger_a_star_path)
 print()
 
 # Call the Prim function.
-minimum_spanning_tree = prim(graph=larger_graph, start_node_index=0)
+toy_minimum_spanning_tree = prim(graph=toy_graph, start_node_index=0)
+print('Toy Prim Minimum Spanning Tree:')
+print(toy_minimum_spanning_tree)
+print()
+larger_minimum_spanning_tree = prim(graph=larger_graph, start_node_index=0)
 print('Prim Minimum Spanning Tree:')
-print(minimum_spanning_tree)
+print(larger_minimum_spanning_tree)
