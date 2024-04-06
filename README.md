@@ -8,10 +8,12 @@ Python and/or Rust with Python bindings. I'll be adding more algorithm implement
 * [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) - Graph path search algorithm.
   * Code-complete in both Python and Rust.
   * Needs a more thorough test suite.
+  * Needs Python bindings for Rust implementation.
 * [Prim's algorithm](https://en.wikipedia.org/wiki/Prim's_algorithm) - Prim's Minimum Spanning Tree algorithm.
   * Code-complete in Python.
   * Tested on toy dataset in test suite.
   * Tested on larger sample (pickled) dataset, not yet incorporated into test suite.
+  * Needs a Rust implementation and corresponding Python bindings.
 
 ## Usage
 
@@ -44,7 +46,6 @@ toy_graph = Graph(nodes=nodes, edges=edges)
 path = a_star(graph=toy_graph, start_node_index=0, goal_node_index=4, heuristic_distance=manhattan_distance)
 print(f'A* Path:')
 pprint(path)
-print()
 ```
 
 #### Rust
