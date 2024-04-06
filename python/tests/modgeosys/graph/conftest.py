@@ -38,6 +38,15 @@ def valid_graph2(valid_nodes, valid_edges2):
 
 
 @pytest.fixture
+def valid_graph_from_edge_definitions():
+    return Graph.from_edge_definitions(((2, ((0.0, 0.0), (0.0, 2.0))),
+                                        (1, ((0.0, 0.0), (1.0, 0.0))),
+                                        (1, ((1.0, 0.0), (2.0, 1.0))),
+                                        (3, ((0.0, 2.0), (2.0, 3.0))),
+                                        (1, ((2.0, 1.0), (2.0, 3.0)))))
+
+
+@pytest.fixture
 def valid_graph_larger():
     with open('data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
         return pickle.load(pickled_sample_larger_graph_file)

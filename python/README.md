@@ -23,22 +23,16 @@ Python and/or Rust with Python bindings. I'll be adding more algorithm implement
 import pickle
 from pprint import pprint
 
-from modgeosys.graph.types import Node, Edge, Graph
+from modgeosys.graph.types import Graph
 from modgeosys.graph.distance import manhattan_distance, euclidean_distance
 from modgeosys.graph.a_star import a_star
 
 # Define a toy graph.
-nodes = [Node(coordinates=(0.0, 0.0)),
-         Node(coordinates=(0.0, 2.0)),
-         Node(coordinates=(1.0, 0.0)),
-         Node(coordinates=(2.0, 1.0)),
-         Node(coordinates=(2.0, 3.0))]
-edges = (Edge(weight=2.0, node_indices=frozenset((0, 1))),
-         Edge(weight=1.0, node_indices=frozenset((0, 2))),
-         Edge(weight=1.0, node_indices=frozenset((2, 3))),
-         Edge(weight=3.0, node_indices=frozenset((1, 4))),
-         Edge(weight=1.0, node_indices=frozenset((3, 4))))
-toy_graph = Graph(nodes=nodes, edges=edges)
+toy_graph = Graph.from_edge_definitions(((2, ((0.0, 0.0), (0.0, 2.0))),
+                                         (1, ((0.0, 0.0), (1.0, 0.0))),
+                                         (1, ((1.0, 0.0), (2.0, 1.0))),
+                                         (3, ((0.0, 2.0), (2.0, 3.0))),
+                                         (1, ((2.0, 1.0), (2.0, 3.0)))))
 
 # Load a bigger graph from a pickle file.
 with open('python/data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
@@ -59,21 +53,15 @@ pprint(larger_a_star_path)
 ```python
 import pickle
 
-from modgeosys.graph.types import Node, Edge, Graph
+from modgeosys.graph.types import Graph
 from modgeosys.graph.prim import prim
 
 # Define a toy graph.
-nodes = [Node(coordinates=(0.0, 0.0)),
-         Node(coordinates=(0.0, 2.0)),
-         Node(coordinates=(1.0, 0.0)),
-         Node(coordinates=(2.0, 1.0)),
-         Node(coordinates=(2.0, 3.0))]
-edges = (Edge(weight=2.0, node_indices=frozenset((0, 1))),
-         Edge(weight=1.0, node_indices=frozenset((0, 2))),
-         Edge(weight=1.0, node_indices=frozenset((2, 3))),
-         Edge(weight=3.0, node_indices=frozenset((1, 4))),
-         Edge(weight=1.0, node_indices=frozenset((3, 4))))
-toy_graph = Graph(nodes=nodes, edges=edges)
+toy_graph = Graph.from_edge_definitions(((2, ((0.0, 0.0), (0.0, 2.0))),
+                                         (1, ((0.0, 0.0), (1.0, 0.0))),
+                                         (1, ((1.0, 0.0), (2.0, 1.0))),
+                                         (3, ((0.0, 2.0), (2.0, 3.0))),
+                                         (1, ((2.0, 1.0), (2.0, 3.0)))))
 
 # Load a bigger graph from a pickle file.
 with open('python/data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:

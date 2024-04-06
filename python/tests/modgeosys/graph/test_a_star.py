@@ -33,6 +33,14 @@ def test_a_star_finds_shortest_path_manhattan_graph1(valid_graph1):
                       Hop(Edge(weight=3.0, node_indices=frozenset({1, 4})), cached_f=5.0, g=5.0, h=0.0)]
 
 
+def test_a_star_find_shortest_path_manhattan_graph_from_edge_definitions(valid_graph_from_edge_definitions):
+    result = a_star(graph=valid_graph_from_edge_definitions, start_node_index=0, goal_node_index=4, heuristic_distance=manhattan_distance)
+
+    assert len(result) == 2
+    assert result == [Hop(Edge(weight=2.0, node_indices=frozenset({0, 1})), cached_f=5.0, g=2.0, h=3.0),
+                      Hop(Edge(weight=3.0, node_indices=frozenset({1, 4})), cached_f=5.0, g=5.0, h=0.0)]
+
+
 def test_a_star_finds_shortest_path_manhattan_graph2(valid_graph2):
     result = a_star(graph=valid_graph2, start_node_index=0, goal_node_index=4, heuristic_distance=manhattan_distance)
 
