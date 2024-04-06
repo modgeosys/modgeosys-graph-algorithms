@@ -9,55 +9,6 @@ use crate::types::{Graph, Node, NoNavigablePathError, Edge};
 
 
 
-// Implement the A* algorithm for finding the shortest path between two nodes in a graph.
-pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, heuristic_distance: fn(&Node, &Node) -> OrderedFloat<f64>) -> Result<Vec<Hop>, NoNavigablePathError>
-{
-    // Grab the nodes and adjacency map from the graph.
-    let nodes           = &graph.nodes;
-    let adjacency_map   = graph.adjacency_map();
-
-    // Initialize the edge hop lists.
-    let mut unhopped = graph.edges.clone();
-    let mut hops     = Vec::new();
-
-    // Current node begins with the start node.
-    let mut current_node_index = start_node_index;
-
-    let mut f = BTreeMap::new();
-    let mut g = OrderedFloat(0.0f64);
-
-    while current_node_index != goal_node_index
-    {
-        // Calculate f for each candidate edge we could hop next.
-        for candidate_edge in adjacency_map[&nodes[current_node_index]].iter()
-        {
-            if unhopped.contains(candidate_edge)
-            {
-                let candidate_hop = Hop::new(candidate_edge.clone(),
-                                             *candidate_edge.weight + *g,
-                                             *heuristic_distance(&nodes[candidate_edge.index_of_other_node(current_node_index)], &nodes[goal_node_index]));
-                f.insert(candidate_hop.f(), candidate_hop);
-            }
-        }
-
-        // Pick the edge with the lowest f value; if no path to the goal exists, return an error.
-        let Some((_, best_hop)) = f.pop_first()
-            else { return Err(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() }) };
-
-        // Update cumulative g, the index of the currently-visited node, and the edge hop lists.
-        g                  = best_hop.g;
-        current_node_index = best_hop.edge.index_of_other_node(current_node_index);
-        unhopped.retain(|edge_ref| *edge_ref != best_hop.edge);
-        hops.push(best_hop);
-
-        // Clear the auto-sorted f BTreeMap for reuse with the next hop calculation.
-        f.clear();
-    }
-
-    Ok(hops)
-}
-
-
 // A wrapper for an edge that includes the f() function, and the g and h values to support A*.
 #[derive(Debug, Clone)]
 pub struct Hop
@@ -119,6 +70,55 @@ impl Ord for Hop
     fn cmp(&self, other: &Self) -> Ordering {
         self.partial_cmp(other).unwrap_or(Ordering::Equal)
     }
+}
+
+
+// Implement the A* algorithm for finding the shortest path between two nodes in a graph.
+pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, heuristic_distance: fn(&Node, &Node) -> OrderedFloat<f64>) -> Result<Vec<Hop>, NoNavigablePathError>
+{
+    // Grab the nodes and adjacency map from the graph.
+    let nodes           = &graph.nodes;
+    let adjacency_map   = graph.adjacency_map();
+
+    // Initialize the edge hop lists.
+    let mut unhopped = graph.edges.clone();
+    let mut hops     = Vec::new();
+
+    // Current node begins with the start node.
+    let mut current_node_index = start_node_index;
+
+    let mut f = BTreeMap::new();
+    let mut g = OrderedFloat(0.0f64);
+
+    while current_node_index != goal_node_index
+    {
+        // Calculate f for each candidate edge we could hop next.
+        for candidate_edge in adjacency_map[&nodes[current_node_index]].iter()
+        {
+            if unhopped.contains(candidate_edge)
+            {
+                let candidate_hop = Hop::new(candidate_edge.clone(),
+                                             *candidate_edge.weight + *g,
+                                             *heuristic_distance(&nodes[candidate_edge.index_of_other_node(current_node_index)], &nodes[goal_node_index]));
+                f.insert(candidate_hop.f(), candidate_hop);
+            }
+        }
+
+        // Pick the edge with the lowest f value; if no path to the goal exists, return an error.
+        let Some((_, best_hop)) = f.pop_first()
+            else { return Err(NoNavigablePathError { start_node: nodes[start_node_index].clone(), goal_node: nodes[goal_node_index].clone() }) };
+
+        // Update cumulative g, the index of the currently-visited node, and the edge hop lists.
+        g                  = best_hop.g;
+        current_node_index = best_hop.edge.index_of_other_node(current_node_index);
+        unhopped.retain(|edge_ref| *edge_ref != best_hop.edge);
+        hops.push(best_hop);
+
+        // Clear the auto-sorted f BTreeMap for reuse with the next hop calculation.
+        f.clear();
+    }
+
+    Ok(hops)
 }
 
 
