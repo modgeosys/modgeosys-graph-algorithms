@@ -18,7 +18,7 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, he
 
     // Initialize the edge hop lists.
     let mut unhopped = graph.edges.clone();
-    let mut hopped   = Vec::new();
+    let mut hops     = Vec::new();
 
     // Current node begins with the start node.
     let mut current_node_index = start_node_index;
@@ -35,8 +35,7 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, he
             {
                 let candidate_hop = Hop::new(candidate_edge.clone(),
                                              *candidate_edge.weight + *g,
-                                             *heuristic_distance(&nodes[candidate_edge.index_of_other_node(current_node_index)],
-                                                                             &nodes[goal_node_index]));
+                                             *heuristic_distance(&nodes[candidate_edge.index_of_other_node(current_node_index)], &nodes[goal_node_index]));
                 f.insert(candidate_hop.f(), candidate_hop);
             }
         }
@@ -49,13 +48,13 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, he
         g                  = best_hop.g;
         current_node_index = best_hop.edge.index_of_other_node(current_node_index);
         unhopped.retain(|edge_ref| *edge_ref != best_hop.edge);
-        hopped.push(best_hop);
+        hops.push(best_hop);
 
         // Clear the auto-sorted f BTreeMap for reuse with the next hop calculation.
         f.clear();
     }
 
-    Ok(hopped)
+    Ok(hops)
 }
 
 
