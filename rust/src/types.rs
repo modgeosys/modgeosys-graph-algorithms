@@ -66,6 +66,10 @@ impl<'a> IntoIterator for &'a Node
 }
 
 
+#[derive(Debug, Clone)]
+pub struct EdgeDefinition(pub f64, pub Vec<Vec<f64>>);
+
+
 // An edge in a graph.
 #[derive(Debug, Clone)]
 pub struct Edge
@@ -141,6 +145,45 @@ impl Graph
         Graph { nodes, edges }
     }
 
+    pub fn from_edge_definitions(edge_definitions: Vec<EdgeDefinition>) -> Self
+    {
+        let mut coordinates_of_all_nodes: Vec<Vec<f64>> = vec![];
+
+        for edge_definition in &edge_definitions
+        {
+            for edge_node_coordinates in &edge_definition.1
+            {
+                if !coordinates_of_all_nodes.contains(edge_node_coordinates)
+                {
+                    coordinates_of_all_nodes.push(edge_node_coordinates.clone());
+                }
+            }
+        }
+
+        let mut node_map: HashMap<usize, Node> = HashMap::new();
+        let mut edges: Vec<Edge> = vec![];
+
+        for edge_definition in &edge_definitions
+        {
+            let mut indices: Vec<usize> = vec![];
+            for edge_node_coordinates in &edge_definition.1
+            {
+                let index = coordinates_of_all_nodes.iter().position(|coordinates| coordinates == edge_node_coordinates).unwrap();
+                indices.push(index);
+                node_map.insert(index, Node::new(edge_node_coordinates.clone()));
+            }
+            let node_indices: HashSet<_> = indices.into_iter().collect();
+            let edge = Edge::new(edge_definition.0, node_indices);
+            edges.push(edge);
+        }
+
+        let mut node_vec: Vec<(usize, Node)> = node_map.into_iter().collect();
+        node_vec.sort_by_key(|(key, _)| *key);
+        let nodes: Vec<Node> = node_vec.into_iter().map(|(_, node)| node).collect();
+
+        Graph::new(nodes, edges)
+    }
+
     // Render an adjacency map.
     pub fn adjacency_map(&self) -> HashMap<Node, Vec<Edge>>
     {
@@ -210,7 +253,7 @@ impl NoNavigablePathError
 mod tests
 {
     use super::*;
-    use crate::test_fixtures::tests::{valid_nodes, valid_edges1, valid_graph1};
+    use crate::test_fixtures::tests::{valid_nodes, valid_edges1, valid_graph1, valid_graph_from_edge_definitions};
 
     #[test]
     fn test_node_equality()
@@ -265,6 +308,15 @@ mod tests
     {
         assert_eq!(valid_graph1().nodes, valid_nodes());
         assert_eq!(valid_graph1().edges, valid_edges1());
+    }
+
+    #[test]
+    fn test_graph_from_edge_definitions()
+    {
+        let graph = valid_graph_from_edge_definitions();
+
+        assert_eq!(graph.nodes, valid_nodes());
+        assert_eq!(graph.edges, valid_edges1());
     }
 
     #[test]

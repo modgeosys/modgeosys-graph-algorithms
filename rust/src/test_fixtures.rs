@@ -2,7 +2,7 @@
 pub mod tests
 {
     use std::collections::HashSet;
-    use crate::types::{Edge, Graph, Node};
+    use crate::types::{Edge, EdgeDefinition, Graph, Node};
 
     pub fn valid_nodes() -> Vec<Node>
     {
@@ -43,6 +43,18 @@ pub mod tests
     pub fn valid_graph2() -> Graph
     {
         let graph = Graph::new(valid_nodes(), valid_edges2());
+        graph
+    }
+
+    pub fn valid_graph_from_edge_definitions() -> Graph
+    {
+        let edge_definitions = vec![EdgeDefinition(2.0, vec![vec![0.0, 0.0], vec![0.0, 2.0]]),
+                                    EdgeDefinition(1.0, vec![vec![0.0, 0.0], vec![1.0, 0.0]]),
+                                    EdgeDefinition(1.0, vec![vec![1.0, 0.0], vec![2.0, 1.0]]),
+                                    EdgeDefinition(3.0, vec![vec![0.0, 2.0], vec![2.0, 3.0]]),
+                                    EdgeDefinition(1.0, vec![vec![2.0, 1.0], vec![2.0, 3.0]])];
+        let graph = Graph::from_edge_definitions(edge_definitions);
+
         graph
     }
 }

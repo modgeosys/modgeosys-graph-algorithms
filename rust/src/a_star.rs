@@ -130,7 +130,7 @@ mod tests
     use super::*;
     use crate::distance::manhattan_distance;
     use crate::types::{Edge, Node};
-    use crate::test_fixtures::tests::{valid_nodes, valid_graph1, valid_graph2};
+    use crate::test_fixtures::tests::{valid_nodes, valid_graph1, valid_graph2, valid_graph_from_edge_definitions};
 
     #[test]
     fn test_hop_creation()
@@ -163,6 +163,15 @@ mod tests
                             Hop::new(Edge::new(3.0, HashSet::from([1, 4])), 5.0, 0.0)];
 
         assert_eq!(a_star(&valid_graph1(), 0, 4, manhattan_distance).unwrap(), expected);
+    }
+
+    #[test]
+    fn test_a_star_finds_shortest_path_manhattan_graph_from_edge_definitions()
+    {
+        let expected = vec![Hop::new(Edge::new(2.0, HashSet::from([0, 1])), 2.0, 3.0),
+                            Hop::new(Edge::new(3.0, HashSet::from([1, 4])), 5.0, 0.0)];
+
+        assert_eq!(a_star(&valid_graph_from_edge_definitions(), 0, 4, manhattan_distance).unwrap(), expected);
     }
 
     #[test]
