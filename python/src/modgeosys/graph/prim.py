@@ -11,7 +11,7 @@ def prim(graph: Graph, start_node_index: int, edge_is_valid: ValidEdgeCallable =
     edges = graph.edges
 
     included_node_indices = {start_node_index}
-    excluded_node_indices = (set(range(len(nodes))) - included_node_indices)
+    excluded_node_indices = set(range(len(nodes))) - included_node_indices
 
     included_edges = set()
     excluded_edges = set(edges)

@@ -26,6 +26,16 @@ def test_edge_creation():
     assert edge.node_indices == frozenset((1, 2))
 
 
+def test_edge_creation_with_int_weight():
+    edge = Edge(weight=10, node_indices=frozenset((1, 2)))
+    assert edge.weight == 10.0
+
+
+def test_edge_creation_with_string_weight():
+    edge = Edge(weight='10.0', node_indices=frozenset((1, 2)))
+    assert edge.weight == 10.0
+
+
 def test_edge_index_of_other_node():
     edge = Edge(weight=10.0, node_indices=frozenset((1, 2)))
     assert edge.index_of_other_node(1) == 2

@@ -1,3 +1,4 @@
+import pickle
 import pytest
 
 from src.modgeosys.graph.types import Node, Edge, Graph
@@ -34,3 +35,15 @@ def valid_graph1(valid_nodes, valid_edges1):
 @pytest.fixture
 def valid_graph2(valid_nodes, valid_edges2):
     return Graph(valid_nodes, valid_edges2)
+
+
+@pytest.fixture
+def valid_graph_larger():
+    with open('data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
+        return pickle.load(pickled_sample_larger_graph_file)
+
+
+@pytest.fixture
+def valid_graph_larger_with_string_edge_weights():
+    with open('data/graph_with_string_edge_weights.pickle', 'rb') as pickled_sample_larger_graph_file:
+        return pickle.load(pickled_sample_larger_graph_file)

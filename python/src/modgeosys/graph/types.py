@@ -73,6 +73,9 @@ class Edge:
     weight: int | float
     node_indices: frozenset[int] = field(compare=False)
 
+    def __post_init__(self):
+        self.weight = float(self.weight)  # Convert weight to float
+
     def index_of_other_node(self, current_index: int) -> int:
         """Given one node index, return the other node index."""
         node_indices = list(self.node_indices)
