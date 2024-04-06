@@ -26,7 +26,8 @@ print(path)
 
 import pickle
 from modgeosys.graph.prim import prim
-with open('/home/kweller/Downloads/graph.pickle', 'rb') as f:
+
+with open('python/data/graph.pickle', 'rb') as f:
     graph = pickle.load(f)
     path = prim(graph=graph, start_node_index=0)
     print(path)
