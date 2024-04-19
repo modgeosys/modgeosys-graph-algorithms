@@ -19,12 +19,14 @@ type EdgeDefinitionSequence = Sequence[tuple[int | float, tuple[tuple, tuple]]]
 type AdjacencyMap = Mapping[Node, Sequence[Edge]]
 type HeuristicDistanceCallable = Callable[[Node, Node], int | float]
 type ValidEdgeCallable = Callable[[Edge], bool]
+type EdgeWeightCallable = Callable[Graph, Edge]
 
 
 @dataclass
 class Node:
     """A node in a graph."""
     coordinates: Vector[np.float64]
+    properties: dict = field(default_factory=dict)
 
     def __init__(self, coordinates: tuple):
         self.coordinates = np.array(coordinates, dtype=np.float64)
@@ -68,11 +70,13 @@ class Node:
 
 
 
+
 @dataclass(order=True)
 class Edge:
     """An edge in a graph."""
-    weight: int | float
     node_indices: frozenset[int] = field(compare=False)
+    properties: dict = field(default_factory=dict, compare=False)
+    weight: int | float = field(default=0.0)
 
     def __post_init__(self):
         self.weight = float(self.weight)  # Convert weight to float
@@ -101,8 +105,10 @@ class Edge:
 
 class Graph:
     """A graph."""
+    properties: dict = field(default_factory=dict)
     nodes: NodeSequence = field(default_factory=list)
     edges: EdgeSequence = field(default_factory=tuple)
+    edge_weight_function: EdgeWeightCallable | None
 
     @classmethod
     def from_edge_definitions(cls, edge_definitions: EdgeDefinitionSequence):
@@ -127,12 +133,17 @@ class Graph:
             edges.append(edge)
 
         nodes = [nodes[index] for index in sorted(nodes)]
-        return cls(nodes, edges)
+        return cls({}, nodes, edges)
 
-    def __init__(self, nodes: NodeSequence, edges: EdgeSequence):
+    def __init__(self, properties: dict, nodes: NodeSequence, edges: EdgeSequence, edge_weight_function: EdgeWeightCallable | None = None):
         """Initialize a graph."""
+        self.properties = dict(properties)
         self.nodes = copy(nodes)
         self.edges = tuple(copy(edge) for edge in edges)
+        if edge_weight_function:
+            self.edge_weight_function = edge_weight_function
+            for edge in self.edges:
+                edge.weight = self.edge_weight_function(self, edge)
 
     def __repr__(self):
         return f'Graph(nodes={self.nodes}, edges={self.edges})'
@@ -167,6 +178,14 @@ class Graph:
             adjacency_matrix[node_indices[0], node_indices[1]] = adjacency_matrix[node_indices[1], node_indices[0]] = edge.weight
 
         return adjacency_matrix
+
+
+
+def length_cost_per_unit(graph: Graph, edge: Edge) -> float:
+    cost_per_unit = edge.properties['cost_per_unit']
+    heuristic_distance = graph.nodes.properties['heuristic_distance']
+    attached_nodes = [graph.nodes[node_index] for node_index in edge.node_indices]
+    return cost_per_unit * heuristic_distance(attached_nodes[0], attached_nodes[1])
 
 
 class NoNavigablePathError(Exception):

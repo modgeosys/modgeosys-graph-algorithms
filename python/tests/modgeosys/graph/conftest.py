@@ -1,6 +1,7 @@
 import pickle
 import pytest
 
+from src.modgeosys.graph.distance import manhattan_distance
 from src.modgeosys.graph.types import Node, Edge, Graph
 
 
@@ -29,12 +30,12 @@ def valid_edges2():
 
 @pytest.fixture
 def valid_graph1(valid_nodes, valid_edges1):
-    return Graph(valid_nodes, valid_edges1)
+    return Graph(properties={'heuristic_distance': manhattan_distance}, nodes=valid_nodes, edges=valid_edges1)
 
 
 @pytest.fixture
 def valid_graph2(valid_nodes, valid_edges2):
-    return Graph(valid_nodes, valid_edges2)
+    return Graph(properties={'heuristic_distance': manhattan_distance}, nodes=valid_nodes, edges=valid_edges2)
 
 
 @pytest.fixture
