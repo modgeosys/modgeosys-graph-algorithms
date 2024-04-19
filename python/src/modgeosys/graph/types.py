@@ -28,8 +28,9 @@ class Node:
     coordinates: Vector[np.float64]
     properties: dict = field(default_factory=dict)
 
-    def __init__(self, coordinates: tuple):
-        self.coordinates = np.array(coordinates, dtype=np.float64)
+    def __post_init__(self):
+        self.properties = dict(self.properties)
+        self.coordinates = np.array(self.coordinates, dtype=np.float64)
 
     def __hash__(self):
         return hash(self.coordinates.tobytes()) # May not work for mixed array shapes; intended for Vectors only.
