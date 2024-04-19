@@ -37,12 +37,16 @@ class Hop:
         return Hop(edge=self.edge, g=self.g, h=self.h)
 
 
-def a_star(graph: Graph, start_node_index: int, goal_node_index: int, heuristic_distance: HeuristicDistanceCallable) -> list[Hop]:
+def a_star(graph: Graph, start_node_index: int, goal_node_index: int) -> list[Hop]:
     """Implement the A* algorithm for finding the shortest path between two nodes in a graph."""
 
     # Grab the nodes and adjacency map from the graph.
     nodes         = graph.nodes
     adjacency_map = graph.adjacency_map()
+    try:
+        heuristic_distance = graph.properties['heuristic_distance']
+    except KeyError:
+        raise KeyError('The graph must have a heuristic_distance property to use the A* algorithm.')
 
     # Initialize the edge hop lists.
     unhopped   = list(graph.edges)

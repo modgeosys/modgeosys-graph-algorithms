@@ -112,7 +112,7 @@ class Graph:
     edge_weight_function: EdgeWeightCallable | None
 
     @classmethod
-    def from_edge_definitions(cls, edge_definitions: EdgeDefinitionSequence):
+    def from_edge_definitions(cls, edge_definitions: EdgeDefinitionSequence, properties: dict):
         coordinates_of_all_nodes = []
 
         for edge_definition in edge_definitions:
@@ -134,7 +134,7 @@ class Graph:
             edges.append(edge)
 
         nodes = [nodes[index] for index in sorted(nodes)]
-        return cls({}, nodes, edges)
+        return cls(properties, nodes, edges)
 
     def __init__(self, properties: dict, nodes: NodeSequence, edges: EdgeSequence, edge_weight_function: EdgeWeightCallable | None = None):
         """Initialize a graph."""

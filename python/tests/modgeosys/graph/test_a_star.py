@@ -26,7 +26,7 @@ def test_hop_equality():
 
 
 def test_a_star_finds_shortest_path_manhattan_graph1(valid_graph1):
-    result = a_star(graph=valid_graph1, start_node_index=0, goal_node_index=4, heuristic_distance=manhattan_distance)
+    result = a_star(graph=valid_graph1, start_node_index=0, goal_node_index=4)
 
     assert len(result) == 2
     assert result == [Hop(Edge(weight=2.0, node_indices=frozenset({0, 1})), cached_f=5.0, g=2.0, h=3.0),
@@ -34,7 +34,7 @@ def test_a_star_finds_shortest_path_manhattan_graph1(valid_graph1):
 
 
 def test_a_star_find_shortest_path_manhattan_graph_from_edge_definitions(valid_graph_from_edge_definitions):
-    result = a_star(graph=valid_graph_from_edge_definitions, start_node_index=0, goal_node_index=4, heuristic_distance=manhattan_distance)
+    result = a_star(graph=valid_graph_from_edge_definitions, start_node_index=0, goal_node_index=4)
 
     assert len(result) == 2
     assert result == [Hop(Edge(weight=2.0, node_indices=frozenset({0, 1})), cached_f=5.0, g=2.0, h=3.0),
@@ -42,7 +42,7 @@ def test_a_star_find_shortest_path_manhattan_graph_from_edge_definitions(valid_g
 
 
 def test_a_star_finds_shortest_path_manhattan_graph2(valid_graph2):
-    result = a_star(graph=valid_graph2, start_node_index=0, goal_node_index=4, heuristic_distance=manhattan_distance)
+    result = a_star(graph=valid_graph2, start_node_index=0, goal_node_index=4)
 
     assert len(result) == 3
     assert result == [Hop(Edge(weight=1.0, node_indices=frozenset({0, 2})), cached_f=5.0, g=1.0, h=4.0),
@@ -52,15 +52,15 @@ def test_a_star_finds_shortest_path_manhattan_graph2(valid_graph2):
 
 def test_a_star_with_no_path_manhattan(valid_nodes):
     with pytest.raises(NoNavigablePathError):
-        a_star(graph=Graph({}, valid_nodes, ()), start_node_index=0, goal_node_index=3, heuristic_distance=manhattan_distance)
+        a_star(graph=Graph({'heuristic_distance': manhattan_distance}, valid_nodes, ()), start_node_index=0, goal_node_index=3)
 
 
 def test_a_star_with_single_node_path_manhattan():
-    assert len(a_star(graph=Graph({}, [(0.0, 0.0)], ()), start_node_index=0, goal_node_index=0, heuristic_distance=manhattan_distance)) == 0.0
+    assert len(a_star(graph=Graph({'heuristic_distance': manhattan_distance}, [(0.0, 0.0)], ()), start_node_index=0, goal_node_index=0)) == 0.0
 
 
 def test_a_star_finds_shortest_path_manhattan_larger_graph(valid_graph_larger):
-    result = a_star(graph=valid_graph_larger, start_node_index=0, goal_node_index=4, heuristic_distance=manhattan_distance)
+    result = a_star(graph=valid_graph_larger, start_node_index=0, goal_node_index=4)
 
     assert len(result) == 12
     assert result == [Hop(edge=Edge(weight=122.70985671734266, node_indices=frozenset({0, 15})), cached_f=1177.683043473936, g=122.70985671734266, h=1054.9731867565933),
@@ -83,7 +83,7 @@ def test_a_star_finds_shortest_path_with_string_edge_weights(valid_graph_larger_
     for edge in valid_graph_larger_with_string_edge_weights.edges:
         edge.__post_init__()
 
-    result = a_star(graph=valid_graph_larger_with_string_edge_weights, start_node_index=0, goal_node_index=4, heuristic_distance=manhattan_distance)
+    result = a_star(graph=valid_graph_larger_with_string_edge_weights, start_node_index=0, goal_node_index=4)
 
     assert len(result) == 12
     assert result == [Hop(edge=Edge(weight=122.70985671734266, node_indices=frozenset({0, 15})), cached_f=1177.683043473936, g=122.70985671734266, h=1054.9731867565933),
