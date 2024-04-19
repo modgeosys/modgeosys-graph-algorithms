@@ -44,7 +44,8 @@ def valid_graph_from_edge_definitions():
                                         (1, ((0.0, 0.0), (1.0, 0.0))),
                                         (1, ((1.0, 0.0), (2.0, 1.0))),
                                         (3, ((0.0, 2.0), (2.0, 3.0))),
-                                        (1, ((2.0, 1.0), (2.0, 3.0)))), properties={'heuristic_distance': manhattan_distance})
+                                        (1, ((2.0, 1.0), (2.0, 3.0)))),
+                                       properties={'heuristic_distance': manhattan_distance})
 
 
 @pytest.fixture
