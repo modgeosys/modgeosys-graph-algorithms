@@ -29,8 +29,9 @@ class Node:
     properties: dict = field(default_factory=dict)
 
     def __post_init__(self):
-        self.properties = dict(self.properties)
         self.coordinates = np.array(self.coordinates, dtype=np.float64)
+        if not isinstance(self.properties, dict):
+            self.properties = dict(self.properties)
 
     def __hash__(self):
         return hash(self.coordinates.tobytes()) # May not work for mixed array shapes; intended for Vectors only.
@@ -76,10 +77,12 @@ class Node:
 class Edge:
     """An edge in a graph."""
     node_indices: frozenset[int] = field(compare=False)
-    properties: dict = field(default_factory=dict, compare=False)
     weight: int | float = field(default=0.0)
+    properties: dict = field(default_factory=dict, compare=False)
 
     def __post_init__(self):
+        if not isinstance(self.properties, dict):
+            self.properties = dict(self.properties)
         self.weight = float(self.weight)  # Convert weight to float
 
     def index_of_other_node(self, current_index: int) -> int:
@@ -106,13 +109,14 @@ class Edge:
 
 class Graph:
     """A graph."""
-    properties: dict = field(default_factory=dict)
     nodes: NodeSequence = field(default_factory=list)
     edges: EdgeSequence = field(default_factory=tuple)
+    properties: dict = field(default_factory=dict)
     edge_weight_function: EdgeWeightCallable | None
+    heuristic_distance_function: HeuristicDistanceCallable | None
 
     @classmethod
-    def from_edge_definitions_and_properties(cls, edge_definitions: EdgeDefinitionSequence, properties: dict):
+    def from_edge_definitions(cls, edge_definitions: EdgeDefinitionSequence, properties: dict | None = None, edge_weight_function: EdgeWeightCallable | None = None, heuristic_distance_function: HeuristicDistanceCallable | None = None) -> 'Graph':
         coordinates_of_all_nodes = []
 
         for edge_definition in edge_definitions:
@@ -134,17 +138,20 @@ class Graph:
             edges.append(edge)
 
         nodes = [nodes[index] for index in sorted(nodes)]
-        return cls(properties, nodes, edges)
 
-    def __init__(self, properties: dict, nodes: NodeSequence, edges: EdgeSequence, edge_weight_function: EdgeWeightCallable | None = None):
+        return cls(nodes=nodes, edges=edges, properties=properties, edge_weight_function=edge_weight_function, heuristic_distance_function=heuristic_distance_function)
+
+    def __init__(self, nodes: NodeSequence, edges: EdgeSequence, properties: dict | None = None, edge_weight_function: EdgeWeightCallable | None = None, heuristic_distance_function: HeuristicDistanceCallable | None = None):
         """Initialize a graph."""
-        self.properties = dict(properties)
         self.nodes = copy(nodes)
         self.edges = tuple(copy(edge) for edge in edges)
+        self.properties = {} if properties is None else (copy(properties) if isinstance(properties, dict) else dict(properties))
         if edge_weight_function:
             self.edge_weight_function = edge_weight_function
             for edge in self.edges:
                 edge.weight = self.edge_weight_function(self, edge)
+        if heuristic_distance_function:
+            self.heuristic_distance_function = heuristic_distance_function
 
     def __repr__(self):
         return f'Graph(nodes={self.nodes}, edges={self.edges})'
@@ -184,7 +191,7 @@ class Graph:
 
 def length_cost_per_unit(graph: Graph, edge: Edge) -> float:
     cost_per_unit = edge.properties['cost_per_unit']
-    heuristic_distance = graph.nodes.properties['heuristic_distance']
+    heuristic_distance = graph.heuristic_distance_function
     attached_nodes = [graph.nodes[node_index] for node_index in edge.node_indices]
     return cost_per_unit * heuristic_distance(attached_nodes[0], attached_nodes[1])
 

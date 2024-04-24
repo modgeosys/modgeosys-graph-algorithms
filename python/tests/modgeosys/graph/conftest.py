@@ -30,22 +30,22 @@ def valid_edges2():
 
 @pytest.fixture
 def valid_graph1(valid_nodes, valid_edges1):
-    return Graph(properties={'heuristic_distance': manhattan_distance}, nodes=valid_nodes, edges=valid_edges1)
+    return Graph(properties={}, nodes=valid_nodes, edges=valid_edges1, heuristic_distance_function=manhattan_distance)
 
 
 @pytest.fixture
 def valid_graph2(valid_nodes, valid_edges2):
-    return Graph(properties={'heuristic_distance': manhattan_distance}, nodes=valid_nodes, edges=valid_edges2)
+    return Graph(properties={}, nodes=valid_nodes, edges=valid_edges2, heuristic_distance_function=manhattan_distance)
 
 
 @pytest.fixture
 def valid_graph_from_edge_definitions():
-    return Graph.from_edge_definitions_and_properties(edge_definitions=((2, ((0.0, 0.0), (0.0, 2.0))),
-                                                                        (1, ((0.0, 0.0), (1.0, 0.0))),
-                                                                        (1, ((1.0, 0.0), (2.0, 1.0))),
-                                                                        (3, ((0.0, 2.0), (2.0, 3.0))),
-                                                                        (1, ((2.0, 1.0), (2.0, 3.0)))),
-                                                      properties={'heuristic_distance': manhattan_distance})
+    return Graph.from_edge_definitions(edge_definitions=((2, ((0.0, 0.0), (0.0, 2.0))),
+                                                         (1, ((0.0, 0.0), (1.0, 0.0))),
+                                                         (1, ((1.0, 0.0), (2.0, 1.0))),
+                                                         (3, ((0.0, 2.0), (2.0, 3.0))),
+                                                         (1, ((2.0, 1.0), (2.0, 3.0)))),
+                                       heuristic_distance_function=manhattan_distance)
 
 
 @pytest.fixture

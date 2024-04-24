@@ -30,11 +30,12 @@ from modgeosys.graph.distance import manhattan_distance, euclidean_distance
 from modgeosys.graph.a_star import a_star
 
 # Define a toy graph.
-toy_graph = Graph.from_edge_definitions_and_properties(((2, ((0.0, 0.0), (0.0, 2.0))),
-                                                        (1, ((0.0, 0.0), (1.0, 0.0))),
-                                                        (1, ((1.0, 0.0), (2.0, 1.0))),
-                                                        (3, ((0.0, 2.0), (2.0, 3.0))),
-                                                        (1, ((2.0, 1.0), (2.0, 3.0)))))
+toy_graph = Graph.from_edge_definitions(edge_definitions=((2, ((0.0, 0.0), (0.0, 2.0))),
+                                                          (1, ((0.0, 0.0), (1.0, 0.0))),
+                                                          (1, ((1.0, 0.0), (2.0, 1.0))),
+                                                          (3, ((0.0, 2.0), (2.0, 3.0))),
+                                                          (1, ((2.0, 1.0), (2.0, 3.0)))),
+                                        heuristic_distance_function=manhattan_distance)
 
 # Load a bigger graph from a pickle file.
 with open('python/data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
@@ -87,15 +88,15 @@ from modgeosys.graph.types import Graph
 from modgeosys.graph.prim import prim
 
 # Define a toy graph.
-toy_graph = Graph.from_edge_definitions_and_properties(((2, ((0.0, 0.0), (0.0, 2.0))),
-                                                        (1, ((0.0, 0.0), (1.0, 0.0))),
-                                                        (1, ((1.0, 0.0), (2.0, 1.0))),
-                                                        (3, ((0.0, 2.0), (2.0, 3.0))),
-                                                        (1, ((2.0, 1.0), (2.0, 3.0)))))
+toy_graph = Graph.from_edge_definitions(((2, ((0.0, 0.0), (0.0, 2.0))),
+                                         (1, ((0.0, 0.0), (1.0, 0.0))),
+                                         (1, ((1.0, 0.0), (2.0, 1.0))),
+                                         (3, ((0.0, 2.0), (2.0, 3.0))),
+                                         (1, ((2.0, 1.0), (2.0, 3.0)))))
 
 # Load a bigger graph from a pickle file.
 with open('python/data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
-    larger_graph = pickle.load(pickled_sample_larger_graph_file)
+  larger_graph = pickle.load(pickled_sample_larger_graph_file)
 
 # Call the Prim function.
 toy_minimum_spanning_tree = prim(graph=toy_graph, start_node_index=0)

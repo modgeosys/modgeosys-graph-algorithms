@@ -52,11 +52,11 @@ def test_a_star_finds_shortest_path_manhattan_graph2(valid_graph2):
 
 def test_a_star_with_no_path_manhattan(valid_nodes):
     with pytest.raises(NoNavigablePathError):
-        a_star(graph=Graph({'heuristic_distance': manhattan_distance}, valid_nodes, ()), start_node_index=0, goal_node_index=3)
+        a_star(graph=Graph(nodes=valid_nodes, edges=(), heuristic_distance_function=manhattan_distance), start_node_index=0, goal_node_index=3)
 
 
 def test_a_star_with_single_node_path_manhattan():
-    assert len(a_star(graph=Graph({'heuristic_distance': manhattan_distance}, [(0.0, 0.0)], ()), start_node_index=0, goal_node_index=0)) == 0.0
+    assert len(a_star(graph=Graph(nodes=[(0.0, 0.0)], edges=(), heuristic_distance_function=manhattan_distance), start_node_index=0, goal_node_index=0)) == 0.0
 
 
 def test_a_star_finds_shortest_path_manhattan_larger_graph(valid_graph_larger):

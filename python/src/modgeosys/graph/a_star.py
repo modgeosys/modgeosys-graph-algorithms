@@ -43,10 +43,9 @@ def a_star(graph: Graph, start_node_index: int, goal_node_index: int) -> list[Ho
     # Grab the nodes and adjacency map from the graph.
     nodes         = graph.nodes
     adjacency_map = graph.adjacency_map()
-    try:
-        heuristic_distance = graph.properties['heuristic_distance']
-    except KeyError:
-        raise KeyError('The graph must have a heuristic_distance property to use the A* algorithm.')
+    heuristic_distance = graph.heuristic_distance_function
+    if not heuristic_distance:
+        raise AttributeError('The graph must have a heuristic_distance property to use the A* algorithm.')
 
     # Initialize the edge hop lists.
     unhopped   = list(graph.edges)

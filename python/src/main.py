@@ -10,12 +10,12 @@ from modgeosys.graph.a_star import a_star
 from modgeosys.graph.prim import prim
 
 # Define a toy graph.
-toy_graph = Graph.from_edge_definitions_and_properties(edge_definitions=((2, ((0.0, 0.0), (0.0, 2.0))),
-                                                                         (1, ((0.0, 0.0), (1.0, 0.0))),
-                                                                         (1, ((1.0, 0.0), (2.0, 1.0))),
-                                                                         (3, ((0.0, 2.0), (2.0, 3.0))),
-                                                                         (1, ((2.0, 1.0), (2.0, 3.0)))),
-                                                       properties={'heuristic_distance': manhattan_distance})
+toy_graph = Graph.from_edge_definitions(edge_definitions=((2, ((0.0, 0.0), (0.0, 2.0))),
+                                                          (1, ((0.0, 0.0), (1.0, 0.0))),
+                                                          (1, ((1.0, 0.0), (2.0, 1.0))),
+                                                          (3, ((0.0, 2.0), (2.0, 3.0))),
+                                                          (1, ((2.0, 1.0), (2.0, 3.0)))),
+                                        heuristic_distance_function=manhattan_distance)
 
 # Load a bigger graph from a pickle file.
 with open('python/data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
