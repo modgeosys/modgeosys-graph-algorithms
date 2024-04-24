@@ -50,6 +50,15 @@ def test_a_star_finds_shortest_path_manhattan_graph2(valid_graph2):
                       Hop(Edge(weight=1.0, node_indices=frozenset({3, 4})), cached_f=3.0, g=3.0, h=0.0)]
 
 
+def test_a_star_finds_shortest_path_manhattan_graph3(valid_graph3):
+    result = a_star(graph=valid_graph3, start_node_index=0, goal_node_index=4)
+
+    # assert len(result) == 3
+    assert result == [Hop(edge=Edge(weight=1.0, node_indices=frozenset({0, 2}), properties={'cost_per_unit': 1}), cached_f=5.0, g=1.0, h=4.0),
+                      Hop(edge=Edge(weight=2.0, node_indices=frozenset({2, 3}), properties={'cost_per_unit': 1}), cached_f=5.0, g=3.0, h=2.0),
+                      Hop(edge=Edge(weight=2.0, node_indices=frozenset({3, 4}), properties={'cost_per_unit': 1}), cached_f=5.0, g=5.0, h=0.0)]
+
+
 def test_a_star_with_no_path_manhattan(valid_nodes):
     with pytest.raises(NoNavigablePathError):
         a_star(graph=Graph(nodes=valid_nodes, edges=(), heuristic_distance_function=manhattan_distance), start_node_index=0, goal_node_index=3)

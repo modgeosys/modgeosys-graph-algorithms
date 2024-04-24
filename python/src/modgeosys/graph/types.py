@@ -2,7 +2,7 @@
 
 import bisect
 from collections.abc import Callable, Mapping, Sequence
-from copy import copy
+from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Annotated, Literal, TypeVar
 
@@ -94,16 +94,16 @@ class Edge:
         return self.weight == other.weight and self.node_indices == other.node_indices
 
     def __repr__(self):
-        return f'Edge(weight={self.weight}, node_indices={self.node_indices})'
+        return f'Edge(weight={self.weight}, node_indices={self.node_indices}, properties={self.properties})'
 
     def __hash__(self):
         return hash(self.node_indices)
 
     def __copy__(self):
-        return Edge(weight=self.weight, node_indices=self.node_indices)
+        return Edge(weight=self.weight, node_indices=self.node_indices, properties=self.properties)
 
     def __deepcopy__(self, memo: Mapping | None = None):
-        return Edge(weight=self.weight, node_indices=self.node_indices)
+        return Edge(weight=self.weight, node_indices=self.node_indices, properties=self.properties)
 
 
 
@@ -143,15 +143,15 @@ class Graph:
 
     def __init__(self, nodes: NodeSequence, edges: EdgeSequence, properties: dict | None = None, edge_weight_function: EdgeWeightCallable | None = None, heuristic_distance_function: HeuristicDistanceCallable | None = None):
         """Initialize a graph."""
-        self.nodes = copy(nodes)
-        self.edges = tuple(copy(edge) for edge in edges)
-        self.properties = {} if properties is None else (copy(properties) if isinstance(properties, dict) else dict(properties))
+        self.nodes = deepcopy(nodes)
+        self.edges = tuple(deepcopy(edge) for edge in edges)
+        self.properties = {} if properties is None else (deepcopy(properties) if isinstance(properties, dict) else dict(properties))
+        if heuristic_distance_function:
+            self.heuristic_distance_function = heuristic_distance_function
         if edge_weight_function:
             self.edge_weight_function = edge_weight_function
             for edge in self.edges:
                 edge.weight = self.edge_weight_function(self, edge)
-        if heuristic_distance_function:
-            self.heuristic_distance_function = heuristic_distance_function
 
     def __repr__(self):
         return f'Graph(nodes={self.nodes}, edges={self.edges})'
