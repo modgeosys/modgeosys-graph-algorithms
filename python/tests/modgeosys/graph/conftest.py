@@ -71,10 +71,8 @@ def valid_graph_larger():
 
 
 @pytest.fixture
-def valid_graph_larger_with_string_edge_weights():
-    with open('data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
-        graph = pickle.load(pickled_sample_larger_graph_file)
-        graph.heuristic_distance_function = manhattan_distance
-        for edge in graph.edges:
-            edge.weight = str(edge.weight)
-        return graph
+def valid_graph_larger_with_string_edge_weights(valid_graph_larger):
+    graph = valid_graph_larger
+    for edge in graph.edges:
+        edge.weight = str(edge.weight)
+    return graph
