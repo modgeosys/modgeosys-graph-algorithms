@@ -112,7 +112,7 @@ class Graph:
     edge_weight_function: EdgeWeightCallable | None
 
     @classmethod
-    def from_edge_definitions(cls, edge_definitions: EdgeDefinitionSequence, properties: dict):
+    def from_edge_definitions_and_properties(cls, edge_definitions: EdgeDefinitionSequence, properties: dict):
         coordinates_of_all_nodes = []
 
         for edge_definition in edge_definitions:

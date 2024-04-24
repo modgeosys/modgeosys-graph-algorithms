@@ -40,12 +40,12 @@ def valid_graph2(valid_nodes, valid_edges2):
 
 @pytest.fixture
 def valid_graph_from_edge_definitions():
-    return Graph.from_edge_definitions(((2, ((0.0, 0.0), (0.0, 2.0))),
-                                        (1, ((0.0, 0.0), (1.0, 0.0))),
-                                        (1, ((1.0, 0.0), (2.0, 1.0))),
-                                        (3, ((0.0, 2.0), (2.0, 3.0))),
-                                        (1, ((2.0, 1.0), (2.0, 3.0)))),
-                                       properties={'heuristic_distance': manhattan_distance})
+    return Graph.from_edge_definitions_and_properties(edge_definitions=((2, ((0.0, 0.0), (0.0, 2.0))),
+                                                                        (1, ((0.0, 0.0), (1.0, 0.0))),
+                                                                        (1, ((1.0, 0.0), (2.0, 1.0))),
+                                                                        (3, ((0.0, 2.0), (2.0, 3.0))),
+                                                                        (1, ((2.0, 1.0), (2.0, 3.0)))),
+                                                      properties={'heuristic_distance': manhattan_distance})
 
 
 @pytest.fixture
