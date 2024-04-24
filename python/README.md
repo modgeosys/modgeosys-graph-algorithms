@@ -38,6 +38,7 @@ toy_graph = Graph.from_edge_definitions(edge_definitions=((2, ((0.0, 0.0), (0.0,
 # Load a bigger graph from a pickle file.
 with open('python/data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
     larger_graph = pickle.load(pickled_sample_larger_graph_file)
+    larger_graph.heuristic_distance_function = manhattan_distance
 
 # Call the A* function.
 toy_a_star_path = a_star(graph=toy_graph, start_node_index=0, goal_node_index=4, heuristic_distance=manhattan_distance)
