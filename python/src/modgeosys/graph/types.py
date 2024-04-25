@@ -15,7 +15,7 @@ Vector = Annotated[npt.NDArray[NDType], Literal["N", 1]]
 
 type NodeSequence = Sequence[Node]
 type EdgeSequence = Sequence[Edge]
-type EdgeDefinitionSequence = Sequence[tuple[tuple, tuple], int | float, dict]
+type EdgeDefinitionSequence = Sequence[tuple[tuple, tuple], int | float | None, dict]
 type AdjacencyMap = Mapping[Node, Sequence[Edge]]
 type HeuristicDistanceCallable = Callable[[Node, Node], int | float]
 type ValidEdgeCallable = Callable[[Edge], bool]
@@ -83,7 +83,8 @@ class Edge:
     def __post_init__(self):
         if not isinstance(self.properties, dict):
             self.properties = dict(self.properties)
-        self.weight = float(self.weight)  # Convert weight to float
+        if self.weight and not isinstance(self.weight, float):
+            self.weight = float(self.weight)
 
     def index_of_other_node(self, current_index: int) -> int:
         """Given one node index, return the other node index."""
