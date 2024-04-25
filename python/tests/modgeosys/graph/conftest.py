@@ -38,6 +38,15 @@ def valid_edges3():
 
 
 @pytest.fixture
+def valid_edges3_with_computed_weights():
+    return (Edge(properties={'cost_per_unit': 2}, weight=4.0, node_indices=frozenset((0, 1))),
+            Edge(properties={'cost_per_unit': 1}, weight=1.0, node_indices=frozenset((0, 2))),
+            Edge(properties={'cost_per_unit': 1}, weight=2.0, node_indices=frozenset((2, 3))),
+            Edge(properties={'cost_per_unit': 3}, weight=9.0, node_indices=frozenset((1, 4))),
+            Edge(properties={'cost_per_unit': 1}, weight=2.0, node_indices=frozenset((3, 4))))
+
+
+@pytest.fixture
 def valid_graph1(valid_nodes, valid_edges1):
     return Graph(properties={}, nodes=valid_nodes, edges=valid_edges1, heuristic_distance_function=manhattan_distance)
 

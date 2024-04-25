@@ -146,12 +146,13 @@ class Graph:
         self.nodes = deepcopy(nodes)
         self.edges = tuple(deepcopy(edge) for edge in edges)
         self.properties = {} if properties is None else (deepcopy(properties) if isinstance(properties, dict) else dict(properties))
-        if heuristic_distance_function:
-            self.heuristic_distance_function = heuristic_distance_function
+        self.heuristic_distance_function = heuristic_distance_function if heuristic_distance_function else None
         if edge_weight_function:
             self.edge_weight_function = edge_weight_function
             for edge in self.edges:
                 edge.weight = self.edge_weight_function(self, edge)
+        else:
+            self.edge_weight_function = None
 
     def __repr__(self):
         return f'Graph(nodes={self.nodes}, edges={self.edges})'

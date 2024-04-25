@@ -57,6 +57,17 @@ def test_edge_inequality():
 def test_graph_creation(valid_nodes, valid_edges1, valid_graph1):
     assert valid_graph1.nodes == valid_nodes
     assert valid_graph1.edges == valid_edges1
+    assert valid_graph1.properties == {}
+    assert valid_graph1.heuristic_distance_function is not None
+    assert valid_graph1.edge_weight_function is None
+
+
+def test_graph_creation_with_edge_weight_function(valid_nodes, valid_edges3_with_computed_weights, valid_graph3):
+    assert valid_graph3.nodes == valid_nodes
+    assert valid_graph3.edges == valid_edges3_with_computed_weights
+    assert valid_graph3.properties == {}
+    assert valid_graph3.heuristic_distance_function is not None
+    assert valid_graph3.edge_weight_function is not None
 
 
 def test_graph_creation_from_edge_definitions(valid_graph_from_edge_definitions, valid_nodes, valid_edges1):
