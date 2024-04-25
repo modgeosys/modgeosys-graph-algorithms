@@ -103,7 +103,7 @@ class Edge:
         return Edge(weight=self.weight, node_indices=self.node_indices, properties=self.properties)
 
     def __deepcopy__(self, memo: Mapping | None = None):
-        return Edge(weight=self.weight, node_indices=self.node_indices, properties=self.properties)
+        return Edge(weight=deepcopy(self.weight), node_indices=deepcopy(self.node_indices), properties=deepcopy(self.properties))
 
 
 
