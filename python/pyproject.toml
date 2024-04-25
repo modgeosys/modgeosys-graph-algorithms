@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "modgeosys-graph-algorithms"
-version = "0.3.2"
+version = "0.3.3"
 description = ""
 authors = ["Kevin Weller <klweller@icloud.com>"]
 readme = "README.md"
