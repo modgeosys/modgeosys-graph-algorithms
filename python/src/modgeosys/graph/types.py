@@ -15,7 +15,7 @@ Vector = Annotated[npt.NDArray[NDType], Literal["N", 1]]
 
 type NodeSequence = Sequence[Node]
 type EdgeSequence = Sequence[Edge]
-type EdgeDefinitionSequence = Sequence[tuple[int | float, tuple[tuple, tuple]]]
+type EdgeDefinitionSequence = Sequence[tuple[tuple, tuple], int | float, dict]
 type AdjacencyMap = Mapping[Node, Sequence[Edge]]
 type HeuristicDistanceCallable = Callable[[Node, Node], int | float]
 type ValidEdgeCallable = Callable[[Edge], bool]
@@ -120,7 +120,7 @@ class Graph:
         coordinates_of_all_nodes = []
 
         for edge_definition in edge_definitions:
-            for edge_node_coordinates in edge_definition[1]:
+            for edge_node_coordinates in edge_definition[0]:
                 if edge_node_coordinates not in coordinates_of_all_nodes:
                     coordinates_of_all_nodes.append(edge_node_coordinates)
 
@@ -129,12 +129,12 @@ class Graph:
 
         for edge_definition in edge_definitions:
             indices = []
-            for edge_node_coordinates in edge_definition[1]:
+            for edge_node_coordinates in edge_definition[0]:
                 index = coordinates_of_all_nodes.index(edge_node_coordinates)
                 indices.append(index)
                 nodes[index] = Node(coordinates=edge_node_coordinates)
             node_indices = frozenset(indices)
-            edge = Edge(weight=edge_definition[0], node_indices=node_indices)
+            edge = Edge(weight=edge_definition[1], node_indices=node_indices, properties=edge_definition[2])
             edges.append(edge)
 
         nodes = [nodes[index] for index in sorted(nodes)]

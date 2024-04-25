@@ -70,9 +70,9 @@ def test_graph_creation_with_edge_weight_function(valid_nodes, valid_edges3_with
     assert valid_graph3.edge_weight_function is not None
 
 
-def test_graph_creation_from_edge_definitions(valid_graph_from_edge_definitions, valid_nodes, valid_edges1):
+def test_graph_creation_from_edge_definitions(valid_graph_from_edge_definitions, valid_nodes, valid_edges1_with_computed_weights):
     assert valid_graph_from_edge_definitions.nodes == valid_nodes
-    assert valid_graph_from_edge_definitions.edges == valid_edges1
+    assert valid_graph_from_edge_definitions.edges == valid_edges1_with_computed_weights
 
 def test_graph_adjacency_map(valid_graph1):
     adjacency_map = valid_graph1.adjacency_map()
