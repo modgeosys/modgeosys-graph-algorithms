@@ -196,7 +196,7 @@ mod tests
     #[test]
     fn test_a_star_with_single_node_path_manhattan()
     {
-        let nodes = vec![Node::new(vec![0.0, 0.0])];
+        let nodes = vec![Node::new(vec![0.0, 0.0], BTreeMap::new())];
         let edges: Vec<Edge> = Vec::new();
 
         let expected: Vec<Hop> = Vec::new();

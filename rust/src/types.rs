@@ -1,6 +1,6 @@
 // Simple and complex data types for the graph module.
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::collections::HashSet;
 use std::cmp::Ordering;
 
@@ -10,15 +10,34 @@ use ordered_float::OrderedFloat;
 
 
 
+// A property value.
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+pub enum PropertyValue
+{
+    String(String),
+    Integer(i64),
+    Float(OrderedFloat<f64>),
+    Boolean(bool),
+}
+
+
 // A node in a graph.
 #[derive(Debug, Clone, Eq, Hash)]
-pub struct Node(pub Array1<OrderedFloat<f64>>);
+pub struct Node
+{
+    pub coordinates: Array1<OrderedFloat<f64>>,
+    pub properties: BTreeMap<String, PropertyValue>,
+}
 
 impl Node
 {
-    pub fn new(coordinates: Vec<f64>) -> Self
+    pub fn new(coordinates: Vec<f64>, properties: BTreeMap<String, PropertyValue>) -> Self
     {
-        Node(Array1::from_vec(coordinates).mapv(OrderedFloat))
+        Node
+        {
+            coordinates: Array1::from_vec(coordinates).mapv(OrderedFloat),
+            properties,
+        }
     }
 }
 
@@ -26,7 +45,7 @@ impl PartialOrd for Node
 {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering>
     {
-        for (self_coord, other_coord) in self.0.iter().zip(other.0.iter())
+        for (self_coord, other_coord) in self.coordinates.iter().zip(other.coordinates.iter())
         {
             match self_coord.cmp(other_coord)
             {
@@ -42,7 +61,7 @@ impl PartialEq for Node
 {
     fn eq(&self, other: &Self) -> bool
     {
-        self.0.iter().zip(other.0.iter()).all(|(a, b)| a == b)
+        self.coordinates.iter().zip(other.coordinates.iter()).all(|(a, b)| a == b)
     }
 }
 
@@ -61,13 +80,13 @@ impl<'a> IntoIterator for &'a Node
 
     fn into_iter(self) -> Self::IntoIter
     {
-        self.0.iter()
+        self.coordinates.iter()
     }
 }
 
 
 #[derive(Debug, Clone)]
-pub struct EdgeDefinition(pub f64, pub Vec<Vec<f64>>);
+pub struct EdgeDefinition(pub Vec<Vec<f64>>, pub f64, pub BTreeMap<String, PropertyValue>);
 
 
 // An edge in a graph.
@@ -151,7 +170,7 @@ impl Graph
 
         for edge_definition in &edge_definitions
         {
-            for edge_node_coordinates in &edge_definition.1
+            for edge_node_coordinates in &edge_definition.0
             {
                 if !coordinates_of_all_nodes.contains(edge_node_coordinates)
                 {
@@ -166,14 +185,14 @@ impl Graph
         for edge_definition in &edge_definitions
         {
             let mut indices: Vec<usize> = vec![];
-            for edge_node_coordinates in &edge_definition.1
+            for edge_node_coordinates in &edge_definition.0
             {
                 let index = coordinates_of_all_nodes.iter().position(|coordinates| coordinates == edge_node_coordinates).unwrap();
                 indices.push(index);
-                node_map.insert(index, Node::new(edge_node_coordinates.clone()));
+                node_map.insert(index, Node::new(edge_node_coordinates.clone(), BTreeMap::new()));
             }
             let node_indices: HashSet<_> = indices.into_iter().collect();
-            let edge = Edge::new(edge_definition.0, node_indices);
+            let edge = Edge::new(edge_definition.1, node_indices);
             edges.push(edge);
         }
 
@@ -258,16 +277,16 @@ mod tests
     #[test]
     fn test_node_equality()
     {
-        let node1 = Node::new(vec![0.0, 0.0]);
-        let node2 = Node::new(vec![0.0, 0.0]);
+        let node1 = Node::new(vec![0.0, 0.0], BTreeMap::new());
+        let node2 = Node::new(vec![0.0, 0.0], BTreeMap::new());
         assert_eq!(node1, node2);
     }
 
     #[test]
     fn test_node_inequality()
     {
-        let node1 = Node::new(vec![0.0, 0.0]);
-        let node2 = Node::new(vec![0.0, 1.0]);
+        let node1 = Node::new(vec![0.0, 0.0], BTreeMap::new());
+        let node2 = Node::new(vec![0.0, 1.0], BTreeMap::new());
         assert_ne!(node1, node2);
     }
 
@@ -329,7 +348,7 @@ mod tests
         let adjacency_map = graph.adjacency_map();
 
         assert_eq!(adjacency_map.len(), 5);
-        assert_eq!(adjacency_map.keys().collect::<Vec<&Node>>().sort(), vec![&Node::new(vec![0.0, 1.0]), &Node::new(vec![0.0, 2.0]), &Node::new(vec![2.0, 3.0]), &Node::new(vec![1.0, 4.0]), &Node::new(vec![3.0, 4.0])].sort());
+        assert_eq!(adjacency_map.keys().collect::<Vec<&Node>>().sort(), vec![&Node::new(vec![0.0, 1.0], BTreeMap::new()), &Node::new(vec![0.0, 2.0], BTreeMap::new()), &Node::new(vec![2.0, 3.0], BTreeMap::new()), &Node::new(vec![1.0, 4.0], BTreeMap::new()), &Node::new(vec![3.0, 4.0], BTreeMap::new())].sort());
 
         assert_eq!(adjacency_map[&graph.nodes[0]], vec![Edge::new(1.0, HashSet::from([0, 2])), Edge::new(2.0, HashSet::from([0, 1]))]);
         assert_eq!(adjacency_map[&graph.nodes[1]], vec![Edge::new(2.0, HashSet::from([0, 1])), Edge::new(3.0, HashSet::from([1, 4]))]);
