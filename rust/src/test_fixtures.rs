@@ -3,7 +3,7 @@ pub mod tests
 {
     use std::collections::{HashSet, BTreeMap};
     use crate::distance::manhattan_distance;
-    use crate::types::{Edge, EdgeDefinition, Graph, Node, specified_edge_weight, length_cost_per_unit};
+    use crate::types::{Edge, EdgeDefinition, Graph, Node, specified_edge_weight};
 
     pub fn valid_nodes() -> Vec<Node>
     {

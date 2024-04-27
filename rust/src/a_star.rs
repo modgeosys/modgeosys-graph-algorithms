@@ -5,7 +5,7 @@ use std::collections::BTreeMap;
 
 use ordered_float::OrderedFloat;
 
-use crate::types::{Graph, Node, NoNavigablePathError, Edge};
+use crate::types::{Graph, NoNavigablePathError, Edge};
 
 
 
@@ -74,11 +74,12 @@ impl Ord for Hop
 
 
 // Implement the A* algorithm for finding the shortest path between two nodes in a graph.
-pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize, heuristic_distance: fn(&Node, &Node) -> OrderedFloat<f64>) -> Result<Vec<Hop>, NoNavigablePathError>
+pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) -> Result<Vec<Hop>, NoNavigablePathError>
 {
     // Grab the nodes and adjacency map from the graph.
     let nodes           = &graph.nodes;
     let adjacency_map   = graph.adjacency_map();
+    let heuristic_distance = graph.heuristic_distance_function;
 
     // Initialize the edge hop lists.
     let mut unhopped = graph.edges.clone();
@@ -162,7 +163,7 @@ mod tests
         let expected = vec![Hop::new(Edge::new(HashSet::from([0, 1]), 2.0, BTreeMap::new()), 2.0, 3.0),
                             Hop::new(Edge::new(HashSet::from([1, 4]), 3.0, BTreeMap::new()), 5.0, 0.0)];
 
-        assert_eq!(a_star(&valid_graph1(), 0, 4, manhattan_distance).unwrap(), expected);
+        assert_eq!(a_star(&valid_graph1(), 0, 4).unwrap(), expected);
     }
 
     #[test]
@@ -171,7 +172,7 @@ mod tests
         let expected = vec![Hop::new(Edge::new(HashSet::from([0, 1]), 2.0, BTreeMap::new()), 2.0, 3.0),
                             Hop::new(Edge::new(HashSet::from([1, 4]), 3.0, BTreeMap::new()), 5.0, 0.0)];
 
-        assert_eq!(a_star(&valid_graph_from_edge_definitions(), 0, 4, manhattan_distance).unwrap(), expected);
+        assert_eq!(a_star(&valid_graph_from_edge_definitions(), 0, 4).unwrap(), expected);
     }
 
     #[test]
@@ -181,7 +182,7 @@ mod tests
                             Hop::new(Edge::new(HashSet::from([2, 3]), 1.0, BTreeMap::new()), 2.0, 2.0),
                             Hop::new(Edge::new(HashSet::from([3, 4]), 1.0, BTreeMap::new()), 3.0, 0.0)];
 
-        assert_eq!(a_star(&valid_graph2(), 0, 4, manhattan_distance).unwrap(), expected);
+        assert_eq!(a_star(&valid_graph2(), 0, 4).unwrap(), expected);
     }
 
     #[test]
@@ -190,7 +191,7 @@ mod tests
         let nodes = valid_nodes();
         let edges: Vec<Edge> = Vec::new();
 
-        assert!(a_star(&Graph::new(nodes, edges, BTreeMap::new(), specified_edge_weight, manhattan_distance), 0, 3, manhattan_distance).is_err());
+        assert!(a_star(&Graph::new(nodes, edges, BTreeMap::new(), specified_edge_weight, manhattan_distance), 0, 3).is_err());
     }
 
     #[test]
@@ -201,7 +202,7 @@ mod tests
 
         let expected: Vec<Hop> = Vec::new();
 
-        assert_eq!(a_star(&Graph::new(nodes, edges, BTreeMap::new(), specified_edge_weight, manhattan_distance), 0, 0, manhattan_distance).unwrap(), expected);
+        assert_eq!(a_star(&Graph::new(nodes, edges, BTreeMap::new(), specified_edge_weight, manhattan_distance), 0, 0).unwrap(), expected);
     }
 }
 

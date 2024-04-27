@@ -19,7 +19,7 @@ fn main()
                                                  BTreeMap::new(), specified_edge_weight, manhattan_distance);
 
     // Call the A* function.
-    let toy_a_star_path = a_star(&toy_graph, 0, 4, manhattan_distance).unwrap();
+    let toy_a_star_path = a_star(&toy_graph, 0, 4).unwrap();
 
     // Report the resulting path.
     println!("{:?}", toy_a_star_path);
