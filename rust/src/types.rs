@@ -93,18 +93,20 @@ pub struct EdgeDefinition(pub Vec<Vec<f64>>, pub f64, pub BTreeMap<String, Prope
 #[derive(Debug, Clone)]
 pub struct Edge
 {
-    pub weight: OrderedFloat<f64>,
     pub node_indices: HashSet<usize>,
+    pub weight: OrderedFloat<f64>,
+    pub properties: BTreeMap<String, PropertyValue>,
 }
 
 impl Edge
 {
-    pub fn new(weight: f64, node_indices: HashSet<usize>) -> Self
+    pub fn new(node_indices: HashSet<usize>, weight: f64, properties: BTreeMap<String, PropertyValue>) -> Self
     {
         Edge
         {
-            weight: OrderedFloat(weight),
             node_indices,
+            weight: OrderedFloat(weight),
+            properties,
         }
     }
 
@@ -127,7 +129,7 @@ impl PartialEq for Edge
 {
     fn eq(&self, other: &Self) -> bool
     {
-        self.weight == other.weight && self.node_indices == other.node_indices
+        self.weight == other.weight && self.node_indices == other.node_indices && self.properties == other.properties
     }
 }
 
@@ -155,16 +157,19 @@ pub struct Graph
 {
     pub nodes: Vec<Node>,
     pub edges: Vec<Edge>,
+    pub properties: BTreeMap<String, PropertyValue>,
+    pub edge_weight_function: fn(&Graph, &Edge) -> OrderedFloat<f64>,
+    pub heuristic_distance_function: fn(&Node, &Node) -> OrderedFloat<f64>,
 }
 
 impl Graph
 {
-    pub fn new(nodes: Vec<Node>, edges: Vec<Edge>) -> Self
+    pub fn new(nodes: Vec<Node>, edges: Vec<Edge>, properties: BTreeMap<String, PropertyValue>, edge_weight_function: fn(&Graph, &Edge) -> OrderedFloat<f64>, heuristic_distance_function: fn(&Node, &Node) -> OrderedFloat<f64>) -> Self
     {
-        Graph { nodes, edges }
+        Graph { nodes, edges, properties, edge_weight_function, heuristic_distance_function }
     }
 
-    pub fn from_edge_definitions(edge_definitions: Vec<EdgeDefinition>) -> Self
+    pub fn from_edge_definitions(edge_definitions: Vec<EdgeDefinition>, properties: BTreeMap<String, PropertyValue>, edge_weight_function: fn(&Graph, &Edge) -> OrderedFloat<f64>, heuristic_distance_function: fn(&Node, &Node) -> OrderedFloat<f64>) -> Self
     {
         let mut coordinates_of_all_nodes: Vec<Vec<f64>> = vec![];
 
@@ -192,7 +197,7 @@ impl Graph
                 node_map.insert(index, Node::new(edge_node_coordinates.clone(), BTreeMap::new()));
             }
             let node_indices: HashSet<_> = indices.into_iter().collect();
-            let edge = Edge::new(edge_definition.1, node_indices);
+            let edge = Edge::new(node_indices, edge_definition.1, edge_definition.2.clone());
             edges.push(edge);
         }
 
@@ -200,7 +205,7 @@ impl Graph
         node_vec.sort_by_key(|(key, _)| *key);
         let nodes: Vec<Node> = node_vec.into_iter().map(|(_, node)| node).collect();
 
-        Graph::new(nodes, edges)
+        Graph::new(nodes, edges, properties, edge_weight_function, heuristic_distance_function)
     }
 
     // Render an adjacency map.
@@ -243,6 +248,22 @@ impl Graph
 
         adjacency_matrix
     }
+}
+
+pub fn specified_edge_weight(_graph: &Graph, edge: &Edge) -> OrderedFloat<f64>
+{
+    edge.weight
+}
+
+pub fn length_cost_per_unit(graph: &Graph, edge: &Edge) -> OrderedFloat<f64>
+{
+    let cost_per_unit: OrderedFloat<f64> = match edge.properties.get("cost_per_unit")
+    {
+        Some(PropertyValue::Float(cost_per_unit)) => cost_per_unit.clone(),
+        _ => OrderedFloat(1.0),
+    };
+    let attached_nodes = edge.node_indices.iter().map(|index| &graph.nodes[*index]).collect::<Vec<&Node>>();
+    cost_per_unit * (graph.heuristic_distance_function)(attached_nodes[0], attached_nodes[1])
 }
 
 
@@ -293,15 +314,15 @@ mod tests
     #[test]
     fn test_edge_creation_()
     {
-        let edge = Edge::new(10.0, HashSet::from([1, 2]));
-        assert_eq!(edge.weight, 10.0);
+        let edge = Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new());
         assert_eq!(edge.node_indices, HashSet::from([1, 2]));
+        assert_eq!(edge.weight, 10.0);
     }
 
     #[test]
     fn test_edge_index_of_other_node()
     {
-        let edge = Edge::new(10.0, HashSet::from([1, 2]));
+        let edge = Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new());
         assert_eq!(edge.index_of_other_node(1), 2);
         assert_eq!(edge.index_of_other_node(2), 1);
     }
@@ -309,16 +330,16 @@ mod tests
     #[test]
     fn test_edge_equality()
     {
-        let edge_1 = Edge::new(10.0, HashSet::from([1, 2]));
-        let edge_2 = Edge::new(10.0, HashSet::from([1, 2]));
+        let edge_1 = Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new());
+        let edge_2 = Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new());
         assert_eq!(edge_1, edge_2);
     }
 
     #[test]
     fn test_edge_inequality()
     {
-        let edge_1 = Edge::new(10.0, HashSet::from([1, 2]));
-        let edge_2 = Edge::new(10.0, HashSet::from([1, 3]));
+        let edge_1 = Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new());
+        let edge_2 = Edge::new(HashSet::from([1, 3]), 10.0, BTreeMap::new());
         assert_ne!(edge_1, edge_2);
     }
 
@@ -341,28 +362,24 @@ mod tests
     #[test]
     fn test_graph_adjacency_map()
     {
-        let nodes = valid_nodes();
-        let edges = valid_edges1();
-        let graph = Graph::new(nodes, edges);
+        let graph = valid_graph1();
 
         let adjacency_map = graph.adjacency_map();
 
         assert_eq!(adjacency_map.len(), 5);
         assert_eq!(adjacency_map.keys().collect::<Vec<&Node>>().sort(), vec![&Node::new(vec![0.0, 1.0], BTreeMap::new()), &Node::new(vec![0.0, 2.0], BTreeMap::new()), &Node::new(vec![2.0, 3.0], BTreeMap::new()), &Node::new(vec![1.0, 4.0], BTreeMap::new()), &Node::new(vec![3.0, 4.0], BTreeMap::new())].sort());
 
-        assert_eq!(adjacency_map[&graph.nodes[0]], vec![Edge::new(1.0, HashSet::from([0, 2])), Edge::new(2.0, HashSet::from([0, 1]))]);
-        assert_eq!(adjacency_map[&graph.nodes[1]], vec![Edge::new(2.0, HashSet::from([0, 1])), Edge::new(3.0, HashSet::from([1, 4]))]);
-        assert_eq!(adjacency_map[&graph.nodes[2]], vec![Edge::new(1.0, HashSet::from([0, 2])), Edge::new(1.0, HashSet::from([2, 3]))]);
-        assert_eq!(adjacency_map[&graph.nodes[3]], vec![Edge::new(1.0, HashSet::from([2, 3])), Edge::new(1.0, HashSet::from([3, 4]))]);
-        assert_eq!(adjacency_map[&graph.nodes[4]], vec![Edge::new(1.0, HashSet::from([3, 4])), Edge::new(3.0, HashSet::from([1, 4]))]);
+        assert_eq!(adjacency_map[&graph.nodes[0]], vec![Edge::new(HashSet::from([0, 2]), 1.0, BTreeMap::new()), Edge::new(HashSet::from([0, 1]), 2.0, BTreeMap::new())]);
+        assert_eq!(adjacency_map[&graph.nodes[1]], vec![Edge::new(HashSet::from([0, 1]), 2.0, BTreeMap::new()), Edge::new(HashSet::from([1, 4]), 3.0, BTreeMap::new())]);
+        assert_eq!(adjacency_map[&graph.nodes[2]], vec![Edge::new(HashSet::from([0, 2]), 1.0, BTreeMap::new()), Edge::new(HashSet::from([2, 3]), 1.0, BTreeMap::new())]);
+        assert_eq!(adjacency_map[&graph.nodes[3]], vec![Edge::new(HashSet::from([2, 3]), 1.0, BTreeMap::new()), Edge::new(HashSet::from([3, 4]), 1.0, BTreeMap::new())]);
+        assert_eq!(adjacency_map[&graph.nodes[4]], vec![Edge::new(HashSet::from([3, 4]), 1.0, BTreeMap::new()), Edge::new(HashSet::from([1, 4]), 3.0, BTreeMap::new())]);
     }
 
     #[test]
     fn test_graph_adjacency_matrix()
     {
-        let nodes = valid_nodes();
-        let edges = valid_edges1();
-        let graph = Graph::new(nodes, edges);
+        let graph = valid_graph1();
 
         let adjacency_matrix = graph.adjacency_matrix();
 
