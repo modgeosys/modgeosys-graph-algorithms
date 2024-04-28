@@ -293,7 +293,8 @@ impl NoNavigablePathError
 mod tests
 {
     use super::*;
-    use crate::test_fixtures::tests::{valid_nodes, valid_edges1, valid_graph1, valid_graph_from_edge_definitions};
+    use crate::distance::manhattan_distance;
+    use crate::test_fixtures::tests::{valid_nodes, valid_edges1, valid_edges1_with_computed_weights, valid_graph1, valid_graph_from_edge_definitions, valid_graph3, valid_edges3_with_computed_weights};
 
     #[test]
     fn test_node_equality()
@@ -348,15 +349,33 @@ mod tests
     {
         assert_eq!(valid_graph1().nodes, valid_nodes());
         assert_eq!(valid_graph1().edges, valid_edges1());
+        assert_eq!(valid_graph1().properties, BTreeMap::new());
+        // assert_eq!(valid_graph1().heuristic_distance_function, manhattan_distance);
+        // assert_eq!(valid_graph1().edge_weight_function, specified_edge_weight);
     }
 
     #[test]
-    fn test_graph_from_edge_definitions()
+    fn test_graph_creation_with_edge_weight_function()
+    {
+        let graph = valid_graph3();
+
+        assert_eq!(graph.nodes, valid_nodes());
+        assert_eq!(graph.edges, valid_edges3_with_computed_weights());
+        assert_eq!(graph.properties, BTreeMap::new());
+        // assert_eq!(graph.heuristic_distance_function, manhattan_distance);
+        // assert_eq!(graph.edge_weight_function, length_cost_per_unit);
+    }
+
+    #[test]
+    fn test_graph_creation_from_edge_definitions()
     {
         let graph = valid_graph_from_edge_definitions();
 
         assert_eq!(graph.nodes, valid_nodes());
-        assert_eq!(graph.edges, valid_edges1());
+        assert_eq!(graph.edges, valid_edges1_with_computed_weights());
+        assert_eq!(graph.properties, BTreeMap::new());
+        // assert_eq!(graph.heuristic_distance_function, manhattan_distance);
+        // assert_eq!(graph.edge_weight_function, specified_edge_weight);
     }
 
     #[test]
