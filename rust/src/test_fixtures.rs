@@ -3,8 +3,9 @@ pub mod tests
 {
     use std::collections::{HashSet, BTreeMap};
     use ordered_float::{OrderedFloat};
+    use crate::edge_weight::length_cost_per_unit;
     use crate::distance::manhattan_distance;
-    use crate::types::{Edge, EdgeDefinition, Graph, Node, specified_edge_weight, length_cost_per_unit, PropertyValue};
+    use crate::types::{Edge, EdgeDefinition, Graph, Node, specified_edge_weight, PropertyValue};
 
     pub fn valid_nodes() -> Vec<Node>
     {

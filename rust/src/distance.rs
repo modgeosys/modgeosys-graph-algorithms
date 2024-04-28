@@ -1,4 +1,4 @@
-// Heuristic distance functions.
+// Distance functions.
 
 use ordered_float::OrderedFloat;
 

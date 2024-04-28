@@ -266,17 +266,6 @@ pub fn specified_edge_weight(_graph: &Graph, edge: &Edge) -> OrderedFloat<f64>
     edge.weight
 }
 
-pub fn length_cost_per_unit(graph: &Graph, edge: &Edge) -> OrderedFloat<f64>
-{
-    let cost_per_unit: OrderedFloat<f64> = match edge.properties.get("cost_per_unit")
-    {
-        Some(PropertyValue::Float(cost_per_unit)) => cost_per_unit.clone(),
-        _ => OrderedFloat(1.0),
-    };
-    let attached_nodes = edge.node_indices.iter().map(|index| &graph.nodes[*index]).collect::<Vec<&Node>>();
-    cost_per_unit * (graph.distance_function)(attached_nodes[0], attached_nodes[1])
-}
-
 
 // Returned when no path can be found to the goal node.
 #[derive(Debug, Clone)]
