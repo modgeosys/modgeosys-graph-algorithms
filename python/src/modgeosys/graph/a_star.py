@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from heapdict import heapdict
 
-from modgeosys.graph.types import Edge, Graph, HeuristicDistanceCallable, NoNavigablePathError
+from modgeosys.graph.types import Edge, Graph, DistanceCallable, NoNavigablePathError
 
 
 @dataclass(order=True)

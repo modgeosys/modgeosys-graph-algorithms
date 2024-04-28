@@ -14,9 +14,7 @@ toy_graph = Graph.from_edge_definitions(edge_definitions=((((0.0, 0.0), (0.0, 2.
                                                           (((0.0, 0.0), (1.0, 0.0)), 1, {'cost_per_unit': 1}),
                                                           (((1.0, 0.0), (2.0, 1.0)), 2, {'cost_per_unit': 1}),
                                                           (((0.0, 2.0), (2.0, 3.0)), 3, {'cost_per_unit': 3}),
-                                                          (((2.0, 1.0), (2.0, 3.0)), 2, {'cost_per_unit': 1})),
-                                        edge_weight_function=length_cost_per_unit,
-                                        heuristic_distance_function=manhattan_distance)
+                                                          (((2.0, 1.0), (2.0, 3.0)), 2, {'cost_per_unit': 1})), distance_function=manhattan_distance, edge_weight_function=length_cost_per_unit)
 
 # Load a bigger graph from a pickle file.
 with open('python/data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
