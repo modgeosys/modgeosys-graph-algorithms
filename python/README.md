@@ -29,11 +29,11 @@ from modgeosys.graph.distance import manhattan_distance, euclidean_distance
 from modgeosys.graph.a_star import a_star
 
 # Define a toy graph.
-toy_graph = Graph.from_edge_definitions(edge_definitions=((((0.0, 0.0), (0.0, 2.0)), 2, {'cost_per_unit': 2}),
-                                                          (((0.0, 0.0), (1.0, 0.0)), 1, {'cost_per_unit': 1}),
-                                                          (((1.0, 0.0), (2.0, 1.0)), 2, {'cost_per_unit': 1}),
-                                                          (((0.0, 2.0), (2.0, 3.0)), 3, {'cost_per_unit': 3}),
-                                                          (((2.0, 1.0), (2.0, 3.0)), 2, {'cost_per_unit': 1})),
+toy_graph = Graph.from_edge_definitions(edge_definitions=((((0.0, 0.0), (0.0, 2.0)), 0, {'cost_per_unit': 2}),
+                                                          (((0.0, 0.0), (1.0, 0.0)), 0, {'cost_per_unit': 1}),
+                                                          (((1.0, 0.0), (2.0, 1.0)), 0, {'cost_per_unit': 1}),
+                                                          (((0.0, 2.0), (2.0, 3.0)), 0, {'cost_per_unit': 3}),
+                                                          (((2.0, 1.0), (2.0, 3.0)), 0, {'cost_per_unit': 1})),
                                         distance_function=manhattan_distance, edge_weight_function=length_cost_per_unit)
 
 # Load a bigger graph from a pickle file.
@@ -63,11 +63,11 @@ from modgeosys.graph.distance import manhattan_distance, euclidean_distance
 from modgeosys.graph.prim import prim
 
 # Define a toy graph.
-toy_graph = Graph.from_edge_definitions(edge_definitions=((((0.0, 0.0), (0.0, 2.0)), 2, {'cost_per_unit': 2}),
-                                                          (((0.0, 0.0), (1.0, 0.0)), 1, {'cost_per_unit': 1}),
-                                                          (((1.0, 0.0), (2.0, 1.0)), 2, {'cost_per_unit': 1}),
-                                                          (((0.0, 2.0), (2.0, 3.0)), 3, {'cost_per_unit': 3}),
-                                                          (((2.0, 1.0), (2.0, 3.0)), 2, {'cost_per_unit': 1})),
+toy_graph = Graph.from_edge_definitions(edge_definitions=((((0.0, 0.0), (0.0, 2.0)), 0, {'cost_per_unit': 2}),
+                                                          (((0.0, 0.0), (1.0, 0.0)), 0, {'cost_per_unit': 1}),
+                                                          (((1.0, 0.0), (2.0, 1.0)), 0, {'cost_per_unit': 1}),
+                                                          (((0.0, 2.0), (2.0, 3.0)), 0, {'cost_per_unit': 3}),
+                                                          (((2.0, 1.0), (2.0, 3.0)), 0, {'cost_per_unit': 1})),
                                         distance_function=manhattan_distance, edge_weight_function=length_cost_per_unit)
 
 # Load a bigger graph from a pickle file.
