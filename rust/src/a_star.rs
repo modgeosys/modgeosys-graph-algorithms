@@ -130,7 +130,7 @@ mod tests
     use std::collections::HashSet;
     use super::*;
     use crate::distance::manhattan_distance;
-    use crate::types::{Edge, Node, specified_edge_weight};
+    use crate::types::{PropertyValue, Edge, Node, specified_edge_weight};
     use crate::test_fixtures::tests::{valid_nodes, valid_graph1, valid_graph2, valid_graph_from_edge_definitions};
 
     #[test]
@@ -169,8 +169,9 @@ mod tests
     #[test]
     fn test_a_star_finds_shortest_path_manhattan_graph_from_edge_definitions()
     {
-        let expected = vec![Hop::new(Edge::new(HashSet::from([0, 1]), 2.0, BTreeMap::new()), 2.0, 3.0),
-                            Hop::new(Edge::new(HashSet::from([1, 4]), 3.0, BTreeMap::new()), 5.0, 0.0)];
+        let expected = vec![Hop::new(Edge::new(HashSet::from([0, 2]), 1.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()), 1.0, 4.0),
+                            Hop::new(Edge::new(HashSet::from([2, 3]), 2.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()), 3.0, 2.0),
+                            Hop::new(Edge::new(HashSet::from([3, 4]), 2.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()), 5.0, 0.0)];
 
         assert_eq!(a_star(&valid_graph_from_edge_definitions(), 0, 4).unwrap(), expected);
     }

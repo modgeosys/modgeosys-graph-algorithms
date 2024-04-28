@@ -166,7 +166,18 @@ impl Graph
 {
     pub fn new(nodes: Vec<Node>, edges: Vec<Edge>, properties: BTreeMap<String, PropertyValue>, edge_weight_function: fn(&Graph, &Edge) -> OrderedFloat<f64>, heuristic_distance_function: fn(&Node, &Node) -> OrderedFloat<f64>) -> Self
     {
-        Graph { nodes, edges, properties, edge_weight_function, heuristic_distance_function }
+        let mut graph = Graph { nodes, edges, properties, edge_weight_function, heuristic_distance_function };
+
+        // Compute edge weights.
+        let new_weights: Vec<OrderedFloat<f64>> = graph.edges.iter().map(|edge| (graph.edge_weight_function)(&graph, edge)).collect();
+
+        // Assign new weights to edges.
+        for (edge, &new_weight) in graph.edges.iter_mut().zip(new_weights.iter())
+        {
+            edge.weight = new_weight;
+        }
+
+        graph
     }
 
     pub fn from_edge_definitions(edge_definitions: Vec<EdgeDefinition>, properties: BTreeMap<String, PropertyValue>, edge_weight_function: fn(&Graph, &Edge) -> OrderedFloat<f64>, heuristic_distance_function: fn(&Node, &Node) -> OrderedFloat<f64>) -> Self
@@ -293,7 +304,7 @@ impl NoNavigablePathError
 mod tests
 {
     use super::*;
-    use crate::distance::manhattan_distance;
+    // use crate::distance::manhattan_distance;
     use crate::test_fixtures::tests::{valid_nodes, valid_edges1, valid_edges1_with_computed_weights, valid_graph1, valid_graph_from_edge_definitions, valid_graph3, valid_edges3_with_computed_weights};
 
     #[test]
