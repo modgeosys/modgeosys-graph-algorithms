@@ -3,7 +3,7 @@ import pytest
 
 from src.modgeosys.graph.edge_weight import length_cost_per_unit
 from src.modgeosys.graph.distance import manhattan_distance
-from src.modgeosys.graph.types import Node, Edge, Graph
+from src.modgeosys.graph.types import Node, Edge, Graph, COMPUTED_WEIGHT
 
 
 @pytest.fixture
@@ -73,11 +73,12 @@ def valid_graph3(valid_nodes, valid_edges3):
 
 @pytest.fixture
 def valid_graph_from_edge_definitions():
-    return Graph.from_edge_definitions(edge_definitions=((((0.0, 0.0), (0.0, 2.0)), 0, {'cost_per_unit': 2}),
-                                                         (((0.0, 0.0), (1.0, 0.0)), 0, {'cost_per_unit': 1}),
-                                                         (((1.0, 0.0), (2.0, 1.0)), 0, {'cost_per_unit': 1}),
-                                                         (((0.0, 2.0), (2.0, 3.0)), 0, {'cost_per_unit': 3}),
-                                                         (((2.0, 1.0), (2.0, 3.0)), 0, {'cost_per_unit': 1})), distance_function=manhattan_distance, edge_weight_function=length_cost_per_unit)
+    return Graph.from_edge_definitions(edge_definitions=((((0.0, 0.0), (0.0, 2.0)), COMPUTED_WEIGHT, {'cost_per_unit': 2}),
+                                                         (((0.0, 0.0), (1.0, 0.0)), COMPUTED_WEIGHT, {'cost_per_unit': 1}),
+                                                         (((1.0, 0.0), (2.0, 1.0)), COMPUTED_WEIGHT, {'cost_per_unit': 1}),
+                                                         (((0.0, 2.0), (2.0, 3.0)), COMPUTED_WEIGHT, {'cost_per_unit': 3}),
+                                                         (((2.0, 1.0), (2.0, 3.0)), COMPUTED_WEIGHT, {'cost_per_unit': 1})),
+                                       distance_function=manhattan_distance, edge_weight_function=length_cost_per_unit)
 
 
 @pytest.fixture

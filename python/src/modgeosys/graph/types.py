@@ -4,7 +4,7 @@ import bisect
 from collections.abc import Callable, Mapping, Sequence
 from copy import deepcopy
 from dataclasses import dataclass, field
-from typing import Annotated, Literal, TypeVar
+from typing import Annotated, Literal, TypeVar, Any
 
 import numpy as np
 import numpy.typing as npt
@@ -15,11 +15,15 @@ Vector = Annotated[npt.NDArray[NDType], Literal["N", 1]]
 
 type NodeSequence = Sequence[Node]
 type EdgeSequence = Sequence[Edge]
-type EdgeDefinitionSequence = Sequence[tuple[tuple, tuple], int | float | None, dict]
+type EdgeDefinition = tuple[tuple, int | float | None, dict]
+type EdgeDefinitionSequence = Sequence[EdgeDefinition]
 type AdjacencyMap = Mapping[Node, Sequence[Edge]]
 type DistanceCallable = Callable[[Node, Node], int | float]
 type ValidEdgeCallable = Callable[[Edge], bool]
 type EdgeWeightCallable = Callable[Graph, Edge]
+
+
+COMPUTED_WEIGHT = None
 
 
 @dataclass
