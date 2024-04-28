@@ -79,7 +79,7 @@ pub fn a_star(graph: &Graph, start_node_index: usize, goal_node_index: usize) ->
     // Grab the nodes and adjacency map from the graph.
     let nodes           = &graph.nodes;
     let adjacency_map   = graph.adjacency_map();
-    let heuristic_distance = graph.heuristic_distance_function;
+    let heuristic_distance = graph.distance_function;
 
     // Initialize the edge hop lists.
     let mut unhopped = graph.edges.clone();
@@ -192,7 +192,7 @@ mod tests
         let nodes = valid_nodes();
         let edges: Vec<Edge> = Vec::new();
 
-        assert!(a_star(&Graph::new(nodes, edges, BTreeMap::new(), specified_edge_weight, manhattan_distance), 0, 3).is_err());
+        assert!(a_star(&Graph::new(nodes, edges, BTreeMap::new(), manhattan_distance, specified_edge_weight), 0, 3).is_err());
     }
 
     #[test]
@@ -203,7 +203,7 @@ mod tests
 
         let expected: Vec<Hop> = Vec::new();
 
-        assert_eq!(a_star(&Graph::new(nodes, edges, BTreeMap::new(), specified_edge_weight, manhattan_distance), 0, 0).unwrap(), expected);
+        assert_eq!(a_star(&Graph::new(nodes, edges, BTreeMap::new(), manhattan_distance, specified_edge_weight), 0, 0).unwrap(), expected);
     }
 }
 

@@ -12,11 +12,11 @@ fn main()
 {
     // Define a graph.
     let toy_graph = Graph::from_edge_definitions(vec![EdgeDefinition(vec![vec![0.0, 0.0], vec![0.0, 2.0]], 2.0, BTreeMap::new()),
-                                                      EdgeDefinition(vec![vec![0.0, 0.0], vec![1.0, 0.0]], 1.0, BTreeMap::new()),
-                                                      EdgeDefinition(vec![vec![1.0, 0.0], vec![2.0, 1.0]], 1.0, BTreeMap::new()),
-                                                      EdgeDefinition(vec![vec![0.0, 2.0], vec![2.0, 3.0]], 3.0, BTreeMap::new()),
-                                                      EdgeDefinition(vec![vec![2.0, 1.0], vec![2.0, 3.0]], 1.0, BTreeMap::new())],
-                                                 BTreeMap::new(), specified_edge_weight, manhattan_distance);
+                                                          EdgeDefinition(vec![vec![0.0, 0.0], vec![1.0, 0.0]], 1.0, BTreeMap::new()),
+                                                          EdgeDefinition(vec![vec![1.0, 0.0], vec![2.0, 1.0]], 1.0, BTreeMap::new()),
+                                                          EdgeDefinition(vec![vec![0.0, 2.0], vec![2.0, 3.0]], 3.0, BTreeMap::new()),
+                                                          EdgeDefinition(vec![vec![2.0, 1.0], vec![2.0, 3.0]], 1.0, BTreeMap::new())],
+                                                 BTreeMap::new(), manhattan_distance, specified_edge_weight);
 
     // Call the A* function.
     let toy_a_star_path = a_star(&toy_graph, 0, 4).unwrap();

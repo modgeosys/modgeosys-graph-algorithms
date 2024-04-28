@@ -158,15 +158,15 @@ pub struct Graph
     pub nodes: Vec<Node>,
     pub edges: Vec<Edge>,
     pub properties: BTreeMap<String, PropertyValue>,
+    pub distance_function: fn(&Node, &Node) -> OrderedFloat<f64>,
     pub edge_weight_function: fn(&Graph, &Edge) -> OrderedFloat<f64>,
-    pub heuristic_distance_function: fn(&Node, &Node) -> OrderedFloat<f64>,
 }
 
 impl Graph
 {
-    pub fn new(nodes: Vec<Node>, edges: Vec<Edge>, properties: BTreeMap<String, PropertyValue>, edge_weight_function: fn(&Graph, &Edge) -> OrderedFloat<f64>, heuristic_distance_function: fn(&Node, &Node) -> OrderedFloat<f64>) -> Self
+    pub fn new(nodes: Vec<Node>, edges: Vec<Edge>, properties: BTreeMap<String, PropertyValue>, distance_function: fn(&Node, &Node) -> OrderedFloat<f64>, edge_weight_function: fn(&Graph, &Edge) -> OrderedFloat<f64>) -> Self
     {
-        let mut graph = Graph { nodes, edges, properties, edge_weight_function, heuristic_distance_function };
+        let mut graph = Graph { nodes, edges, properties, edge_weight_function, distance_function };
 
         // Compute edge weights.
         let new_weights: Vec<OrderedFloat<f64>> = graph.edges.iter().map(|edge| (graph.edge_weight_function)(&graph, edge)).collect();
@@ -180,7 +180,7 @@ impl Graph
         graph
     }
 
-    pub fn from_edge_definitions(edge_definitions: Vec<EdgeDefinition>, properties: BTreeMap<String, PropertyValue>, edge_weight_function: fn(&Graph, &Edge) -> OrderedFloat<f64>, heuristic_distance_function: fn(&Node, &Node) -> OrderedFloat<f64>) -> Self
+    pub fn from_edge_definitions(edge_definitions: Vec<EdgeDefinition>, properties: BTreeMap<String, PropertyValue>, distance_function: fn(&Node, &Node) -> OrderedFloat<f64>, edge_weight_function: fn(&Graph, &Edge) -> OrderedFloat<f64>) -> Self
     {
         let mut coordinates_of_all_nodes: Vec<Vec<f64>> = vec![];
 
@@ -216,7 +216,7 @@ impl Graph
         node_vec.sort_by_key(|(key, _)| *key);
         let nodes: Vec<Node> = node_vec.into_iter().map(|(_, node)| node).collect();
 
-        Graph::new(nodes, edges, properties, edge_weight_function, heuristic_distance_function)
+        Graph::new(nodes, edges, properties, distance_function, edge_weight_function)
     }
 
     // Render an adjacency map.
@@ -274,7 +274,7 @@ pub fn length_cost_per_unit(graph: &Graph, edge: &Edge) -> OrderedFloat<f64>
         _ => OrderedFloat(1.0),
     };
     let attached_nodes = edge.node_indices.iter().map(|index| &graph.nodes[*index]).collect::<Vec<&Node>>();
-    cost_per_unit * (graph.heuristic_distance_function)(attached_nodes[0], attached_nodes[1])
+    cost_per_unit * (graph.distance_function)(attached_nodes[0], attached_nodes[1])
 }
 
 
