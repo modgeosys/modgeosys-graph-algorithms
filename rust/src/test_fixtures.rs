@@ -87,11 +87,11 @@ pub mod tests
 
     pub fn valid_graph_from_edge_definitions() -> Graph
     {
-        let edge_definitions = vec![EdgeDefinition(vec![vec![0.0, 0.0], vec![0.0, 2.0]], 2.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(2.0)))].iter().cloned().collect()),
-                                    EdgeDefinition(vec![vec![0.0, 0.0], vec![1.0, 0.0]], 1.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
-                                    EdgeDefinition(vec![vec![1.0, 0.0], vec![2.0, 1.0]], 2.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
-                                    EdgeDefinition(vec![vec![0.0, 2.0], vec![2.0, 3.0]], 3.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(3.0)))].iter().cloned().collect()),
-                                    EdgeDefinition(vec![vec![2.0, 1.0], vec![2.0, 3.0]], 2.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect())];
+        let edge_definitions = vec![EdgeDefinition(vec![vec![0.0, 0.0], vec![0.0, 2.0]], 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(2.0)))].iter().cloned().collect()),
+                                    EdgeDefinition(vec![vec![0.0, 0.0], vec![1.0, 0.0]], 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
+                                    EdgeDefinition(vec![vec![1.0, 0.0], vec![2.0, 1.0]], 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
+                                    EdgeDefinition(vec![vec![0.0, 2.0], vec![2.0, 3.0]], 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(3.0)))].iter().cloned().collect()),
+                                    EdgeDefinition(vec![vec![2.0, 1.0], vec![2.0, 3.0]], 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect())];
         let graph = Graph::from_edge_definitions(edge_definitions, BTreeMap::new(), manhattan_distance, Some(length_cost_per_unit));
 
         graph
