@@ -5,7 +5,7 @@ pub mod tests
     use ordered_float::{OrderedFloat};
     use crate::edge_weight::length_cost_per_unit;
     use crate::distance::manhattan_distance;
-    use crate::types::{Edge, EdgeDefinition, Graph, Node, specified_edge_weight, PropertyValue};
+    use crate::types::{Edge, EdgeDefinition, Graph, Node, PropertyValue};
 
     pub fn valid_nodes() -> Vec<Node>
     {
@@ -69,19 +69,19 @@ pub mod tests
 
     pub fn valid_graph1() -> Graph
     {
-        let graph = Graph::new(valid_nodes(), valid_edges1(), BTreeMap::new(), manhattan_distance, specified_edge_weight);
+        let graph = Graph::new(valid_nodes(), valid_edges1(), BTreeMap::new(), manhattan_distance, None);
         graph
     }
 
     pub fn valid_graph2() -> Graph
     {
-        let graph = Graph::new(valid_nodes(), valid_edges2(), BTreeMap::new(), manhattan_distance, specified_edge_weight);
+        let graph = Graph::new(valid_nodes(), valid_edges2(), BTreeMap::new(), manhattan_distance, None);
         graph
     }
 
     pub fn valid_graph3() -> Graph
     {
-        let graph = Graph::new(valid_nodes(), valid_edges3(), BTreeMap::new(), manhattan_distance, length_cost_per_unit);
+        let graph = Graph::new(valid_nodes(), valid_edges3(), BTreeMap::new(), manhattan_distance, Some(length_cost_per_unit));
         graph
     }
 
@@ -92,7 +92,7 @@ pub mod tests
                                     EdgeDefinition(vec![vec![1.0, 0.0], vec![2.0, 1.0]], 2.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
                                     EdgeDefinition(vec![vec![0.0, 2.0], vec![2.0, 3.0]], 3.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(3.0)))].iter().cloned().collect()),
                                     EdgeDefinition(vec![vec![2.0, 1.0], vec![2.0, 3.0]], 2.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect())];
-        let graph = Graph::from_edge_definitions(edge_definitions, BTreeMap::new(), manhattan_distance, length_cost_per_unit);
+        let graph = Graph::from_edge_definitions(edge_definitions, BTreeMap::new(), manhattan_distance, Some(length_cost_per_unit));
 
         graph
     }

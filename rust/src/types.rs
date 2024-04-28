@@ -164,8 +164,9 @@ pub struct Graph
 
 impl Graph
 {
-    pub fn new(nodes: Vec<Node>, edges: Vec<Edge>, properties: BTreeMap<String, PropertyValue>, distance_function: fn(&Node, &Node) -> OrderedFloat<f64>, edge_weight_function: fn(&Graph, &Edge) -> OrderedFloat<f64>) -> Self
+    pub fn new(nodes: Vec<Node>, edges: Vec<Edge>, properties: BTreeMap<String, PropertyValue>, distance_function: fn(&Node, &Node) -> OrderedFloat<f64>, edge_weight_function: Option<fn(&Graph, &Edge) -> OrderedFloat<f64>>) -> Self
     {
+        let edge_weight_function = edge_weight_function.unwrap_or(specified_edge_weight);
         let mut graph = Graph { nodes, edges, properties, edge_weight_function, distance_function };
 
         // Compute edge weights.
@@ -180,7 +181,7 @@ impl Graph
         graph
     }
 
-    pub fn from_edge_definitions(edge_definitions: Vec<EdgeDefinition>, properties: BTreeMap<String, PropertyValue>, distance_function: fn(&Node, &Node) -> OrderedFloat<f64>, edge_weight_function: fn(&Graph, &Edge) -> OrderedFloat<f64>) -> Self
+    pub fn from_edge_definitions(edge_definitions: Vec<EdgeDefinition>, properties: BTreeMap<String, PropertyValue>, distance_function: fn(&Node, &Node) -> OrderedFloat<f64>, edge_weight_function: Option<fn(&Graph, &Edge) -> OrderedFloat<f64>>) -> Self
     {
         let mut coordinates_of_all_nodes: Vec<Vec<f64>> = vec![];
 

@@ -130,7 +130,7 @@ mod tests
     use std::collections::HashSet;
     use super::*;
     use crate::distance::manhattan_distance;
-    use crate::types::{PropertyValue, Edge, Node, specified_edge_weight};
+    use crate::types::{PropertyValue, Edge, Node};
     use crate::test_fixtures::tests::{valid_nodes, valid_graph1, valid_graph2, valid_graph_from_edge_definitions};
 
     #[test]
@@ -192,7 +192,7 @@ mod tests
         let nodes = valid_nodes();
         let edges: Vec<Edge> = Vec::new();
 
-        assert!(a_star(&Graph::new(nodes, edges, BTreeMap::new(), manhattan_distance, specified_edge_weight), 0, 3).is_err());
+        assert!(a_star(&Graph::new(nodes, edges, BTreeMap::new(), manhattan_distance, None), 0, 3).is_err());
     }
 
     #[test]
@@ -203,7 +203,7 @@ mod tests
 
         let expected: Vec<Hop> = Vec::new();
 
-        assert_eq!(a_star(&Graph::new(nodes, edges, BTreeMap::new(), manhattan_distance, specified_edge_weight), 0, 0).unwrap(), expected);
+        assert_eq!(a_star(&Graph::new(nodes, edges, BTreeMap::new(), manhattan_distance, None), 0, 0).unwrap(), expected);
     }
 }
 
