@@ -5,7 +5,7 @@ pub mod tests
     use ordered_float::{OrderedFloat};
     use crate::edge_weight::length_cost_per_unit;
     use crate::distance::manhattan_distance;
-    use crate::types::{Edge, EdgeDefinition, Graph, Node, PropertyValue};
+    use crate::types::{Edge, EdgeDefinition, Graph, Node, PropertyValue, WeightOption};
 
     pub fn valid_nodes() -> Vec<Node>
     {
@@ -19,51 +19,51 @@ pub mod tests
 
     pub fn valid_edges1() -> Vec<Edge>
     {
-        let edges = vec![Edge::new(HashSet::from([0, 1]), 2.0, BTreeMap::new()),
-                         Edge::new(HashSet::from([0, 2]), 1.0, BTreeMap::new()),
-                         Edge::new(HashSet::from([2, 3]), 1.0, BTreeMap::new()),
-                         Edge::new(HashSet::from([1, 4]), 3.0, BTreeMap::new()),
-                         Edge::new(HashSet::from([3, 4]), 1.0, BTreeMap::new())];
+        let edges = vec![Edge::new(HashSet::from([0, 1]), WeightOption::Specified(2.0), BTreeMap::new()),
+                         Edge::new(HashSet::from([0, 2]), WeightOption::Specified(1.0), BTreeMap::new()),
+                         Edge::new(HashSet::from([2, 3]), WeightOption::Specified(1.0), BTreeMap::new()),
+                         Edge::new(HashSet::from([1, 4]), WeightOption::Specified(3.0), BTreeMap::new()),
+                         Edge::new(HashSet::from([3, 4]), WeightOption::Specified(1.0), BTreeMap::new())];
         edges
     }
 
     pub fn valid_edges1_with_computed_weights() -> Vec<Edge>
     {
-        let edges = vec![Edge::new(HashSet::from([0, 1]), 4.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(2.0)))].iter().cloned().collect()),
-                         Edge::new(HashSet::from([0, 2]), 1.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
-                         Edge::new(HashSet::from([2, 3]), 2.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
-                         Edge::new(HashSet::from([1, 4]), 9.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(3.0)))].iter().cloned().collect()),
-                         Edge::new(HashSet::from([3, 4]), 2.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect())];
+        let edges = vec![Edge::new(HashSet::from([0, 1]), WeightOption::Specified(4.0), [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(2.0)))].iter().cloned().collect()),
+                         Edge::new(HashSet::from([0, 2]), WeightOption::Specified(1.0), [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
+                         Edge::new(HashSet::from([2, 3]), WeightOption::Specified(2.0), [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
+                         Edge::new(HashSet::from([1, 4]), WeightOption::Specified(9.0), [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(3.0)))].iter().cloned().collect()),
+                         Edge::new(HashSet::from([3, 4]), WeightOption::Specified(2.0), [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect())];
         edges
     }
 
     pub fn valid_edges2() -> Vec<Edge>
     {
-        let edges = vec![Edge::new(HashSet::from([0, 1]), 3.0, BTreeMap::new()),
-                         Edge::new(HashSet::from([0, 2]), 1.0, BTreeMap::new()),
-                         Edge::new(HashSet::from([2, 3]), 1.0, BTreeMap::new()),
-                         Edge::new(HashSet::from([1, 4]), 3.0, BTreeMap::new()),
-                         Edge::new(HashSet::from([3, 4]), 1.0, BTreeMap::new())];
+        let edges = vec![Edge::new(HashSet::from([0, 1]), WeightOption::Specified(3.0), BTreeMap::new()),
+                         Edge::new(HashSet::from([0, 2]), WeightOption::Specified(1.0), BTreeMap::new()),
+                         Edge::new(HashSet::from([2, 3]), WeightOption::Specified(1.0), BTreeMap::new()),
+                         Edge::new(HashSet::from([1, 4]), WeightOption::Specified(3.0), BTreeMap::new()),
+                         Edge::new(HashSet::from([3, 4]), WeightOption::Specified(1.0), BTreeMap::new())];
         edges
     }
 
     pub fn valid_edges3() -> Vec<Edge>
     {
-        let edges = vec![Edge::new(HashSet::from([0, 1]), 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(2.0)))].iter().cloned().collect()),
-                         Edge::new(HashSet::from([0, 2]), 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
-                         Edge::new(HashSet::from([2, 3]), 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
-                         Edge::new(HashSet::from([1, 4]), 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(3.0)))].iter().cloned().collect()),
-                         Edge::new(HashSet::from([3, 4]), 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect())];
+        let edges = vec![Edge::new(HashSet::from([0, 1]), WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(2.0)))].iter().cloned().collect()),
+                         Edge::new(HashSet::from([0, 2]), WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
+                         Edge::new(HashSet::from([2, 3]), WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
+                         Edge::new(HashSet::from([1, 4]), WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(3.0)))].iter().cloned().collect()),
+                         Edge::new(HashSet::from([3, 4]), WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect())];
         edges
     }
 
     pub fn valid_edges3_with_computed_weights() -> Vec<Edge>
     {
-        let edges = vec![Edge::new(HashSet::from([0, 1]), 4.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(2.0)))].iter().cloned().collect()),
-                         Edge::new(HashSet::from([0, 2]), 1.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
-                         Edge::new(HashSet::from([2, 3]), 2.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
-                         Edge::new(HashSet::from([1, 4]), 9.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(3.0)))].iter().cloned().collect()),
-                         Edge::new(HashSet::from([3, 4]), 2.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect())];
+        let edges = vec![Edge::new(HashSet::from([0, 1]), WeightOption::Specified(4.0), [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(2.0)))].iter().cloned().collect()),
+                         Edge::new(HashSet::from([0, 2]), WeightOption::Specified(1.0), [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
+                         Edge::new(HashSet::from([2, 3]), WeightOption::Specified(2.0), [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
+                         Edge::new(HashSet::from([1, 4]), WeightOption::Specified(9.0), [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(3.0)))].iter().cloned().collect()),
+                         Edge::new(HashSet::from([3, 4]), WeightOption::Specified(2.0), [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect())];
         edges
     }
 
@@ -87,11 +87,11 @@ pub mod tests
 
     pub fn valid_graph_from_edge_definitions() -> Graph
     {
-        let edge_definitions = vec![EdgeDefinition(vec![vec![0.0, 0.0], vec![0.0, 2.0]], 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(2.0)))].iter().cloned().collect()),
-                                    EdgeDefinition(vec![vec![0.0, 0.0], vec![1.0, 0.0]], 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
-                                    EdgeDefinition(vec![vec![1.0, 0.0], vec![2.0, 1.0]], 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
-                                    EdgeDefinition(vec![vec![0.0, 2.0], vec![2.0, 3.0]], 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(3.0)))].iter().cloned().collect()),
-                                    EdgeDefinition(vec![vec![2.0, 1.0], vec![2.0, 3.0]], 0.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect())];
+        let edge_definitions = vec![EdgeDefinition(vec![vec![0.0, 0.0], vec![0.0, 2.0]], WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(2.0)))].iter().cloned().collect()),
+                                    EdgeDefinition(vec![vec![0.0, 0.0], vec![1.0, 0.0]], WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
+                                    EdgeDefinition(vec![vec![1.0, 0.0], vec![2.0, 1.0]], WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
+                                    EdgeDefinition(vec![vec![0.0, 2.0], vec![2.0, 3.0]], WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(3.0)))].iter().cloned().collect()),
+                                    EdgeDefinition(vec![vec![2.0, 1.0], vec![2.0, 3.0]], WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect())];
         let graph = Graph::from_edge_definitions(edge_definitions, BTreeMap::new(), manhattan_distance, Some(length_cost_per_unit));
 
         graph

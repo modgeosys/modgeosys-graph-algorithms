@@ -130,14 +130,14 @@ mod tests
     use std::collections::HashSet;
     use super::*;
     use crate::distance::manhattan_distance;
-    use crate::types::{PropertyValue, Edge, Node};
+    use crate::types::{PropertyValue, Edge, Node, WeightOption};
     use crate::test_fixtures::tests::{valid_nodes, valid_graph1, valid_graph2, valid_graph_from_edge_definitions};
 
     #[test]
     fn test_hop_creation()
     {
-        let hop = Hop::new(Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new()), 5.0, 5.0);
-        assert_eq!(hop.edge, Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new()));
+        let hop = Hop::new(Edge::new(HashSet::from([1, 2]), WeightOption::Specified(10.0), BTreeMap::new()), 5.0, 5.0);
+        assert_eq!(hop.edge, Edge::new(HashSet::from([1, 2]), WeightOption::Specified(10.0), BTreeMap::new()));
         assert_eq!(hop.g, OrderedFloat(5.0f64));
         assert_eq!(hop.h, OrderedFloat(5.0f64));
     }
@@ -145,23 +145,23 @@ mod tests
     #[test]
     fn test_hop_f_calculation()
     {
-        let hop = Hop::new(Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new()), 5.0, 5.0);
+        let hop = Hop::new(Edge::new(HashSet::from([1, 2]), WeightOption::Specified(10.0), BTreeMap::new()), 5.0, 5.0);
         assert_eq!(hop.f(), OrderedFloat(10.0f64));
     }
 
     #[test]
     fn test_hop_equality()
     {
-        let hop1 = Hop::new(Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new()), 5.0, 5.0);
-        let hop2 = Hop::new(Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new()), 5.0, 5.0);
+        let hop1 = Hop::new(Edge::new(HashSet::from([1, 2]), WeightOption::Specified(10.0), BTreeMap::new()), 5.0, 5.0);
+        let hop2 = Hop::new(Edge::new(HashSet::from([1, 2]), WeightOption::Specified(10.0), BTreeMap::new()), 5.0, 5.0);
         assert_eq!(hop1, hop2);
     }
 
     #[test]
     fn test_a_star_finds_shortest_path_manhattan_graph1()
     {
-        let expected = vec![Hop::new(Edge::new(HashSet::from([0, 1]), 2.0, BTreeMap::new()), 2.0, 3.0),
-                            Hop::new(Edge::new(HashSet::from([1, 4]), 3.0, BTreeMap::new()), 5.0, 0.0)];
+        let expected = vec![Hop::new(Edge::new(HashSet::from([0, 1]), WeightOption::Specified(2.0), BTreeMap::new()), 2.0, 3.0),
+                            Hop::new(Edge::new(HashSet::from([1, 4]), WeightOption::Specified(3.0), BTreeMap::new()), 5.0, 0.0)];
 
         assert_eq!(a_star(&valid_graph1(), 0, 4).unwrap(), expected);
     }
@@ -169,9 +169,9 @@ mod tests
     #[test]
     fn test_a_star_finds_shortest_path_manhattan_graph_from_edge_definitions()
     {
-        let expected = vec![Hop::new(Edge::new(HashSet::from([0, 2]), 1.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()), 1.0, 4.0),
-                            Hop::new(Edge::new(HashSet::from([2, 3]), 2.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()), 3.0, 2.0),
-                            Hop::new(Edge::new(HashSet::from([3, 4]), 2.0, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()), 5.0, 0.0)];
+        let expected = vec![Hop::new(Edge::new(HashSet::from([0, 2]), WeightOption::Specified(1.0), [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()), 1.0, 4.0),
+                            Hop::new(Edge::new(HashSet::from([2, 3]), WeightOption::Specified(2.0), [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()), 3.0, 2.0),
+                            Hop::new(Edge::new(HashSet::from([3, 4]), WeightOption::Specified(2.0), [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()), 5.0, 0.0)];
 
         assert_eq!(a_star(&valid_graph_from_edge_definitions(), 0, 4).unwrap(), expected);
     }
@@ -179,9 +179,9 @@ mod tests
     #[test]
     fn test_a_star_finds_shortest_path_manhattan_graph2()
     {
-        let expected = vec![Hop::new(Edge::new(HashSet::from([0, 2]), 1.0, BTreeMap::new()), 1.0, 4.0),
-                            Hop::new(Edge::new(HashSet::from([2, 3]), 1.0, BTreeMap::new()), 2.0, 2.0),
-                            Hop::new(Edge::new(HashSet::from([3, 4]), 1.0, BTreeMap::new()), 3.0, 0.0)];
+        let expected = vec![Hop::new(Edge::new(HashSet::from([0, 2]), WeightOption::Specified(1.0), BTreeMap::new()), 1.0, 4.0),
+                            Hop::new(Edge::new(HashSet::from([2, 3]), WeightOption::Specified(1.0), BTreeMap::new()), 2.0, 2.0),
+                            Hop::new(Edge::new(HashSet::from([3, 4]), WeightOption::Specified(1.0), BTreeMap::new()), 3.0, 0.0)];
 
         assert_eq!(a_star(&valid_graph2(), 0, 4).unwrap(), expected);
     }

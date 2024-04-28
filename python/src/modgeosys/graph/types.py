@@ -4,8 +4,7 @@ import bisect
 from collections.abc import Callable, Mapping, Sequence
 from copy import deepcopy
 from dataclasses import dataclass, field
-from typing import Annotated, Literal, TypeVar, Any
-
+from typing import Annotated, Literal, TypeVar
 import numpy as np
 import numpy.typing as npt
 

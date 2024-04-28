@@ -85,8 +85,16 @@ impl<'a> IntoIterator for &'a Node
 }
 
 
+#[derive(Debug, Clone, Copy)]
+pub enum WeightOption
+{
+    Specified(f64),
+    Computed,
+}
+
+
 #[derive(Debug, Clone)]
-pub struct EdgeDefinition(pub Vec<Vec<f64>>, pub f64, pub BTreeMap<String, PropertyValue>);
+pub struct EdgeDefinition(pub Vec<Vec<f64>>, pub WeightOption, pub BTreeMap<String, PropertyValue>);
 
 
 // An edge in a graph.
@@ -100,12 +108,12 @@ pub struct Edge
 
 impl Edge
 {
-    pub fn new(node_indices: HashSet<usize>, weight: f64, properties: BTreeMap<String, PropertyValue>) -> Self
+    pub fn new(node_indices: HashSet<usize>, weight: WeightOption, properties: BTreeMap<String, PropertyValue>) -> Self
     {
         Edge
         {
             node_indices,
-            weight: OrderedFloat(weight),
+            weight: match weight { WeightOption::Specified(i) => OrderedFloat(i as f64), WeightOption::Computed => OrderedFloat(0.0f64) },
             properties,
         }
     }
@@ -296,6 +304,7 @@ mod tests
     use super::*;
     // use crate::distance::manhattan_distance;
     use crate::test_fixtures::tests::{valid_nodes, valid_edges1, valid_edges1_with_computed_weights, valid_graph1, valid_graph_from_edge_definitions, valid_graph3, valid_edges3_with_computed_weights};
+    use crate::types::WeightOption::Specified;
 
     #[test]
     fn test_node_equality()
@@ -316,7 +325,7 @@ mod tests
     #[test]
     fn test_edge_creation_()
     {
-        let edge = Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new());
+        let edge = Edge::new(HashSet::from([1, 2]), WeightOption::Specified(10.0), BTreeMap::new());
         assert_eq!(edge.node_indices, HashSet::from([1, 2]));
         assert_eq!(edge.weight, 10.0);
     }
@@ -324,7 +333,7 @@ mod tests
     #[test]
     fn test_edge_index_of_other_node()
     {
-        let edge = Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new());
+        let edge = Edge::new(HashSet::from([1, 2]), WeightOption::Specified(10.0), BTreeMap::new());
         assert_eq!(edge.index_of_other_node(1), 2);
         assert_eq!(edge.index_of_other_node(2), 1);
     }
@@ -332,16 +341,16 @@ mod tests
     #[test]
     fn test_edge_equality()
     {
-        let edge_1 = Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new());
-        let edge_2 = Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new());
+        let edge_1 = Edge::new(HashSet::from([1, 2]), WeightOption::Specified(10.0), BTreeMap::new());
+        let edge_2 = Edge::new(HashSet::from([1, 2]), WeightOption::Specified(10.0), BTreeMap::new());
         assert_eq!(edge_1, edge_2);
     }
 
     #[test]
     fn test_edge_inequality()
     {
-        let edge_1 = Edge::new(HashSet::from([1, 2]), 10.0, BTreeMap::new());
-        let edge_2 = Edge::new(HashSet::from([1, 3]), 10.0, BTreeMap::new());
+        let edge_1 = Edge::new(HashSet::from([1, 2]), Specified(10.0), BTreeMap::new());
+        let edge_2 = Edge::new(HashSet::from([1, 3]), Specified(10.0), BTreeMap::new());
         assert_ne!(edge_1, edge_2);
     }
 
@@ -389,11 +398,11 @@ mod tests
         assert_eq!(adjacency_map.len(), 5);
         assert_eq!(adjacency_map.keys().collect::<Vec<&Node>>().sort(), vec![&Node::new(vec![0.0, 1.0], BTreeMap::new()), &Node::new(vec![0.0, 2.0], BTreeMap::new()), &Node::new(vec![2.0, 3.0], BTreeMap::new()), &Node::new(vec![1.0, 4.0], BTreeMap::new()), &Node::new(vec![3.0, 4.0], BTreeMap::new())].sort());
 
-        assert_eq!(adjacency_map[&graph.nodes[0]], vec![Edge::new(HashSet::from([0, 2]), 1.0, BTreeMap::new()), Edge::new(HashSet::from([0, 1]), 2.0, BTreeMap::new())]);
-        assert_eq!(adjacency_map[&graph.nodes[1]], vec![Edge::new(HashSet::from([0, 1]), 2.0, BTreeMap::new()), Edge::new(HashSet::from([1, 4]), 3.0, BTreeMap::new())]);
-        assert_eq!(adjacency_map[&graph.nodes[2]], vec![Edge::new(HashSet::from([0, 2]), 1.0, BTreeMap::new()), Edge::new(HashSet::from([2, 3]), 1.0, BTreeMap::new())]);
-        assert_eq!(adjacency_map[&graph.nodes[3]], vec![Edge::new(HashSet::from([2, 3]), 1.0, BTreeMap::new()), Edge::new(HashSet::from([3, 4]), 1.0, BTreeMap::new())]);
-        assert_eq!(adjacency_map[&graph.nodes[4]], vec![Edge::new(HashSet::from([3, 4]), 1.0, BTreeMap::new()), Edge::new(HashSet::from([1, 4]), 3.0, BTreeMap::new())]);
+        assert_eq!(adjacency_map[&graph.nodes[0]], vec![Edge::new(HashSet::from([0, 2]), WeightOption::Specified(1.0), BTreeMap::new()), Edge::new(HashSet::from([0, 1]), WeightOption::Specified(2.0), BTreeMap::new())]);
+        assert_eq!(adjacency_map[&graph.nodes[1]], vec![Edge::new(HashSet::from([0, 1]), WeightOption::Specified(2.0), BTreeMap::new()), Edge::new(HashSet::from([1, 4]), WeightOption::Specified(3.0), BTreeMap::new())]);
+        assert_eq!(adjacency_map[&graph.nodes[2]], vec![Edge::new(HashSet::from([0, 2]), WeightOption::Specified(1.0), BTreeMap::new()), Edge::new(HashSet::from([2, 3]), WeightOption::Specified(1.0), BTreeMap::new())]);
+        assert_eq!(adjacency_map[&graph.nodes[3]], vec![Edge::new(HashSet::from([2, 3]), WeightOption::Specified(1.0), BTreeMap::new()), Edge::new(HashSet::from([3, 4]), WeightOption::Specified(1.0), BTreeMap::new())]);
+        assert_eq!(adjacency_map[&graph.nodes[4]], vec![Edge::new(HashSet::from([3, 4]), WeightOption::Specified(1.0), BTreeMap::new()), Edge::new(HashSet::from([1, 4]), WeightOption::Specified(3.0), BTreeMap::new())]);
     }
 
     #[test]
