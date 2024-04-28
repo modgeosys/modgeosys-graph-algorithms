@@ -3,8 +3,9 @@
 import pickle
 from pprint import pprint
 
-from modgeosys.graph.types import Graph, length_cost_per_unit
+from modgeosys.graph.edge_weight import length_cost_per_unit
 from modgeosys.graph.distance import manhattan_distance, euclidean_distance
+from modgeosys.graph.types import Graph
 
 from modgeosys.graph.a_star import a_star
 from modgeosys.graph.prim import prim

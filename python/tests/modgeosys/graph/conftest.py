@@ -1,8 +1,9 @@
 import pickle
 import pytest
 
+from src.modgeosys.graph.edge_weight import length_cost_per_unit
 from src.modgeosys.graph.distance import manhattan_distance
-from src.modgeosys.graph.types import Node, Edge, Graph, length_cost_per_unit
+from src.modgeosys.graph.types import Node, Edge, Graph
 
 
 @pytest.fixture
