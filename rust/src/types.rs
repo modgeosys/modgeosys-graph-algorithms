@@ -113,7 +113,7 @@ impl Edge
         Edge
         {
             node_indices,
-            weight: match weight { WeightOption::Specified(i) => OrderedFloat(i as f64), WeightOption::Computed => OrderedFloat(0.0f64) },
+            weight: match weight { WeightOption::Specified(i) => OrderedFloat(i), WeightOption::Computed => OrderedFloat(0.0f64) },
             properties,
         }
     }
@@ -304,7 +304,7 @@ mod tests
     use super::*;
     // use crate::distance::manhattan_distance;
     use crate::test_fixtures::tests::{valid_nodes, valid_edges1, valid_edges1_with_computed_weights, valid_graph1, valid_graph_from_edge_definitions, valid_graph3, valid_edges3_with_computed_weights};
-    use crate::types::WeightOption::Specified;
+    use crate::types::WeightOption;
 
     #[test]
     fn test_node_equality()
@@ -349,8 +349,8 @@ mod tests
     #[test]
     fn test_edge_inequality()
     {
-        let edge_1 = Edge::new(HashSet::from([1, 2]), Specified(10.0), BTreeMap::new());
-        let edge_2 = Edge::new(HashSet::from([1, 3]), Specified(10.0), BTreeMap::new());
+        let edge_1 = Edge::new(HashSet::from([1, 2]), WeightOption::Specified(10.0), BTreeMap::new());
+        let edge_2 = Edge::new(HashSet::from([1, 3]), WeightOption::Specified(10.0), BTreeMap::new());
         assert_ne!(edge_1, edge_2);
     }
 
