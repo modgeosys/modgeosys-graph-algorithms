@@ -1,4 +1,4 @@
-"""Heuristic distance functions."""
+"""Distance functions."""
 
 import numpy as np
 

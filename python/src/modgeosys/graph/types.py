@@ -5,7 +5,6 @@ from collections.abc import Callable, Mapping, Sequence
 from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Annotated, Literal, TypeVar
-
 import numpy as np
 import numpy.typing as npt
 
@@ -15,11 +14,15 @@ Vector = Annotated[npt.NDArray[NDType], Literal["N", 1]]
 
 type NodeSequence = Sequence[Node]
 type EdgeSequence = Sequence[Edge]
-type EdgeDefinitionSequence = Sequence[tuple[tuple, tuple], int | float | None, dict]
+type EdgeDefinition = tuple[tuple, int | float | None, dict]
+type EdgeDefinitionSequence = Sequence[EdgeDefinition]
 type AdjacencyMap = Mapping[Node, Sequence[Edge]]
-type HeuristicDistanceCallable = Callable[[Node, Node], int | float]
+type DistanceCallable = Callable[[Node, Node], int | float]
 type ValidEdgeCallable = Callable[[Edge], bool]
 type EdgeWeightCallable = Callable[Graph, Edge]
+
+
+COMPUTED_WEIGHT = None
 
 
 @dataclass
@@ -114,10 +117,11 @@ class Graph:
     edges: EdgeSequence = field(default_factory=tuple)
     properties: dict = field(default_factory=dict)
     edge_weight_function: EdgeWeightCallable | None
-    heuristic_distance_function: HeuristicDistanceCallable | None
+    heuristic_distance_function: DistanceCallable | None
 
     @classmethod
-    def from_edge_definitions(cls, edge_definitions: EdgeDefinitionSequence, properties: dict | None = None, edge_weight_function: EdgeWeightCallable | None = None, heuristic_distance_function: HeuristicDistanceCallable | None = None) -> 'Graph':
+    def from_edge_definitions(cls, edge_definitions: EdgeDefinitionSequence, properties: dict | None = None, distance_function: DistanceCallable | None = None, edge_weight_function: EdgeWeightCallable | None = None) -> 'Graph':
+        """Create a graph from a sequence of edge definitions."""
         coordinates_of_all_nodes = []
 
         for edge_definition in edge_definitions:
@@ -125,7 +129,7 @@ class Graph:
                 if edge_node_coordinates not in coordinates_of_all_nodes:
                     coordinates_of_all_nodes.append(edge_node_coordinates)
 
-        nodes = dict()
+        nodes = {}
         edges = []
 
         for edge_definition in edge_definitions:
@@ -140,9 +144,9 @@ class Graph:
 
         nodes = [nodes[index] for index in sorted(nodes)]
 
-        return cls(nodes=nodes, edges=edges, properties=properties, edge_weight_function=edge_weight_function, heuristic_distance_function=heuristic_distance_function)
+        return cls(nodes=nodes, edges=edges, properties=properties, edge_weight_function=edge_weight_function, heuristic_distance_function=distance_function)
 
-    def __init__(self, nodes: NodeSequence, edges: EdgeSequence, properties: dict | None = None, edge_weight_function: EdgeWeightCallable | None = None, heuristic_distance_function: HeuristicDistanceCallable | None = None):
+    def __init__(self, nodes: NodeSequence, edges: EdgeSequence, properties: dict | None = None, edge_weight_function: EdgeWeightCallable | None = None, heuristic_distance_function: DistanceCallable | None = None):
         """Initialize a graph."""
         self.nodes = deepcopy(nodes)
         self.edges = tuple(deepcopy(edge) for edge in edges)
@@ -153,7 +157,7 @@ class Graph:
             for edge in self.edges:
                 edge.weight = self.edge_weight_function(self, edge)
         else:
-            self.edge_weight_function = None
+            self.edge_weight_function = specified_edge_weight
 
     def __repr__(self):
         return f'Graph(nodes={self.nodes}, edges={self.edges})'
@@ -190,12 +194,9 @@ class Graph:
         return adjacency_matrix
 
 
-
-def length_cost_per_unit(graph: Graph, edge: Edge) -> float:
-    cost_per_unit = edge.properties['cost_per_unit']
-    heuristic_distance = graph.heuristic_distance_function
-    attached_nodes = [graph.nodes[node_index] for node_index in edge.node_indices]
-    return cost_per_unit * heuristic_distance(attached_nodes[0], attached_nodes[1])
+def specified_edge_weight(_graph: Graph, edge: Edge) -> float:
+    """As the default edge weight function, return the current value of the edge's weight property."""
+    return edge.weight
 
 
 class NoNavigablePathError(Exception):

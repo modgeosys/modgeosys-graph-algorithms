@@ -1,6 +1,6 @@
-# modgeosys-graph-algorithms: Graph Algorithms
+# modgeosys-graph-algorithms: Spatial Graph Algorithms
 
-A repository for [hopefully] clean, readable, and easily-called implementations of some navigation,
+A repository for [hopefully] clean, readable, and easily-called implementations of some spatial navigation,
 path planning, and obstacle avoidance algorithms I will be using in the near future, written in modern
 Python and/or Rust with Python bindings. I'll be adding more algorithm implementations over time.
 
@@ -25,39 +25,44 @@ Python and/or Rust with Python bindings. I'll be adding more algorithm implement
 import pickle
 from pprint import pprint
 
-from modgeosys.graph.types import Graph, length_cost_per_unit
+from modgeosys.graph.edge_weight import length_cost_per_unit
+from modgeosys.graph.types import Graph, COMPUTED_WEIGHT
 from modgeosys.graph.distance import manhattan_distance, euclidean_distance
 from modgeosys.graph.a_star import a_star
 
 # Define a toy graph.
-toy_graph = Graph.from_edge_definitions(edge_definitions=((((0.0, 0.0), (0.0, 2.0)), 2, {'cost_per_unit': 2}),
-                                                          (((0.0, 0.0), (1.0, 0.0)), 1, {'cost_per_unit': 1}),
-                                                          (((1.0, 0.0), (2.0, 1.0)), 2, {'cost_per_unit': 1}),
-                                                          (((0.0, 2.0), (2.0, 3.0)), 3, {'cost_per_unit': 3}),
-                                                          (((2.0, 1.0), (2.0, 3.0)), 2, {'cost_per_unit': 1})),
-                                        edge_weight_function=length_cost_per_unit,
-                                        heuristic_distance_function=manhattan_distance)
+toy_graph = Graph.from_edge_definitions(edge_definitions=((((0.0, 0.0), (0.0, 2.0)), COMPUTED_WEIGHT, {'cost_per_unit': 2}),
+                                                          (((0.0, 0.0), (1.0, 0.0)), COMPUTED_WEIGHT, {'cost_per_unit': 1}),
+                                                          (((1.0, 0.0), (2.0, 1.0)), COMPUTED_WEIGHT, {'cost_per_unit': 1}),
+                                                          (((0.0, 2.0), (2.0, 3.0)), COMPUTED_WEIGHT, {'cost_per_unit': 3}),
+                                                          (((2.0, 1.0), (2.0, 3.0)), COMPUTED_WEIGHT, {'cost_per_unit': 1})),
+                                        distance_function=manhattan_distance, edge_weight_function=length_cost_per_unit)
 
 # Load a bigger graph from a pickle file.
 with open('python/data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
-    larger_graph = pickle.load(pickled_sample_larger_graph_file)
-    larger_graph.heuristic_distance_function = manhattan_distance
-    larger_graph.edge_weight_function = length_cost_per_unit
+  larger_graph = pickle.load(pickled_sample_larger_graph_file)
+  larger_graph.heuristic_distance_function = manhattan_distance
+  larger_graph.edge_weight_function = length_cost_per_unit
 
 # Call the A* function.
 toy_a_star_path = a_star(graph=toy_graph, start_node_index=0, goal_node_index=4)
-print(f'Toy A* Path:')
+print('Toy A* Path:')
 pprint(toy_a_star_path)
 print()
 larger_a_star_path = a_star(graph=larger_graph, start_node_index=0, goal_node_index=4)
-print(f'Large A* Path:')
+print('Large A* Path:')
 pprint(larger_a_star_path)
 ```
 
 #### Rust
 ```rust
+use std::collections::BTreeMap;
+
+use ordered_float::OrderedFloat;
+
 use modgeosys_graph::a_star::a_star;
-use modgeosys_graph::types::{EdgeDefinition, Graph};
+use modgeosys_graph::edge_weight::length_cost_per_unit;
+use modgeosys_graph::types::{PropertyValue, EdgeDefinition, Graph, WeightOption};
 use modgeosys_graph::distance::manhattan_distance;
 
 
@@ -65,14 +70,15 @@ use modgeosys_graph::distance::manhattan_distance;
 fn main()
 {
   // Define a graph.
-  let toy_graph = Graph::from_edge_definitions(vec![EdgeDefinition(2.0, vec![vec![0.0, 0.0], vec![0.0, 2.0]]),
-                                                    EdgeDefinition(1.0, vec![vec![0.0, 0.0], vec![1.0, 0.0]]),
-                                                    EdgeDefinition(1.0, vec![vec![1.0, 0.0], vec![2.0, 1.0]]),
-                                                    EdgeDefinition(3.0, vec![vec![0.0, 2.0], vec![2.0, 3.0]]),
-                                                    EdgeDefinition(1.0, vec![vec![2.0, 1.0], vec![2.0, 3.0]])]);
+  let toy_graph = Graph::from_edge_definitions(vec![EdgeDefinition(vec![vec![0.0, 0.0], vec![0.0, 2.0]], WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(2.0)))].iter().cloned().collect()),
+                                                    EdgeDefinition(vec![vec![0.0, 0.0], vec![1.0, 0.0]], WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
+                                                    EdgeDefinition(vec![vec![1.0, 0.0], vec![2.0, 1.0]], WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect()),
+                                                    EdgeDefinition(vec![vec![0.0, 2.0], vec![2.0, 3.0]], WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(3.0)))].iter().cloned().collect()),
+                                                    EdgeDefinition(vec![vec![2.0, 1.0], vec![2.0, 3.0]], WeightOption::Computed, [("cost_per_unit".to_string(), PropertyValue::Float(OrderedFloat(1.0)))].iter().cloned().collect())],
+                                               BTreeMap::new(), manhattan_distance, Some(length_cost_per_unit));
 
   // Call the A* function.
-  let toy_a_star_path = a_star(&toy_graph, 0, 4, manhattan_distance).unwrap();
+  let toy_a_star_path = a_star(&toy_graph, 0, 4).unwrap();
 
   // Report the resulting path.
   println!("{:?}", toy_a_star_path);
@@ -86,15 +92,18 @@ fn main()
 ```python
 import pickle
 
-from modgeosys.graph.types import Graph
+from modgeosys.graph.edge_weight import length_cost_per_unit
+from modgeosys.graph.types import Graph, COMPUTED_WEIGHT
+from modgeosys.graph.distance import manhattan_distance, euclidean_distance
 from modgeosys.graph.prim import prim
 
 # Define a toy graph.
-toy_graph = Graph.from_edge_definitions(((2, ((0.0, 0.0), (0.0, 2.0))),
-                                         (1, ((0.0, 0.0), (1.0, 0.0))),
-                                         (1, ((1.0, 0.0), (2.0, 1.0))),
-                                         (3, ((0.0, 2.0), (2.0, 3.0))),
-                                         (1, ((2.0, 1.0), (2.0, 3.0)))))
+toy_graph = Graph.from_edge_definitions(edge_definitions=((((0.0, 0.0), (0.0, 2.0)), COMPUTED_WEIGHT, {'cost_per_unit': 2}),
+                                                          (((0.0, 0.0), (1.0, 0.0)), COMPUTED_WEIGHT, {'cost_per_unit': 1}),
+                                                          (((1.0, 0.0), (2.0, 1.0)), COMPUTED_WEIGHT, {'cost_per_unit': 1}),
+                                                          (((0.0, 2.0), (2.0, 3.0)), COMPUTED_WEIGHT, {'cost_per_unit': 3}),
+                                                          (((2.0, 1.0), (2.0, 3.0)), COMPUTED_WEIGHT, {'cost_per_unit': 1})),
+                                        distance_function=manhattan_distance, edge_weight_function=length_cost_per_unit)
 
 # Load a bigger graph from a pickle file.
 with open('python/data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
