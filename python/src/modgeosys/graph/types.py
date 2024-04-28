@@ -121,6 +121,7 @@ class Graph:
 
     @classmethod
     def from_edge_definitions(cls, edge_definitions: EdgeDefinitionSequence, properties: dict | None = None, distance_function: DistanceCallable | None = None, edge_weight_function: EdgeWeightCallable | None = None) -> 'Graph':
+        """Create a graph from a sequence of edge definitions."""
         coordinates_of_all_nodes = []
 
         for edge_definition in edge_definitions:
@@ -128,7 +129,7 @@ class Graph:
                 if edge_node_coordinates not in coordinates_of_all_nodes:
                     coordinates_of_all_nodes.append(edge_node_coordinates)
 
-        nodes = dict()
+        nodes = {}
         edges = []
 
         for edge_definition in edge_definitions:
@@ -194,7 +195,7 @@ class Graph:
 
 
 def specified_edge_weight(_graph: Graph, edge: Edge) -> float:
-    """The default edge weight function simply returns the current value of the edge's weight property."""
+    """As the default edge weight function, return the current value of the edge's weight property."""
     return edge.weight
 
 

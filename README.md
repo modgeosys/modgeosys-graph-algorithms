@@ -46,11 +46,11 @@ with open('python/data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
 
 # Call the A* function.
 toy_a_star_path = a_star(graph=toy_graph, start_node_index=0, goal_node_index=4)
-print(f'Toy A* Path:')
+print('Toy A* Path:')
 pprint(toy_a_star_path)
 print()
 larger_a_star_path = a_star(graph=larger_graph, start_node_index=0, goal_node_index=4)
-print(f'Large A* Path:')
+print('Large A* Path:')
 pprint(larger_a_star_path)
 ```
 
