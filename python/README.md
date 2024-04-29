@@ -39,7 +39,7 @@ toy_graph = Graph.from_edge_definitions(edge_definitions=((((0.0, 0.0), (0.0, 2.
 # Load a bigger graph from a pickle file.
 with open('python/data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
   larger_graph = pickle.load(pickled_sample_larger_graph_file)
-  larger_graph.heuristic_distance_function = manhattan_distance
+  larger_graph.distance_function = manhattan_distance
   larger_graph.edge_weight_function = length_cost_per_unit
 
 # Call the A* function.

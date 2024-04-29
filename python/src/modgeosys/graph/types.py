@@ -117,7 +117,7 @@ class Graph:
     edges: EdgeSequence = field(default_factory=tuple)
     properties: dict = field(default_factory=dict)
     edge_weight_function: EdgeWeightCallable | None
-    heuristic_distance_function: DistanceCallable | None
+    distance_function: DistanceCallable | None
 
     @classmethod
     def from_edge_definitions(cls, edge_definitions: EdgeDefinitionSequence, properties: dict | None = None, distance_function: DistanceCallable | None = None, edge_weight_function: EdgeWeightCallable | None = None) -> 'Graph':
@@ -144,14 +144,14 @@ class Graph:
 
         nodes = [nodes[index] for index in sorted(nodes)]
 
-        return cls(nodes=nodes, edges=edges, properties=properties, edge_weight_function=edge_weight_function, heuristic_distance_function=distance_function)
+        return cls(nodes=nodes, edges=edges, properties=properties, edge_weight_function=edge_weight_function, distance_function=distance_function)
 
-    def __init__(self, nodes: NodeSequence, edges: EdgeSequence, properties: dict | None = None, edge_weight_function: EdgeWeightCallable | None = None, heuristic_distance_function: DistanceCallable | None = None):
+    def __init__(self, nodes: NodeSequence, edges: EdgeSequence, properties: dict | None = None, edge_weight_function: EdgeWeightCallable | None = None, distance_function: DistanceCallable | None = None):
         """Initialize a graph."""
         self.nodes = deepcopy(nodes)
         self.edges = tuple(deepcopy(edge) for edge in edges)
         self.properties = {} if properties is None else (deepcopy(properties) if isinstance(properties, dict) else dict(properties))
-        self.heuristic_distance_function = heuristic_distance_function if heuristic_distance_function else None
+        self.distance_function = distance_function if distance_function else None
         if edge_weight_function:
             self.edge_weight_function = edge_weight_function
             for edge in self.edges:

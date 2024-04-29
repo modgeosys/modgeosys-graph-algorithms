@@ -58,17 +58,17 @@ def valid_edges3_with_computed_weights():
 
 @pytest.fixture
 def valid_graph1(valid_nodes, valid_edges1):
-    return Graph(properties={}, nodes=valid_nodes, edges=valid_edges1, heuristic_distance_function=manhattan_distance)
+    return Graph(properties={}, nodes=valid_nodes, edges=valid_edges1, distance_function=manhattan_distance)
 
 
 @pytest.fixture
 def valid_graph2(valid_nodes, valid_edges2):
-    return Graph(properties={}, nodes=valid_nodes, edges=valid_edges2, heuristic_distance_function=manhattan_distance)
+    return Graph(properties={}, nodes=valid_nodes, edges=valid_edges2, distance_function=manhattan_distance)
 
 
 @pytest.fixture
 def valid_graph3(valid_nodes, valid_edges3):
-    return Graph(properties={}, nodes=valid_nodes, edges=valid_edges3, heuristic_distance_function=manhattan_distance, edge_weight_function=length_cost_per_unit)
+    return Graph(properties={}, nodes=valid_nodes, edges=valid_edges3, distance_function=manhattan_distance, edge_weight_function=length_cost_per_unit)
 
 
 @pytest.fixture
@@ -85,7 +85,7 @@ def valid_graph_from_edge_definitions():
 def valid_graph_larger():
     with open('data/graph.pickle', 'rb') as pickled_sample_larger_graph_file:
         graph = pickle.load(pickled_sample_larger_graph_file)
-        graph.heuristic_distance_function = manhattan_distance
+        graph.distance_function = manhattan_distance
         graph.edge_weight_function = length_cost_per_unit
         return graph
 
