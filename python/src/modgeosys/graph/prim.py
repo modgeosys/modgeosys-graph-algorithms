@@ -1,7 +1,12 @@
 """A module containing an implementation of Prim's algorithm for finding the minimum spanning tree of a graph."""
 
 from modgeosys.graph.types import Edge, Graph, ValidEdgeCallable, NoNavigablePathError
-from modgeosys.graph.edge_validation import edge_is_always_valid
+
+
+
+def edge_is_always_valid(graph: Graph, edge: Edge) -> bool:
+    """Default:  All edges are valid."""
+    return True
 
 
 def prim(graph: Graph, start_node_index: int, edge_is_valid: ValidEdgeCallable = edge_is_always_valid) -> set[Edge]:
@@ -23,7 +28,7 @@ def prim(graph: Graph, start_node_index: int, edge_is_valid: ValidEdgeCallable =
 
         for edge in candidate_edges:
 
-            if edge_is_valid(edge):
+            if edge_is_valid(graph, edge):
 
                 best_edge = edge
                 indices = best_edge.node_indices - included_node_indices
