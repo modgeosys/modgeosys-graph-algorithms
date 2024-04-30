@@ -4,7 +4,7 @@ from modgeosys.graph.types import Edge, Graph, ValidEdgeCallable, NoNavigablePat
 
 
 
-def edge_is_always_valid(graph: Graph, edge: Edge) -> bool:
+def edge_is_always_valid(_graph: Graph, _edge: Edge) -> bool:
     """Default:  All edges are valid."""
     return True
 
