@@ -94,8 +94,8 @@ pub fn prim(graph: &Graph, start_node_index: usize, edge_validation_function: Va
         }
     }
 
-    let included_edges: Vec<Edge> = included_edge_indices.iter().map(|index| graph.edges[*index].clone()).collect();
-    let included_edge_indices = included_edges.iter().map(|edge| graph.edges.iter().position(|e| e == edge).unwrap()).collect();
+    let included_edges: Vec<Edge> = graph.edges_from_indices(&included_edge_indices);
+    let included_edge_indices = graph.indices_from_edges(&included_edges);
     Ok(included_edge_indices)
 }
 

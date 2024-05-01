@@ -252,6 +252,13 @@ impl Graph
         edges.iter().map(|edge| self.edges.iter().position(|e| e == edge).unwrap()).collect()
     }
 
+    // Extract a set of node indices from the graph's nodes.
+    pub fn node_indices(&self) -> HashSet<usize>
+    {
+        (0..self.nodes.len()).collect()
+    }
+
+    // Extract a set of edge indices from the graph's edges.
     pub fn edge_indices(&self) -> HashSet<usize>
     {
         (0..self.edges.len()).collect()
