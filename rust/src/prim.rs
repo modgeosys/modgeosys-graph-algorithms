@@ -87,3 +87,29 @@ pub fn prim(graph: &Graph, start_node_index: usize, edge_validation_function: Va
     let included_edges = included_edge_indices.iter().map(|index| graph.edges[*index].clone()).collect();
     Ok(included_edges)
 }
+
+
+
+#[cfg(test)]
+mod tests
+{
+    use super::*;
+    use std::collections::{BTreeMap, HashSet};
+    use crate::types::Edge;
+    use crate::test_fixtures::tests::{valid_graph1, valid_graph2, valid_graph3};
+    use crate::types::WeightOption::Specified;
+
+    #[test]
+    fn test_prim_finds_minimum_spanning_tree()
+    {
+        let expected = vec![Edge::new(HashSet::from([0, 1]), Specified(2.0), BTreeMap::new()),
+                            Edge::new(HashSet::from([0, 2]), Specified(1.0), BTreeMap::new()),
+                            Edge::new(HashSet::from([2, 3]), Specified(1.0), BTreeMap::new()),
+                            Edge::new(HashSet::from([3, 4]), Specified(1.0), BTreeMap::new())];
+        let result = prim(&valid_graph1(), 0, ValidEdgeFunction::AlwaysValid).unwrap();
+
+        assert_eq!(result.len(), 4);
+        assert_eq!(result, expected);
+        assert_eq!(result.iter().map(|edge| edge.weight.into_inner()).sum::<f64>(), 5.0);
+    }
+}
