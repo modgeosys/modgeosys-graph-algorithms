@@ -8,6 +8,7 @@ use modgeosys_graph::a_star::a_star;
 use modgeosys_graph::edge_weight::length_cost_per_unit;
 use modgeosys_graph::types::{PropertyValue, EdgeDefinition, Graph, WeightOption};
 use modgeosys_graph::distance::manhattan_distance;
+use modgeosys_graph::prim::{prim, ValidEdgeFunction};
 
 
 
@@ -23,7 +24,11 @@ fn main()
 
     // Call the A* function.
     let toy_a_star_path = a_star(&toy_graph, 0, 4).unwrap();
-
-    // Report the resulting path.
     println!("{:?}", toy_a_star_path);
+
+    // Call the Prim function.
+    let toy_minimum_spanning_tree = prim(&toy_graph, 0, ValidEdgeFunction::AlwaysValid).unwrap();
+    println!("Toy Minimum Spanning Tree:");
+    println!("{:?}", toy_graph.edges_from_indices(&toy_minimum_spanning_tree));
+    println!();
 }

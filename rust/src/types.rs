@@ -228,6 +228,18 @@ impl Graph
         Graph::new(nodes, edges, properties, distance_function, edge_weight_function)
     }
 
+    // Extract a vector of nodes from the given vector of node indices.
+    pub fn nodes_from_indices(&self, node_indices: &HashSet<usize>) -> Vec<Node>
+    {
+        node_indices.iter().map(|index| self.nodes[*index].clone()).collect()
+    }
+
+    // Extract a vector of edges from the given vector of edge indices.
+    pub fn edges_from_indices(&self, edge_indices: &HashSet<usize>) -> Vec<Edge>
+    {
+        edge_indices.iter().map(|index| self.edges[*index].clone()).collect()
+    }
+
     // Render an adjacency map.
     pub fn adjacency_map(&self) -> HashMap<Node, Vec<Edge>>
     {
