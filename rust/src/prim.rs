@@ -29,14 +29,13 @@ pub fn prim(graph: &Graph, start_node_index: usize, edge_validation_function: Va
         ValidEdgeFunction::AlwaysValid => edge_is_always_valid,
     };
 
-    let nodes_count = graph.nodes.len();
     let mut included_node_indices = HashSet::new();
     included_node_indices.insert(start_node_index);
-    let mut excluded_node_indices: BTreeSet<_> = (0..nodes_count).collect();
+    let mut excluded_node_indices: BTreeSet<_> = (0..graph.nodes.len()).collect();
     excluded_node_indices.remove(&start_node_index);
 
     let mut included_edge_indices = HashSet::new();
-    let mut excluded_edge_indices: HashSet<_> = graph.edges.iter().enumerate().map(|(index, _)| index).collect();
+    let mut excluded_edge_indices = graph.edge_indices();
 
     while !excluded_node_indices.is_empty()
     {

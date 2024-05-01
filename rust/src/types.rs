@@ -252,6 +252,11 @@ impl Graph
         edges.iter().map(|edge| self.edges.iter().position(|e| e == edge).unwrap()).collect()
     }
 
+    pub fn edge_indices(&self) -> HashSet<usize>
+    {
+        (0..self.edges.len()).collect()
+    }
+
     // Render an adjacency map.
     pub fn adjacency_map(&self) -> HashMap<Node, Vec<Edge>>
     {
