@@ -21,7 +21,7 @@ pub enum ValidEdgeFunction
 }
 
 
-pub fn prim(graph: &Graph, start_node_index: usize, edge_validation_function: ValidEdgeFunction) -> Result<Vec<Edge>, NoNavigablePathError>
+pub fn prim(graph: &Graph, start_node_index: usize, edge_validation_function: ValidEdgeFunction) -> Result<HashSet<usize>, NoNavigablePathError>
 {
     let edge_is_valid = match edge_validation_function
     {
@@ -95,8 +95,9 @@ pub fn prim(graph: &Graph, start_node_index: usize, edge_validation_function: Va
         }
     }
 
-    let included_edges = included_edge_indices.iter().map(|index| graph.edges[*index].clone()).collect();
-    Ok(included_edges)
+    let included_edges: Vec<Edge> = included_edge_indices.iter().map(|index| graph.edges[*index].clone()).collect();
+    let included_edge_indices = included_edges.iter().map(|edge| graph.edges.iter().position(|e| e == edge).unwrap()).collect();
+    Ok(included_edge_indices)
 }
 
 
@@ -113,14 +114,15 @@ mod tests
     #[test]
     fn test_prim_finds_minimum_spanning_tree()
     {
-        let expected = vec![Edge::new(HashSet::from([0, 1]), Specified(2.0), BTreeMap::new()),
-                            Edge::new(HashSet::from([0, 2]), Specified(1.0), BTreeMap::new()),
-                            Edge::new(HashSet::from([2, 3]), Specified(1.0), BTreeMap::new()),
-                            Edge::new(HashSet::from([3, 4]), Specified(1.0), BTreeMap::new())];
+        // let expected = vec![Edge::new(HashSet::from([0, 1]), Specified(2.0), BTreeMap::new()),
+        //                     Edge::new(HashSet::from([0, 2]), Specified(1.0), BTreeMap::new()),
+        //                     Edge::new(HashSet::from([2, 3]), Specified(1.0), BTreeMap::new()),
+        //                     Edge::new(HashSet::from([3, 4]), Specified(1.0), BTreeMap::new())];
+        let expected = HashSet::from([0, 1, 2, 4]);
         let result = prim(&valid_graph1(), 0, ValidEdgeFunction::AlwaysValid).unwrap();
 
         assert_eq!(result.len(), 4);
         assert_eq!(result, expected);
-        assert_eq!(result.iter().map(|edge| edge.weight.into_inner()).sum::<f64>(), 5.0);
+        assert_eq!(result.iter().map(|index| valid_graph1().edges[*index].weight.into_inner()).sum::<f64>(), 5.0);
     }
 }
