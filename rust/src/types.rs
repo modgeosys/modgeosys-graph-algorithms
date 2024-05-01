@@ -281,17 +281,17 @@ pub fn specified_edge_weight(_graph: &Graph, edge: &Edge) -> OrderedFloat<f64>
 pub struct NoNavigablePathError
 {
     pub start_node: Node,
-    pub goal_node: Node,
+    pub optional_goal_node: Option<Node>,
 }
 
 impl NoNavigablePathError
 {
-    pub fn new(start_node: Node, goal_node: Node) -> Self
+    pub fn new(start_node: Node, optional_goal_node: Option<Node>) -> Self
     {
         NoNavigablePathError
         {
             start_node,
-            goal_node,
+            optional_goal_node,
         }
     }
 }

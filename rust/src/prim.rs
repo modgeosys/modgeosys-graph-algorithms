@@ -6,21 +6,22 @@ use crate::types::{Graph, Edge, NoNavigablePathError};
 
 
 
-
+#[allow(dead_code)]
 pub fn edge_is_always_valid(_: &Graph, _: &Edge) -> bool
 {
     true
 }
 
 
-enum ValidEdgeFunction
+#[allow(dead_code)]
+pub enum ValidEdgeFunction
 {
     Specified(fn(&Graph, &Edge) -> bool),
     AlwaysValid,
 }
 
 
-pub fn prim(graph: &Graph, start_node_index: usize, edge_validation_function: ValidEdgeFunction) -> Result<HashSet<Edge>, NoNavigablePathError>
+pub fn prim(graph: &Graph, start_node_index: usize, edge_validation_function: ValidEdgeFunction) -> Result<Vec<Edge>, NoNavigablePathError>
 {
     let edge_is_valid = match edge_validation_function
     {
@@ -34,15 +35,17 @@ pub fn prim(graph: &Graph, start_node_index: usize, edge_validation_function: Va
     let mut excluded_node_indices: BTreeSet<_> = (0..nodes_count).collect();
     excluded_node_indices.remove(&start_node_index);
 
-    let mut included_edges = HashSet::new();
-    let mut excluded_edges: HashSet<_> = graph.edges.iter().cloned().collect();
+    let mut included_edge_indices = HashSet::new();
+    let mut excluded_edge_indices: HashSet<_> = graph.edges.iter().enumerate().map(|(index, _)| index).collect();
 
     while !excluded_node_indices.is_empty()
     {
         let mut candidate_edges = Vec::new();
 
-        for edge in &excluded_edges
+        for edge_index in &excluded_edge_indices
         {
+            let edge = &graph.edges[*edge_index];
+
             // Check if the edge connects to the current spanning tree.
             if edge.node_indices.intersection(&included_node_indices).next().is_some()
             {
@@ -70,8 +73,9 @@ pub fn prim(graph: &Graph, start_node_index: usize, edge_validation_function: Va
                 let new_node_index = *edge.node_indices.difference(&included_node_indices).next().unwrap();
                 included_node_indices.insert(new_node_index);
                 excluded_node_indices.remove(&new_node_index);
-                included_edges.insert(edge.clone());
-                excluded_edges.remove(&edge);
+                let edge_index = graph.edges.iter().position(|e| e == &edge).unwrap();
+                included_edge_indices.insert(edge_index);
+                excluded_edge_indices.remove(&edge_index);
             },
             None =>
             {
@@ -80,5 +84,6 @@ pub fn prim(graph: &Graph, start_node_index: usize, edge_validation_function: Va
         }
     }
 
+    let included_edges = included_edge_indices.iter().map(|index| graph.edges[*index].clone()).collect();
     Ok(included_edges)
 }
