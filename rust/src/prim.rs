@@ -53,6 +53,9 @@ pub fn prim(graph: &Graph, start_node_index: usize, edge_validation_function: Va
             }
         }
 
+        // Sort the candidate edges by weight.
+        candidate_edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
+
         let mut best_edge = None;
 
         for edge in candidate_edges
@@ -70,7 +73,15 @@ pub fn prim(graph: &Graph, start_node_index: usize, edge_validation_function: Va
             Some(edge) =>
             {
                 // Update the sets based on the selected edge.
-                let new_node_index = *edge.node_indices.difference(&included_node_indices).next().unwrap();
+                let indices = edge.node_indices.difference(&included_node_indices).collect::<HashSet<_>>();
+                if indices.len() != 1
+                {
+                    // We've discovered a cycle.  Remove the edge from consideration, and move on.
+                    excluded_edge_indices.remove(&graph.edges.iter().position(|e| e == &edge).unwrap());
+                    continue;
+                }
+                let new_node_index = **indices.iter().next().unwrap();
+
                 included_node_indices.insert(new_node_index);
                 excluded_node_indices.remove(&new_node_index);
                 let edge_index = graph.edges.iter().position(|e| e == &edge).unwrap();
