@@ -240,6 +240,18 @@ impl Graph
         edge_indices.iter().map(|index| self.edges[*index].clone()).collect()
     }
 
+    // Extract a vector of node indices from the given vector of nodes.
+    pub fn indices_from_nodes(&self, nodes: &Vec<Node>) -> HashSet<usize>
+    {
+        nodes.iter().map(|node| self.nodes.iter().position(|n| n == node).unwrap()).collect()
+    }
+
+    // Extract a vector of edge indices from the given vector of edges.
+    pub fn indices_from_edges(&self, edges: &Vec<Edge>) -> HashSet<usize>
+    {
+        edges.iter().map(|edge| self.edges.iter().position(|e| e == edge).unwrap()).collect()
+    }
+
     // Render an adjacency map.
     pub fn adjacency_map(&self) -> HashMap<Node, Vec<Edge>>
     {
