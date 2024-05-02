@@ -298,8 +298,8 @@ impl Graph
         for edge in &self.edges
         {
             let node_indices: Vec<usize> = edge.node_indices.iter().cloned().collect();
-            adjacency_matrix[[node_indices[0], node_indices[1]]] = f64::from(edge.weight);
-            adjacency_matrix[[node_indices[1], node_indices[0]]] = f64::from(edge.weight);
+            adjacency_matrix[[node_indices[0], node_indices[1]]] = edge.weight.into_inner();
+            adjacency_matrix[[node_indices[1], node_indices[0]]] = edge.weight.into_inner();
         }
 
         adjacency_matrix
