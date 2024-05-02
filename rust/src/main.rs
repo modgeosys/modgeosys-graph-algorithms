@@ -4,10 +4,10 @@ use std::collections::BTreeMap;
 
 use ordered_float::OrderedFloat;
 
-use modgeosys_graph::a_star::a_star;
-use modgeosys_graph::edge_weight::length_cost_per_unit;
 use modgeosys_graph::types::{PropertyValue, EdgeDefinition, Graph, WeightOption};
+use modgeosys_graph::edge_weight::length_cost_per_unit;
 use modgeosys_graph::distance::manhattan_distance;
+use modgeosys_graph::a_star::a_star;
 use modgeosys_graph::prim::{prim, ValidEdgeFunction};
 
 
