@@ -46,29 +46,24 @@ class Node:
         return not np.all(self.coordinates < other.coordinates)
 
     def __add__(self, other):
-        if isinstance(other, Node):
-            other = other.coordinates
-        return Node(self.coordinates + other)
+        other_coordinates = other.coordinates if isinstance(other, Node) else other
+        return Node(self.coordinates + other_coordinates)
 
     def __sub__(self, other):
-        if isinstance(other, Node):
-            other = other.coordinates
-        return Node(self.coordinates - other)
+        other_coordinates = other.coordinates if isinstance(other, Node) else other
+        return Node(self.coordinates - other_coordinates)
 
     def __mul__(self, other):
-        if isinstance(other, Node):
-            other = other.coordinates
-        return Node(self.coordinates * other)
+        other_coordinates = other.coordinates if isinstance(other, Node) else other
+        return Node(self.coordinates * other_coordinates)
 
     def __truediv__(self, other):
-        if isinstance(other, Node):
-            other = other.coordinates
-        return Node(self.coordinates / other)
+        other_coordinates = other.coordinates if isinstance(other, Node) else other
+        return Node(self.coordinates / other_coordinates)
 
     def __floordiv__(self, other):
-        if isinstance(other, Node):
-            other = other.coordinates
-        return Node(self.coordinates // other)
+        other_coordinates = other.coordinates if isinstance(other, Node) else other
+        return Node(self.coordinates // other_coordinates)
 
     def __array__(self):
         return self.coordinates
