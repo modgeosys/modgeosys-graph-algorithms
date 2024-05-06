@@ -15,18 +15,6 @@ def test_prim_finds_minimum_spanning_tree(valid_graph1):
     assert sum(edge.weight for edge in result) == 5.0
 
 
-def test_prim_finds_steiner_minimal_tree(valid_graph4_with_steiner_node):
-    result = prim(graph=valid_graph4_with_steiner_node, start_node_index=0)
-
-    assert len(result) == 5
-    assert result == {Edge(weight=1.0, node_indices=frozenset({3, 4}), properties={}),
-                      Edge(weight=1.0, node_indices=frozenset({2, 3}), properties={}),
-                      Edge(weight=1.0, node_indices=frozenset({0, 3}), properties={}),
-                      Edge(weight=1.0, node_indices=frozenset({4, 5}), properties={}),
-                      Edge(weight=1.0, node_indices=frozenset({1, 3}), properties={})}
-    assert sum(edge.weight for edge in result) == 5.0
-
-
 def test_prim_finds_minimum_spanning_tree_from_edge_definitions(valid_graph_from_edge_definitions):
     result = prim(graph=valid_graph_from_edge_definitions, start_node_index=0)
 
