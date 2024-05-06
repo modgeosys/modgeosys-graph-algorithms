@@ -4,7 +4,7 @@ from modgeosys.graph.types import Edge, Graph, ValidEdgeCallable, NoNavigablePat
 
 
 
-def edge_is_always_valid(_graph: Graph, _edge: Edge) -> bool:
+def edge_is_always_valid(_graph: Graph, _edge: Edge, _included_node_indices: {int}, _excluded_node_indices: {int}) -> bool:
     """Default:  All edges are valid."""
     return True
 
@@ -28,7 +28,7 @@ def prim(graph: Graph, start_node_index: int, edge_is_valid: ValidEdgeCallable =
 
         for edge in candidate_edges:
 
-            if edge_is_valid(graph, edge):
+            if edge_is_valid(graph, edge, included_node_indices, excluded_node_indices):
 
                 best_edge = edge
                 indices = best_edge.node_indices - included_node_indices
