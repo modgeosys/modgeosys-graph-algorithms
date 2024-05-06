@@ -18,7 +18,7 @@ type EdgeDefinition = tuple[tuple, int | float | None, dict]
 type EdgeDefinitionSequence = Sequence[EdgeDefinition]
 type AdjacencyMap = Mapping[Node, Sequence[Edge]]
 type DistanceCallable = Callable[[Node, Node], int | float]
-type ValidEdgeCallable = Callable[Graph, Edge, {int}, {int}]
+type ValidEdgeCallable = Callable[Graph, Edge, {int}, {Edge}, {int}, {Edge}]
 type EdgeWeightCallable = Callable[Graph, Edge]
 
 
