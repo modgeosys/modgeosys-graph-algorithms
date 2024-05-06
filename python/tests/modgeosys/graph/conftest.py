@@ -12,6 +12,11 @@ def valid_nodes():
 
 
 @pytest.fixture
+def valid_nodes_with_steiner_node():
+    return [Node(properties={'terminal': True}, coordinates=(0.0, 0.0)), Node(properties={'terminal': True}, coordinates=(0.0, 2.0)), Node(properties={'terminal': True}, coordinates=(1.0, 0.0)), Node(properties={'terminal': False}, coordinates=(1.0, 1.0)), Node(properties={'terminal': True}, coordinates=(2.0, 1.0)), Node(properties={'terminal': True}, coordinates=(2.0, 3.0))]
+
+
+@pytest.fixture
 def valid_edges1():
     return (Edge(properties={}, weight=2, node_indices=frozenset((0, 1))),
             Edge(properties={}, weight=1, node_indices=frozenset((0, 2))),
@@ -57,6 +62,19 @@ def valid_edges3_with_computed_weights():
 
 
 @pytest.fixture
+def valid_edges4():
+    return (Edge(properties={}, weight=2, node_indices=frozenset((0, 1))),
+            Edge(properties={}, weight=1, node_indices=frozenset((0, 2))),
+            Edge(properties={}, weight=1, node_indices=frozenset((0, 3))),
+            Edge(properties={}, weight=1, node_indices=frozenset((1, 3))),
+            Edge(properties={}, weight=1, node_indices=frozenset((2, 3))),
+            Edge(properties={}, weight=1, node_indices=frozenset((4, 3))),
+            Edge(properties={}, weight=1, node_indices=frozenset((5, 3))),
+            Edge(properties={}, weight=1, node_indices=frozenset((2, 4))),
+            Edge(properties={}, weight=3, node_indices=frozenset((1, 5))),
+            Edge(properties={}, weight=1, node_indices=frozenset((4, 5))))
+
+@pytest.fixture
 def valid_graph1(valid_nodes, valid_edges1):
     return Graph(properties={}, nodes=valid_nodes, edges=valid_edges1, distance_function=manhattan_distance)
 
@@ -69,6 +87,11 @@ def valid_graph2(valid_nodes, valid_edges2):
 @pytest.fixture
 def valid_graph3(valid_nodes, valid_edges3):
     return Graph(properties={}, nodes=valid_nodes, edges=valid_edges3, distance_function=manhattan_distance, edge_weight_function=length_cost_per_unit)
+
+
+@pytest.fixture
+def valid_graph4_with_steiner_node(valid_nodes_with_steiner_node, valid_edges4):
+    return Graph(properties={}, nodes=valid_nodes_with_steiner_node, edges=valid_edges4, distance_function=manhattan_distance)
 
 
 @pytest.fixture
