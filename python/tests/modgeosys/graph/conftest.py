@@ -12,8 +12,8 @@ def valid_nodes():
 
 
 @pytest.fixture
-def valid_nodes_with_steiner_node():
-    return [Node(properties={'terminal': True}, coordinates=(0.0, 0.0)), Node(properties={'terminal': True}, coordinates=(0.0, 2.0)), Node(properties={'terminal': True}, coordinates=(1.0, 0.0)), Node(properties={'terminal': False}, coordinates=(1.0, 1.0)), Node(properties={'terminal': True}, coordinates=(2.0, 1.0)), Node(properties={'terminal': True}, coordinates=(2.0, 3.0))]
+def valid_nodes_with_steiner_nodes():
+    return [Node(properties={}, coordinates=(0.0, 0.0), terminal=True), Node(properties={}, coordinates=(0.0, 2.0), terminal=True), Node(properties={}, coordinates=(1.0, 0.0), terminal=True), Node(properties={}, coordinates=(1.0, 1.0), terminal=False), Node(properties={}, coordinates=(2.0, 1.0), terminal=True), Node(properties={}, coordinates=(2.0, 3.0), terminal=True), Node(properties={}, coordinates=(8.0, 8.0), terminal=False)]
 
 
 @pytest.fixture
@@ -90,8 +90,8 @@ def valid_graph3(valid_nodes, valid_edges3):
 
 
 @pytest.fixture
-def valid_graph4_with_steiner_node(valid_nodes_with_steiner_node, valid_edges4):
-    return Graph(properties={}, nodes=valid_nodes_with_steiner_node, edges=valid_edges4, distance_function=manhattan_distance)
+def valid_graph4_with_steiner_node(valid_nodes_with_steiner_nodes, valid_edges4):
+    return Graph(properties={}, nodes=valid_nodes_with_steiner_nodes, edges=valid_edges4, distance_function=manhattan_distance)
 
 
 @pytest.fixture

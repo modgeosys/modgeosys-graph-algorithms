@@ -30,6 +30,7 @@ class Node:
     """A node in a graph."""
     coordinates: Vector[np.float64]
     properties: dict = field(default_factory=dict)
+    terminal: bool = field(default=True, compare=False)
 
     def __post_init__(self):
         self.coordinates = np.array(self.coordinates, dtype=np.float64)

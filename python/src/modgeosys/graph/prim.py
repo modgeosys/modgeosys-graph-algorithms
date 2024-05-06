@@ -17,11 +17,13 @@ def prim(graph: Graph, start_node_index: int, edge_is_valid: ValidEdgeCallable =
 
     included_node_indices = {start_node_index}
     excluded_node_indices = set(range(len(nodes))) - included_node_indices
+    excluded_terminal_node_indices = {node_index for node_index in excluded_node_indices if nodes[node_index].terminal}
+    excluded_steiner_node_indices = excluded_node_indices - excluded_terminal_node_indices
 
     included_edges = set()
     excluded_edges = set(edges)
 
-    while excluded_node_indices:
+    while excluded_terminal_node_indices:
 
         candidate_edges = sorted(edge for edge in excluded_edges if edge.node_indices & included_node_indices)
         best_edge = None
@@ -40,6 +42,10 @@ def prim(graph: Graph, start_node_index: int, edge_is_valid: ValidEdgeCallable =
 
                 included_node_indices.add(new_node_index)
                 excluded_node_indices.remove(new_node_index)
+                if nodes[new_node_index].terminal:
+                    excluded_terminal_node_indices.remove(new_node_index)
+                else:
+                    excluded_steiner_node_indices.remove(new_node_index)
                 included_edges.add(best_edge)
                 excluded_edges.remove(best_edge)
 
