@@ -10,9 +10,16 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 numpy = "^1.26.3"
 heapdict = "^1.0.1"
+#numpy = "^2.1.0"
+networkx = "^3.3"
+scipy = "^1.14.1"
+rmm-cu12 = { url = "https://pypi.nvidia.com/rmm-cu12/rmm_cu12-24.8.2-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl#sha256=aebf834f2de17967e5f2eb1f52a1e96eabcf55b17984efb177eba4f93b51c6a4" }
+cudf-cu12 = { url = "https://pypi.nvidia.com/cudf-cu12/cudf_cu12-24.8.2-cp311-cp311-manylinux_2_28_x86_64.whl#sha256=21b64be0e05fcaaa41cb4430819f832f330830c0b9c13ef26437c9c7d2eedbea"}
+cugraph-cu12 = { url = "https://pypi.nvidia.com/cugraph-cu12/cugraph_cu12-24.8.0-cp311-cp311-manylinux_2_28_x86_64.whl#sha256=cb6bf91d76bf0a52bcfc0b5004d2106fcf86b05a773e8714f302b62954a45a29"}
+cupy-cuda12x = "^13.3.0"
 
 [build-system]
 requires = ["poetry-core"]
